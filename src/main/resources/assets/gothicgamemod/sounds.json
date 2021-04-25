@@ -1,0 +1,53 @@
+{
+    "scavenger_aggr_anim": {
+        "category": "hostile",
+        "sounds": [
+			{
+				"name": "mob/scavenger/scavenger_aggr_anim",
+				"stream": false
+			}
+		]
+    },
+	"scavenger_living": {
+        "category": "hostile",
+        "sounds": [			
+			{
+				"name": "mob/scavenger/scavenger_living",
+				"stream": false
+			}
+		]
+    },
+	"nikita_living": {
+        "category": "hostile",
+        "sounds": [			
+			{
+				"name": "mob/nikita/nikita_living",
+				"stream": false
+			}
+		]
+    },
+	"nikita_aggr_anim": {
+        "category": "hostile",
+        "sounds": [
+			{
+				"name": "mob/nikita/nikita_aggr_anim",
+				"stream": false
+			}
+		]
+    },
+	"nikita_hit": {
+        "category": "hostile",
+        "sounds": [			
+			{
+				"name": "mob/nikita/nikita_hit_1",
+				"stream": false,
+				"weight": 50.0
+			},
+			{
+				"name": "mob/nikita/nikita_hit_2",
+				"stream": false,
+				"weight": 50.0
+			}
+		]
+    }	
+}

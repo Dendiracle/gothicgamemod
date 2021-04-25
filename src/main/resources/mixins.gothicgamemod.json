@@ -1,0 +1,40 @@
+{
+    "minVersion": "0.7.10",
+    "compatibilityLevel": "JAVA_8",
+    "package": "mrfinger.gothicgamemod.mixin",
+    "refmap": "mixins.gothicgamemod.refmap.json",
+    "mixins": [
+		"entity.ai.attributes.GGMBaseAttributeMap",
+		"entity.ai.attributes.GGMServersideAttributeMap",
+		"entity.ai.attributes.GGMBaseAttribute",
+		"entity.ai.attributes.GGMModifiableAttributeInstance",
+		"entity.ai.attributes.GGMAttributeModifier",
+		"entity.GGMSharedMonsterAttributes",
+		"entity.GGMEntity",
+		"entity.GGMEntityLivingBase",
+		"entity.GGMEntityLiving",
+		"entity.GGMEntityCreature",
+		"entity.GGMEntityMob",
+		"entity.GGMEntitySkeleton",
+		"entity.GGMEntityTrackerEntry",
+		"entity.player.GGMEntityPlayer",
+		"entity.player.GGMEntityPlayerMP",
+		"entity.player.GGMInventoryPlayer",
+      	"item.GGMItemTool",
+		"item.GGMItemBow",
+		"server.management.GGMItemInWorldManager",
+		"server.management.GGMServerConfigurationManager",
+		"util.GGMDamageSource",
+		"network.play.server.GGMS20PacketEntityProperties",
+		"network.GGMNetHandlerPlayServer"
+    ],
+    "client": [
+		"client.entity.GGMAbstractClientPlayer",
+		"network.GGMNetHandlerPlayClient",
+		"client.GGMMinecraft",
+		"client.GGMPlayerControllerMP",
+		"client.model.GGMModelBiped"
+	],
+    "server": [
+	]
+}

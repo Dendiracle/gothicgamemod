@@ -1,0 +1,15 @@
+[
+{
+  "modid": "gothicgamemod",
+  "name": "Gothic",
+  "version": "${version}",
+  "description": "",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Dendiracle"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
