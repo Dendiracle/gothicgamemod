@@ -11,31 +11,33 @@ public class GGMAttributeHelper {
 	
 	public final IGGMIncreasableAttributeInstance 	attributeInstance;
 
+	public final boolean							isDynamic;
+
 	public final int								id;
 
 	public final String 							name;
-
-	public int 										guiOffsetX, guiOffsetY;
 	
 	public float 									addedBefore,
 													addedValue;
 	
 	public int 										upgradeAmounts;
+
 	
 	public GGMAttributeHelper(IGGMIncreasableAttributeInstance attributeInstance, String name) {
 		this.attributeInstance = attributeInstance;
+		this.isDynamic = attributeInstance instanceof IGGMDynamicAttributeInstance;
 		this.id = counter++;
 		this.name = name;
 	}
 
 	@Override
-	public String toString() {
-
+	public String toString()
+	{
 		String s = "";
 
-		if (this.attributeInstance instanceof IGGMDynamicAttributeInstance) s += (int) ((IGGMDynamicAttributeInstance) this.attributeInstance).getCurrentValue() + "/";
-
+		if (this.isDynamic) s += (int) ((IGGMDynamicAttributeInstance) this.attributeInstance).getCurrentValue() + "/";
 		s += (int) (this.attributeInstance.getAttributeValue()) + "  (" + (String.format("%.1f", this.attributeInstance.getBaseValue() + this.addedValue)) + ")";
+		if (this.isDynamic) s += " +" + ((IGGMDynamicAttributeInstance) this.attributeInstance).getCachedRegenValue() * 2.0F + " (" + ((IGGMDynamicAttributeInstance) this.attributeInstance).getNaturalRegen() + ")";
 
 		return s;
 	}

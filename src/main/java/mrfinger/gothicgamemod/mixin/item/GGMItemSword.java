@@ -1,4 +1,4 @@
 package mrfinger.gothicgamemod.mixin.item;
 
-public class GGMItemTool {
+public class GGMItemSword {
 }
