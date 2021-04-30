@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import mrfinger.gothicgamemod.command.CommandGothicStats;
-import mrfinger.gothicgamemod.command.CommandSetExp;
+import mrfinger.gothicgamemod.command.CommandGGMSet;
 import mrfinger.gothicgamemod.init.*;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.ServerPacketHandler;
@@ -42,7 +42,7 @@ public class CommonProxy {
 
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandGothicStats());
-		event.registerServerCommand(new CommandSetExp());
+		event.registerServerCommand(new CommandGGMSet());
 	} 
 	
 	public Side getSide() {

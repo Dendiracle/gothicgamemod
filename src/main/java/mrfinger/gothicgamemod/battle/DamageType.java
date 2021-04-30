@@ -17,4 +17,9 @@ public class DamageType {
         return this.unlocalizedName;
     }
 
+
+    @Override
+    public String toString() {
+        return this.getClass() + ": " + this.unlocalizedName;
+    }
 }

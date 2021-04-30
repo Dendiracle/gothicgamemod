@@ -8,12 +8,15 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityCreature.class)
-public abstract class GGMEntityCreature implements IGGMEntityCreature {
+public abstract class GGMEntityCreature extends GGMEntityLiving implements IGGMEntityCreature {
 
 
     @Shadow protected Entity            entityToAttack;
+
+    @Shadow protected abstract void attackEntity(Entity p_70785_1_, float p_70785_2_);
 
     private int 						cAttDur;
 
@@ -21,6 +24,20 @@ public abstract class GGMEntityCreature implements IGGMEntityCreature {
 
     private int                         attTick;
 
+
+    @Inject(method = "attackEntity", at = @At("RETURN"))
+    private void fixAttackEntity(Entity entity, float distance, CallbackInfo ci)
+    {
+
+    }
+
+
+    @Override
+    public void justAttack(Entity entity, float distance) {
+        super.justAttack(entity, distance);
+
+        this.attackEntity(entity, distance);
+    }
 
     @Inject(method = "updateLeashedState", at = @At(value = "TAIL"))
     private void attackUpdate(CallbackInfo ci) {

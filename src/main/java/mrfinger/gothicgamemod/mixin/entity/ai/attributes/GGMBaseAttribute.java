@@ -19,6 +19,7 @@ public abstract class GGMBaseAttribute implements IGGMAttribute {
 
 
     @Shadow @Final private String unlocalizedName;
+
     protected boolean haveDP;
 
     protected Map<IGGMAttribute, Float> attributeModifiersMap;
@@ -75,14 +76,18 @@ public abstract class GGMBaseAttribute implements IGGMAttribute {
     }
 
 
-    public boolean equals(Object obj) {
+    @Override
+    public String toString() {
+        return this.getClass().toString() + ": " + this.unlocalizedName;
+    }
 
-        if (obj instanceof BaseAttribute) {
+    @Override
+    public boolean equals(Object obj)
+    {
 
-            BaseAttribute attribute = (BaseAttribute) obj;
-
-            if (this.unlocalizedName == null && attribute.getAttributeUnlocalizedName() == null) return true;
-            return (this.unlocalizedName != null && attribute.getAttributeUnlocalizedName() != null && this.unlocalizedName.equals(attribute.getAttributeUnlocalizedName()));
+        if (obj instanceof IAttribute)
+        {
+            return this.unlocalizedName.equals(((IAttribute) obj).getAttributeUnlocalizedName());
         }
 
         return false;

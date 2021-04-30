@@ -47,26 +47,15 @@ public class GGMItems {
 
 	public static void load(FMLPreInitializationEvent e) {
 
-		IItemBlocker i = (IItemBlocker) itemDebug;
-		Map<DamageType, Map<IGGMAttribute, UseSpendings>> debugBlockersMap = new HashMap<>();
-		Map<IGGMAttribute, UseSpendings> a = new HashMap<>();
-		a.put((IGGMAttribute) SharedMonsterAttributes.attackDamage, new UseSpendings(GGMCapabilities.maxStamina, 1.0F, 1.0F));
 
-		for (DamageType dt : GGMBattleSystem.set) {
-
-			debugBlockersMap.put(dt, a);
-		}
-
-		i.setDamageBlocker(debugBlockersMap);
-
-
+		((IItemBlocker) itemDebug).setDamageBlocker(GGMBattleSystem.crushing, GGMCapabilities.dexterity, GGMCapabilities.maxMana, 1.0F, 1.0F);
 		registerItem(itemDebug);
 		registerItem(AmuletFranko);
 		registerItem(RingStrenght);
 		registerRune(runeFireBolt);
 		registerItem(scrollFireBolt);
 		registerItem(new Keks());
-		((IItemMeleeWeapon) GameData.getItemRegistry().getObjectById(276)).setExtraDamage(GGMBattleSystem.fire, (IGGMAttribute) SharedMonsterAttributes.maxHealth, (IGGMAttribute) SharedMonsterAttributes.maxHealth,0.5F, 0.1F);
+		((IItemMeleeWeapon) GameData.getItemRegistry().getObjectById(276)).setExtraDamage(GGMBattleSystem.fire, (IGGMAttribute) SharedMonsterAttributes.maxHealth,0.4F, 1.0F);
     }
     
     public static void registerItem(Item item) {    	

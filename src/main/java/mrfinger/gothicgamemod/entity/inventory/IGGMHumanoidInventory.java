@@ -1,4 +1,4 @@
-package mrfinger.gothicgamemod.entity;
+package mrfinger.gothicgamemod.entity.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;

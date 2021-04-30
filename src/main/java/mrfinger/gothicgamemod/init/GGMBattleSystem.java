@@ -2,8 +2,13 @@ package mrfinger.gothicgamemod.init;
 
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import mrfinger.gothicgamemod.battle.DamageType;
+import mrfinger.gothicgamemod.battle.UseSpendings;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
+import net.minecraft.entity.SharedMonsterAttributes;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class GGMBattleSystem {
@@ -20,6 +25,9 @@ public class GGMBattleSystem {
     public static final Set<DamageType> set = new HashSet<>();
 
 
+    public static final Map<DamageType, UseSpendings> standartDamageValuesBlockModifiers = new HashMap<>(6, 1.0F);
+
+
     public static void load(FMLPreInitializationEvent e) {
 
         set.add(cutting);
@@ -28,6 +36,14 @@ public class GGMBattleSystem {
         set.add(fire);
         set.add(cold);
         set.add(electricity);
+
+
+        standartDamageValuesBlockModifiers.put(cutting, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.5F, 1.0F));
+        standartDamageValuesBlockModifiers.put(crushing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.3F, 1.2F));
+        standartDamageValuesBlockModifiers.put(piersing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.7F, 0.8F));
+        standartDamageValuesBlockModifiers.put(fire, new UseSpendings(GGMCapabilities.intelligence, 0.1F, 1.0F));
+        standartDamageValuesBlockModifiers.put(cold, new UseSpendings(GGMCapabilities.intelligence, 0.1F, 1.0F));
+        standartDamageValuesBlockModifiers.put(electricity, new UseSpendings(GGMCapabilities.intelligence, 0.1F, 1.0F));
     }
 
 }

@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -66,7 +67,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
     		Float o = GGMCapabilities.expGainFromAttributesMap.get(e.getKey());
 
-    		if (o != null && o > 0) l += e.getValue().getBaseValue() / o;
+    		if (o != null && o > 0.0F) l += e.getValue().getBaseValue() / o;
 		}
 
 		return Math.round(l);
@@ -241,10 +242,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}*/
 
 
-
-
-	@Shadow
-	public abstract int getTotalArmorValue();
+	@Override
+	public void justAttack(Entity entity, float distance) {}
 
 	@Shadow @Override public abstract void setSprinting(boolean sprinting);
 
@@ -256,7 +255,9 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 	@Shadow public abstract float getMaxHealth();
 
-	@Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
+    @Shadow public int attackTime;
+
+    @Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
 	private void onKnockback(Entity knockbacker, float power, double x, double y, CallbackInfo ci) {
 
 
@@ -287,6 +288,23 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		}
 		return false;
 	}
+
+
+	@ModifyVariable(method = "fall", at = @At(value = "TAIL"), ordinal = 0)
+	private int fixFallDamage(int i)
+	{
+		if (i >= 0 && !this.worldObj.isRemote)
+		{
+			System.out.println("Debug in GGMENtityLivingBase fall " + this.motionX + " " + this.motionY + " " + this.motionZ);
+			//throw new IllegalArgumentException("Just im farting");
+		}
+
+		return i;
+	}
+
+
+
+
 
 	/*@Override
 	public void immobilize() {
@@ -339,7 +357,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	public boolean isCastingSpell() {
 		return this.castDuration > 0;
 	}*/
-
 
 
 }

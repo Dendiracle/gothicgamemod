@@ -1,27 +1,21 @@
 package mrfinger.gothicgamemod.client.gui;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import mrfinger.gothicgamemod.client.entity.IGGMAbstractClientPlayer;
-import mrfinger.gothicgamemod.client.gui.button.GGMButton;
-import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
+import mrfinger.gothicgamemod.client.entity.capabilities.GGMDynamicAttributeHelper;
+import mrfinger.gothicgamemod.client.entity.capabilities.GGMIncreasableAttributeHelper;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMIncreasableAttributeInstance;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.client.CPacketAttributesToUpgrade;
-import mrfinger.gothicgamemod.util.Packet;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.GothicMain;
-import mrfinger.gothicgamemod.client.GGMAttributeHelper;
 import mrfinger.gothicgamemod.init.GGMKeyBindings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -35,11 +29,11 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 	
 	public static final ResourceLocation menuTexture = new ResourceLocation(GothicMain.MODID, "textures/gui/charachter_menu.png");
 
-	//public static final Map<IAttribute, GGMAttributeHelper> statHelpersMap = new LinkedHashMap<>(6, 1.0F);
+	//public static final Map<IAttribute, GGMIncreasableAttributeHelper> statHelpersMap = new LinkedHashMap<>(6, 1.0F);
 
-	public static GGMAttributeHelper[] statHelpersArray;
+	public static GGMIncreasableAttributeHelper[] statHelpersArray;
 
-	private int guiWidth = 220,
+	private int guiWidth = 256,
 				guiHeight = 240;
 
 	float GparticalTicks;
@@ -63,23 +57,23 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 
 	public static void loadStatHelpers(IGGMAbstractClientPlayer player) {
 
-		statHelpersArray = new GGMAttributeHelper[] {
+		statHelpersArray = new GGMIncreasableAttributeHelper[] {
 
-				new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxHealth), GGMCapabilities.maxHealthS),
-				new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxStamina), GGMCapabilities.maxStaminaS),
-				new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxMana), GGMCapabilities.maxManaS),
-				new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.attackDamage), GGMCapabilities.strenghtS),
-				new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.dexterity), GGMCapabilities.dexterityS),
-				new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.intelligence), GGMCapabilities.intelligenceS)
+				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxHealth), GGMCapabilities.maxHealthS),
+				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxStamina), GGMCapabilities.maxStaminaS),
+				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxMana), GGMCapabilities.maxManaS),
+				new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.attackDamage), GGMCapabilities.strenghtS),
+				new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.dexterity), GGMCapabilities.dexterityS),
+				new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.intelligence), GGMCapabilities.intelligenceS)
 		};
-		/*statHelpersMap.put(SharedMonsterAttributes.maxHealth, new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.maxHealth), "Health"));
-		statHelpersMap.put(GGMCapabilities.maxStamina, new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxStamina), "Stamina"));
-		statHelpersMap.put(GGMCapabilities.maxMana, new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxMana), "Mana"));
-		statHelpersMap.put(SharedMonsterAttributes.attackDamage, new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.attackDamage), "Strenght"));
-		statHelpersMap.put(GGMCapabilities.dexterity, new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.dexterity), "Dexterity"));
-		statHelpersMap.put(GGMCapabilities.intelligence, new GGMAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.intelligence), "Intelligence"));
+		/*statHelpersMap.put(SharedMonsterAttributes.maxHealth, new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.maxHealth), "Health"));
+		statHelpersMap.put(GGMCapabilities.maxStamina, new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxStamina), "Stamina"));
+		statHelpersMap.put(GGMCapabilities.maxMana, new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxMana), "Mana"));
+		statHelpersMap.put(SharedMonsterAttributes.attackDamage, new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.attackDamage), "Strenght"));
+		statHelpersMap.put(GGMCapabilities.dexterity, new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.dexterity), "Dexterity"));
+		statHelpersMap.put(GGMCapabilities.intelligence, new GGMIncreasableAttributeHelper((IGGMIncreasableAttributeInstance) player.getEntityAttribute(GGMCapabilities.intelligence), "Intelligence"));
 
-		for (GGMAttributeHelper ah : statHelpersMap.values()) {
+		for (GGMIncreasableAttributeHelper ah : statHelpersMap.values()) {
 			statHelpersArray[ah.id] = ah;
 		}*/
 	}
@@ -112,10 +106,10 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 		y += 30;
 
 
-		for (GGMAttributeHelper si : statHelpersArray) {
+		for (GGMIncreasableAttributeHelper si : statHelpersArray) {
 
 			fr.drawString(si.name, x, y, 0xFFFFFF);
-			fr.drawString(si.toString(), xx, y, 0xFFFFFF);
+			fr.drawString(si.toDrawValue(), xx, y, 0xFFFFFF);
 			y += 10;
 		}
 
@@ -131,135 +125,148 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 		this.guiOffsetX = (width - guiWidth) / 2;
 		this.guiOffsetY = (height - guiHeight) / 2 - 5;
 
-		System.out.print("Debug in: " + this.getClass() + " InitGui ");
 		this.buttonList = new ArrayList<GGMButton>();
 
-		System.out.print("X: " + guiOffsetX + " Y: " + guiOffsetY);
-		System.out.println();
-		int x = guiOffsetX + guiWidth - 30;
+		int x = guiOffsetX + guiWidth - 40;
 		int y = guiOffsetY + 105;
 		
 		boolean active = this.player.getExpCap().getLP() > 0;
+		int length = statHelpersArray.length;
 		
-		for (GGMAttributeHelper ah : statHelpersArray) {
-
-			this.buttonList.add(new GGMButton.PlusButton(ah.id, x, y, active));
+		for (GGMIncreasableAttributeHelper ah : statHelpersArray)
+		{
+			IGGMIncreasableAttributeInstance ai = ah.attributeInstance;
+			this.buttonList.add(new GGMButton.PlusButton(ah.id, x, y, ah, active && ai.getBaseValue() < ai.getMaxValue()));
 			y += 10;
 		}
-		
+		y = guiOffsetY + 105;
 		x += 10;
-		int i = statHelpersArray.length;
-		y -= i * 10;
-
-		for (GGMAttributeHelper ah : statHelpersArray) {
-
-			this.buttonList.add(new GGMButton.MinusButton(ah.id + i, x, y, false));
+		for (GGMIncreasableAttributeHelper ah : statHelpersArray)
+		{
+			IGGMIncreasableAttributeInstance ai = ah.attributeInstance;
+			this.buttonList.add(new GGMButton.PlusButton(ah.id + length, x, y, ah, active && ai.getBaseValue() < ai.getMaxValue()));
 			y += 10;
 		}
-		
-		buttonList.add(new GGMButton.ControlButton(50, guiOffsetX + 45, guiOffsetY + guiHeight - 20, "Close"));
-		buttonList.add(new GGMButton.ControlButton(51, guiOffsetX + 80, guiOffsetY + guiHeight - 20, "Reset"));
-		buttonList.add(new GGMButton.ControlButton(52, guiOffsetX + 115, guiOffsetY + guiHeight - 20, "Apply"));
+		y = guiOffsetY + 105;
+		x += 10;
+		for (GGMIncreasableAttributeHelper ah : statHelpersArray)
+		{
+			this.buttonList.add(new GGMButton.MinusButton(ah.id + length * 2, x , y, ah, false));
+			y += 10;
+		}
+
+		buttonList.add(new GGMControlButton(50, guiOffsetX + (guiWidth / 2) - 50, guiOffsetY + guiHeight - 20, "Close"));
+		buttonList.add(new GGMControlButton(51, guiOffsetX + (guiWidth / 2) - 15, guiOffsetY + guiHeight - 20, "Reset"));
+		buttonList.add(new GGMControlButton(52, guiOffsetX + (guiWidth / 2) + 20, guiOffsetY + guiHeight - 20, "Apply"));
+
 	}
 	
 	
 	
 	@Override
-	public boolean doesGuiPauseGame() {
+	public boolean doesGuiPauseGame()
+	{
         return false;
     }
 
 
-	public void lStatNull() {
-
+	public void lStatNull()
+	{
 		this.lp = 0;
-
-		for(int i = 0; i < statHelpersArray.length; ++i) {
-
-			if (statHelpersArray[i].upgradeAmounts > 0) {
-				((GGMButton) this.buttonList.get(i + statHelpersArray.length)).enabled = false;
+		int length = statHelpersArray.length;
+		for (int i = 0; i < length; ++i)
+		{
+			if (statHelpersArray[i].upgradeAmounts > 0.0F) {
+				((GGMButton) this.buttonList.get(i + length * 2)).enabled = false;
 			}
-
-			statHelpersArray[i].upgradeAmounts = 0;
-			statHelpersArray[i].addedBefore = 0.0F;
-			statHelpersArray[i].addedValue = 0.0F;
+			statHelpersArray[i].nullify();
 		}
 	}
 	
 	@Override
-	protected void actionPerformed(GuiButton button) {		
-		
+	protected void actionPerformed(GuiButton button)
+	{
 		int id = button.id;
 		int length = statHelpersArray.length;
-		GGMAttributeHelper helper;
-		IGGMIncreasableAttributeInstance stat;
-		int needLP;
-		
-		
-		if (id >= 0 && id < length) {
+		if (id < length * 3)
+		{
+			final int entityLP = player.getExpCap().getLP();
+			GGMIncreasableAttributeHelper helper = ((GGMButton) button).attributeHelper;
+			IGGMIncreasableAttributeInstance stat = helper.getAttributeInstance();
 
-			helper = statHelpersArray[id];
-			stat = helper.attributeInstance;
+			if (id >= 0 && id < length)
+			{
+				if ((entityLP + lp) > 0)
+				{
+					helper.increase();
+					--this.lp;
+					((GGMButton) this.buttonList.get(id + length * 2)).enabled = true;
 
-			if((player.getExpCap().getLP() + lp) > 0) {
-				
-				helper.upgradeAmounts++;
-				helper.addedBefore = (float) stat.calculateIncreasingValueWithAdded(helper.addedValue, stat.getIncreasingValue());
-				helper.addedValue += helper.addedBefore;
-				
-				--this.lp;
-				
-				((GGMButton) this.buttonList.get(id + length)).enabled = true;
-				
-				if ((player.getExpCap().getLP() + lp) <= 0) {
-
-					for (int i = 0; i < length; ++i) {
-						((GGMButton) this.buttonList.get(i)).enabled = false;
+					if ((entityLP + lp) <= 0) {
+						for (int i = 0; i < length; ++i) {
+							((GGMButton) this.buttonList.get(i)).enabled = false;
+							((GGMButton) this.buttonList.get(i + length)).enabled = false;
+						}
+					}
+					if (helper.addedValue + stat.getBaseValue() > stat.getMaxValue() - stat.calculateIncreasingValueWithAdded(helper.addedValue, stat.getIncreasingValue()) / 2.0F) {
+						helper.addedValue = (float) (stat.getMaxValue() - stat.getBaseValue());
+						button.enabled = false;
+						((GGMButton) this.buttonList.get(id + length)).enabled = false;
 					}
 				}
-				else if (helper.addedValue >= stat.getMaxValue() - 0.001D) {
+			} else if (id >= length && id < length * 2) {
+				int lpToSpend = entityLP + lp > 5 ? 5 : entityLP + lp;
 
-					helper.addedValue = (float) stat.getMaxValue();
-					button.enabled = false;
+				if ((lpToSpend) > 0) {
+					helper.increase(lpToSpend);
+					this.lp -= lpToSpend;
+
+					((GGMButton) this.buttonList.get(id + length)).enabled = true;
+
+					if ((entityLP + lp) <= 0) {
+						for (int i = 0; i < length; ++i) {
+							((GGMButton) this.buttonList.get(i)).enabled = false;
+							((GGMButton) this.buttonList.get(i + length)).enabled = false;
+						}
+					}
+					if (helper.addedValue + stat.getBaseValue() > stat.getMaxValue() - stat.calculateIncreasingValueWithAdded(helper.addedValue, stat.getIncreasingValue()) / 2.0F) {
+						helper.addedValue = (float) (stat.getMaxValue() - stat.getBaseValue());
+						button.enabled = false;
+						((GGMButton) this.buttonList.get(id - length)).enabled = false;
+					}
 				}
-			}			
-		}
-		
-		else if (id >= length && id < length * 2) {
+			} else if (id >= length * 2 && id < length * 3) {
+				if (helper.upgradeAmounts > 0.0F) {
 
-			id -= length;
-			helper = statHelpersArray[id];
-			stat = helper.attributeInstance;
-			
-			if (helper.upgradeAmounts > 0) {
-				
-				helper.upgradeAmounts--;
-				helper.addedBefore = (float) stat.calculateIncreasingValueWithAdded(helper.addedValue - helper.addedBefore, stat.getIncreasingValue());
-				helper.addedValue -= helper.addedBefore;
-				++this.lp;
-				
-				if ((player.getExpCap().getLP() + lp) > 0) {
+					helper.decrease();
+					++this.lp;
 
 					for (int i = 0; i < length; ++i) {
 						GGMButton ggmButton = (GGMButton) this.buttonList.get(i);
-						if (helper.addedValue < stat.getMaxValue()) ggmButton.enabled = true;
+						GGMButton ggmButton2 = (GGMButton) this.buttonList.get(i + length);
+						if (helper.addedValue < stat.getMaxValue()) {
+							ggmButton.enabled = true;
+							ggmButton2.enabled = true;
+						}
 					}
+
+					if (helper.upgradeAmounts <= 0.0F) button.enabled = false;
 				}
-				if (helper.upgradeAmounts <= 0) ((GGMButton) this.buttonList.get(id + length)).enabled = false;
 			}
 		}
-		
-		switch (id) {		
-		case 50:
-			mc.thePlayer.closeScreen();
-			this.lStatNull();
-			break;
-		case 51:
-			this.lStatNull();
-			break;
-		case 52:
-			PacketDispatcher.sendToServer(new CPacketAttributesToUpgrade(player.getEntityId(), statHelpersArray));
-			break;
+		else {
+			switch (id) {
+				case 50:
+					mc.thePlayer.closeScreen();
+					this.lStatNull();
+					break;
+				case 51:
+					this.lStatNull();
+					break;
+				case 52:
+					PacketDispatcher.sendToServer(new CPacketAttributesToUpgrade(player.getEntityId(), statHelpersArray));
+					break;
+			}
 		}
 
 		super.actionPerformed(button);

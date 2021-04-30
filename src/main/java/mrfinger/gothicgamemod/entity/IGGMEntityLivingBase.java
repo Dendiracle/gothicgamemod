@@ -90,6 +90,9 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	int getDisallowSprintTimer();
 
 
+	void justAttack(Entity entity, float distance);
+
+
 	int getTotalArmorValue();
 
 	float applyArmorCalculations(DamageSource ds, float damage);

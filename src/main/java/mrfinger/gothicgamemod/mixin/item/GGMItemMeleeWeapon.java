@@ -7,6 +7,7 @@ import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
+import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.item.IItemBlocker;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -20,14 +21,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @Mixin({ItemTool.class, ItemSword.class})
-public abstract class GGMItemTool implements IItemMeleeWeapon, IItemBlocker {
+public abstract class GGMItemMeleeWeapon implements IItemMeleeWeapon, IItemBlocker {
 
-
-    //@Shadow(remap = false, aliases = {"Lnet/minecraft/item/ItemSword;field_150934_a:F", "Lnet/minecraft/item/ItemTool;damageVsEntity:F"})
 
     protected DamageType baseDamageType;
 
@@ -53,10 +53,16 @@ public abstract class GGMItemTool implements IItemMeleeWeapon, IItemBlocker {
         this.baseDamageType = GGMBattleSystem.cutting;
         this.baseAttribute = (IGGMAttribute) SharedMonsterAttributes.attackDamage;
         this.baseAttributeMultiplier = 1.0F;
-        this.baseDamage = (float) ((AttributeModifier) this.getItemAttributeModifiers().get(SharedMonsterAttributes.attackDamage)).getAmount();
-    }
+        this.baseDamage = this.getDamageVsEntity();
+        this.blockerMap = new HashMap<>(GGMBattleSystem.standartDamageValuesBlockModifiers.size(), 1.0F);
 
-    @Shadow public abstract Multimap getItemAttributeModifiers();
+        for (Map.Entry<DamageType, UseSpendings> e : GGMBattleSystem.standartDamageValuesBlockModifiers.entrySet())
+        {
+            Map<IGGMAttribute, UseSpendings> usMap = new HashMap<>(1, 1.0F);
+            usMap.put(e.getValue().getAttribute(), new UseSpendings(GGMCapabilities.maxStamina, this.getToolMaterial().getDamageVsEntity() * e.getValue().getAttributeMultiplier(), e.getValue().getSpendsFromD()));
+            this.blockerMap.put(e.getKey(), usMap);
+        }
+    }
 
 
     @Override
@@ -119,30 +125,26 @@ public abstract class GGMItemTool implements IItemMeleeWeapon, IItemBlocker {
 
 
     @Override
-    public void onAttack(IGGMEntityLivingBase attacker, Map<DamageType, Float> damageValues, IGGMEntity victim) {
-
-    }
+    public void onAttack(IGGMEntityLivingBase attacker, Map<DamageType, Float> damageValues, IGGMEntity victim) {}
 
 
     @Override
     public Map<DamageType, Map<IGGMAttribute, UseSpendings>> getBlockersMap() {
-        return null;
+        return Collections.unmodifiableMap(this.blockerMap);
     }
 
+    @Override
+    public Map<DamageType, Map<IGGMAttribute, UseSpendings>> getBlockersMapToRed() {
+        return this.blockerMap;
+    }
 
     @Override
-    public void setDamageBlocker(Map<DamageType, Map<IGGMAttribute, UseSpendings>> map) {
-
-        if (this.blockerMap == null) {
-            this.blockerMap = new HashMap<>(map.size(), 1.0F);
+    public void setDamageBlocker(Map<DamageType, Map<IGGMAttribute, UseSpendings>> map)
+    {
+        for (Map.Entry<DamageType, Map<IGGMAttribute, UseSpendings>> e : map.entrySet())
+        {
+            this.blockerMap.get(e.getValue()).putAll(e.getValue());
         }
-        else {
-
-            Map<DamageType, Map<IGGMAttribute, UseSpendings>> oldMap = this.blockerMap;
-            this.blockerMap = new HashMap<>(oldMap.size() + map.size(), 1.0F);
-            this.blockerMap.putAll(oldMap);
-        }
-        this.blockerMap.putAll(map);
     }
 
     @Override
@@ -163,7 +165,7 @@ public abstract class GGMItemTool implements IItemMeleeWeapon, IItemBlocker {
 
     @Override
     public float getWeight() {
-        return 0;
+        return 1.0F;
     }
 
     @Override

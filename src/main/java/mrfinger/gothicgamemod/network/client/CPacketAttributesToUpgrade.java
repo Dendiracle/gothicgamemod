@@ -3,14 +3,12 @@ package mrfinger.gothicgamemod.network.client;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import mrfinger.gothicgamemod.client.GGMAttributeHelper;
+import mrfinger.gothicgamemod.client.entity.capabilities.GGMIncreasableAttributeHelper;
 import mrfinger.gothicgamemod.entity.capability.IGGMEntityExperienceable;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMIncreasableAttributeInstance;
-import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.network.server.AbstractServerMessageHandler;
 import mrfinger.gothicgamemod.network.server.SPacketAfterAttributesUpgraded;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.HashMap;
@@ -28,12 +26,12 @@ public class CPacketAttributesToUpgrade implements IMessage {
 
     }
 
-    public CPacketAttributesToUpgrade(int id, GGMAttributeHelper... attributeHelpers) {
+    public CPacketAttributesToUpgrade(int id, GGMIncreasableAttributeHelper... attributeHelpers) {
 
         this.id = id;
         this.amounts = new HashMap<>(attributeHelpers.length, 1.0F);
 
-        for (GGMAttributeHelper ah : attributeHelpers) {
+        for (GGMIncreasableAttributeHelper ah : attributeHelpers) {
 
             IGGMIncreasableAttributeInstance ai = ah.attributeInstance;
             this.amounts.put(ai.getAttribute().getAttributeUnlocalizedName(), ah.upgradeAmounts);

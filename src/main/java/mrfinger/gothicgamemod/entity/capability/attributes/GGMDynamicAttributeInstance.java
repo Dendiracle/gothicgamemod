@@ -142,8 +142,8 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
     public void setNaturalRegen(float value) {
 
         if (this.naturalRegen != value) {
-
             this.naturalRegen = value < 0.0F ? 0.0F : value;
+            this.flagForRegenUpdate();
             ((IGGMBaseAttributeMap) this.attributeMap).addDPToUpdate(this);
         }
     }
@@ -162,7 +162,7 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
 
         if (bv >= mv) return 0.0F;
 
-        increasingValue = (float) calculateIncreasingValueWithArgs(increasingValue, bv, this.getValueAfterNaturalRegenIncreasingValueDecreases(), this.getMaxNaturalRegenIncreasesNeedLP());
+        increasingValue = this.calculateIncreasingRegenValue(increasingValue);
         {
             float difference = mv - bv;
 
@@ -201,6 +201,11 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
             iv = this.getNaturalRegenIncreasingValue() / separator;
         }
 
+        if (mv - bv < iv / 2.0F) {
+            this.setNaturalRegen(mv);
+            return 0;
+        }
+
         if (flag && bv + iv > mv) return 0;
 
         int i = 1;
@@ -236,6 +241,16 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
         return i;
     }
 
+
+    @Override
+    public float calculateIncreasingRegenValue(float value) {
+        return (float) calculateIncreasingValueWithArgs(value, this.getNaturalRegen(), this.getValueAfterNaturalRegenIncreasingValueDecreases(), this.getMaxNaturalRegenIncreasesNeedLP());
+    }
+
+    @Override
+    public float calculateIncreasingRegenValueWithAdded(float added, float value) {
+        return (float) calculateIncreasingValueWithArgs(value, this.getNaturalRegen() + added, this.getValueAfterNaturalRegenIncreasingValueDecreases(), this.getMaxNaturalRegenIncreasesNeedLP());
+    }
 
     @Override
     public RegenModifier getRegenModifier(int id, int operation, boolean isSaved) {
@@ -324,10 +339,12 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
 
 
     @Override
-    public void saveNBTData(NBTTagCompound nbt) {
+    public void saveNBTData(NBTTagCompound nbt)
+    {
         super.saveNBTData(nbt);
 
         nbt.setDouble("Curr", this.getCurrentValue());
+        nbt.setFloat("NReg", this.getNaturalRegen());
 
         if (!this.regenModifiersMap.isEmpty()) {
 
@@ -347,8 +364,9 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
     @Override
     public void loadNBTData(NBTTagCompound nbt) {
         super.loadNBTData(nbt);
-        System.out.println("Debug in GGMDynamicAttributeInstance: load ");
+
         this.setCurrentValue(nbt.getDouble("Curr"));
+        this.setNaturalRegen(nbt.getFloat("NReg"));
 
         if (nbt.hasKey("RegModifiers", 9)) {
 

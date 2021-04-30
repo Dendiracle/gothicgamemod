@@ -25,9 +25,13 @@ public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperi
 
         InventoryPlayer getInventoryPlayer();
 
+
         IGGMInventoryPlayer getGGMEquipment();
 
         Container getGGMContainer();
+
+
+        boolean isUsingLH();
 
 
         void clearItemInUse();

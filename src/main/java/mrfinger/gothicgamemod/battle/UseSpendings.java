@@ -7,25 +7,24 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 public class UseSpendings {
 
 
-    IAttribute dynamicAttribute;
+    IGGMAttribute attribute;
 
     protected float attributeMultiplier;
 
     protected float spendsFromD;
 
 
-    public UseSpendings(IGGMAttribute dynamicAttribute, float attributeMultiplier, float spendsFromD) {
+    public UseSpendings(IGGMAttribute attribute, float attributeMultiplier, float spendsFromD) {
 
-        if (dynamicAttribute == null) throw new IllegalArgumentException("Dynamic Attribute cannot be null");
-        else if (!dynamicAttribute.isHaveDP()) throw new IllegalArgumentException("Attribute must be dynamic");
-        this.dynamicAttribute = dynamicAttribute;
+        if (attribute == null) throw new IllegalArgumentException("Attribute cannot be null");
+        this.attribute = attribute;
         this.attributeMultiplier = attributeMultiplier;
         this.spendsFromD = spendsFromD;
     }
 
 
-    public IAttribute getDynamicAttribute() {
-        return dynamicAttribute;
+    public IGGMAttribute getAttribute() {
+        return attribute;
     }
 
     public float getAttributeMultiplier() {
@@ -36,5 +35,10 @@ public class UseSpendings {
             return spendsFromD;
         }
 
+
+    @Override
+    public String toString() {
+        return this.getClass() + ": " + this.attribute.getAttributeUnlocalizedName() + " Attribute multiplier: " + this.attributeMultiplier + " Spends from DP multiplier: " + this.spendsFromD;
+    }
 }
 

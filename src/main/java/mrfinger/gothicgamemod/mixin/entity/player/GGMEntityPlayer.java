@@ -1,5 +1,7 @@
 package mrfinger.gothicgamemod.mixin.entity.player;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.entity.capability.GGMExp;
 import mrfinger.gothicgamemod.entity.capability.IGGMExp;
@@ -26,17 +28,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
@@ -58,9 +62,16 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
     private byte magicCircle;
 
+    @Shadow private ItemStack itemInUse;
+    @Shadow private int itemInUseCount;
+
     @Shadow public InventoryPlayer inventory;
 
-    @Shadow private ItemStack itemInUse;
+
+    @Shadow protected abstract void onItemUseFinish();
+
+
+    @Shadow protected abstract void updateItemUse(ItemStack p_71010_1_, int p_71010_2_);
 
     protected IGGMInventoryPlayer ggmEqupment;
 
@@ -216,10 +227,139 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
 
+    /*@SideOnly(Side.CLIENT)
+    @Inject(method = "getItemInUse", at = @At(value = "HEAD"), cancellable = true)
+    private void fixItemUseGetter(CallbackInfoReturnable<ItemStack> cir)
+    {
+        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse);
+    }
+
+    @Inject(method = "isUsingItem", at = @At(value = "HEAD"), cancellable = true)
+    private void fixItemUseBool(CallbackInfoReturnable<Boolean> cir)
+    {
+        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse != null);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Inject(method = "getItemInUseDuration", at = @At(value = "HEAD"), cancellable = true)
+    private void fixItemUseDurationGetter(CallbackInfoReturnable<Integer> cir)
+    {
+        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse != null ? this.ggmItemInUse.getMaxItemUseDuration() - this.itemInUseCount : 0);
+    }
+
+    @Inject(method = "stopUsingItem", at = @At("HEAD"), cancellable = true)
+    private void fixStopUsingItem(CallbackInfo ci)
+    {
+        if (this.inFightStance())
+        {
+            if (this.ggmItemInUse != null)
+            {
+                this.ggmItemInUse.onPlayerStoppedUsing(this.worldObj, thisEntity(), this.itemInUseCount);
+            }
+
+            ci.cancel();
+        }
+    }
+
+    @Redirect(method = "clearItemInUse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", opcode = Opcodes.GETFIELD))
+    private ItemStack fixClearItemInUse(EntityPlayer player)
+    {
+        if (this.inFightStance()) return this.ggmItemInUse;
+        return this.itemInUse;
+    }
+
+    @Inject(method = "getItemInUseDuration", at = @At(value = "HEAD"), cancellable = true)
+    private void fixIsBlocking(CallbackInfoReturnable<Boolean> cir)
+    {
+        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse != null && this.ggmItemInUse.getItem().getItemUseAction(this.itemInUse) == EnumAction.block);
+    }
+
+
+    @Inject(method = "onUpdate", at = @At(value = "JUMP", opcode = 0))
+    private void onGGMItemInUseUpdate(CallbackInfo ci)
+    {
+        if (this.inFightStance() && this.ggmItemInUse != null)
+        {
+            ItemStack item = this.ggmEqupment.getSecHeldItem() != null ? this.ggmEqupment.getSecHeldItem() : this.ggmEqupment.getHeldItem();
+
+            if (item == this.ggmItemInUse)
+            {
+                item.getItem().onUsingTick(item, thisEntity(), itemInUseCount);
+
+                if (--this.itemInUseCount <= 0 && !this.worldObj.isRemote)
+                {
+                    this.onItemUseFinish();
+                }
+            }
+            else
+            {
+                this.clearItemInUse();
+            }
+        }
+    }
+
+    @Inject(method = "onItemUseFinish", at = @At("HEAD"), cancellable = true)
+    private void fixItemUseFinish(CallbackInfo ci)
+    {
+        if (this.inFightStance())
+        {
+            if (this.ggmItemInUse != null)
+            {
+                byte inLH = this.ggmEqupment.getSecHeldItem() == this.ggmItemInUse ? (byte) 1 : (byte) 0;
+                int i = this.ggmItemInUse.stackSize;
+                ItemStack itemstack = this.ggmItemInUse.onFoodEaten(this.worldObj, thisEntity());
+
+                if (itemstack != null && itemstack.stackSize > 0) {
+                    if (itemstack != this.ggmItemInUse || itemstack.stackSize != i) {
+                        this.ggmEqupment.setInventorySlotContents(this.ggmEqupment.getCurrentItemIndex() * 2 + inLH, itemstack);
+
+                    }
+                }
+                else
+                {
+                    this.ggmEqupment.setInventorySlotContents(this.ggmEqupment.getCurrentItemIndex() * 2 + inLH, null);
+                }
+
+                this.clearItemInUse();
+
+            }
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "setItemInUse", at = @At("HEAD"), cancellable = true)
+    private void fixItemInUseSetter(ItemStack itemStack, int duration, CallbackInfo ci)
+    {
+        if (this.inFightStance())
+        {
+            if (this.ggmItemInUse != itemStack)
+            {
+                if (duration <= 0) ci.cancel();
+                this.ggmItemInUse = itemStack;
+                this.itemInUseCount = duration;
+
+                if (!this.worldObj.isRemote)
+                {
+                    this.setEating(true);
+                }
+            }
+            ci.cancel();
+        }
+    }
+
+    @Redirect(method = "getItemIcon", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", opcode = Opcodes.GETFIELD))
+    private ItemStack fixItemIconGetter(EntityPlayer player)
+    {
+        if (this.inFightStance()) return this.ggmItemInUse;
+        return this.itemInUse;
+    }*/
+
+
     @Override
     public InventoryPlayer getInventoryPlayer() {
         return this.inventory;
     }
+
 
     @Override
     public IGGMInventoryPlayer getGGMEquipment() {
@@ -257,6 +397,10 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         this.sprintUpdate();
     }
 
+    @Override
+    public boolean isUsingLH() {
+        return isUsingLH;
+    }
 
     @Inject(method = "setItemInUse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", ordinal = 1))
     private void onSetItemInUse(ItemStack itemStack, int count, CallbackInfo ci) {
@@ -282,22 +426,39 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         return inventory.getCurrentItem();
     }
 
-    @Redirect(method = "onItemUseFinish", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;", opcode = Opcodes.PUTFIELD))
-    private void fixItemUseFinish(ItemStack[] itemStacks, int index, ItemStack itemStack) {
-        System.out.println("Debug in GGMEntityPlayer: fixItemUseFinish");
-        if (this.inFightStance) {
+    @Inject(method = "onItemUseFinish", at = @At(value = "HEAD"), cancellable = true)
+    private void fixItemUseFinish(CallbackInfo ci)
+    {
+        if (this.itemInUse != null && this.inFightStance())
+        {
+            System.out.println("Debug in GGMEntityPlayer: fixItemUseFinish");
 
-            index = this.ggmEqupment.getCurrentItemIndex() * 2;
+            this.updateItemUse(this.itemInUse, 16);
+            int i = this.itemInUse.stackSize;
+            int index = this.ggmEqupment.getCurrentItemIndex() * 2;
 
-            if (this.isUsingLH) {
+            if (this.isUsingLH)
+            {
                 ++index;
             }
 
-            this.ggmEqupment.setInventorySlotContents(index, itemStack);
-        }
-        else {
+            ItemStack itemstack = this.itemInUse.onFoodEaten(this.worldObj, thisEntity());
 
-            itemStacks[index] = itemStack;
+            itemstack = ForgeEventFactory.onItemUseFinish(thisEntity(), itemInUse, itemInUseCount, itemstack);
+
+            if (itemstack != this.itemInUse || itemstack != null && itemstack.stackSize != i)
+            {
+                this.getGGMEquipment().setInventorySlotContents(index, itemstack);
+
+                if (itemstack != null && itemstack.stackSize == 0)
+                {
+                    this.getGGMEquipment().setInventorySlotContents(index, null);
+                }
+            }
+
+            this.clearItemInUse();
+
+            ci.cancel();
         }
     }
 
@@ -309,7 +470,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     {
         IGGMDamageSource gds = (IGGMDamageSource) source;
         float f;
-
+        System.out.println("Debug in GGMEntityPlayer: damageEntity");
         if (gds.isSettedValues())
         {
             f = 0.0F;
@@ -326,41 +487,46 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                 {
                     for (Map.Entry<IGGMAttribute, UseSpendings> ee : blocker.getBlockersMap().get(e.getKey()).entrySet())
                     {
+                        System.out.println("3");
                         IAttributeInstance mainAttribute = this.getEntityAttribute(ee.getKey());
-                        IAttributeInstance spendAttribute = this.getEntityAttribute(ee.getValue().getDynamicAttribute());
+                        IAttributeInstance spendAttribute = this.getEntityAttribute(ee.getValue().getAttribute());
+                        System.out.println(ee.getKey().getAttributeUnlocalizedName() + " " + ee.getValue().getAttribute().getAttributeUnlocalizedName());
+                        if (mainAttribute != null && spendAttribute instanceof IGGMDynamicAttributeInstance)
+                        {
 
-                        if (mainAttribute != null && spendAttribute instanceof IGGMDynamicAttributeInstance) {
-
+                            System.out.println("4");
                             double curr = ((IGGMDynamicAttributeInstance) spendAttribute).getCurrentValue();
-                            if (curr <= 0.0D && ee.getValue().getSpendsFromD() > 0) continue;
+                            if (curr <= 0.0D && ee.getValue().getSpendsFromD() > 0.0F) continue;
                             double canBlock = mainAttribute.getAttributeValue() * ee.getValue().getAttributeMultiplier();
                             double toSpendCurr = damageSumm * ee.getValue().getSpendsFromD();
 
-                            if (toSpendCurr > curr) {
-
+                            if (toSpendCurr > curr)
+                            {
                                 canBlock *= curr / toSpendCurr;
                                 toSpendCurr = curr;
                             }
-                            if (canBlock > damageSumm) {
-
+                            if (canBlock > damageSumm)
+                            {
                                 toSpendCurr *= damageSumm / canBlock;
                                 canBlock = damageSumm;
                             }
 
+                            System.out.println("5");
                             damageSumm -= canBlock;
                             ((IGGMDynamicAttributeInstance) spendAttribute).changeCurrentValue(-toSpendCurr);
                             float damageItem = (float) canBlock - blocker.getSustainability();
                             if (damageItem > 0.0F) this.itemInUse.damageItem((int) damageItem, thisEntity());
-                            if (this.itemInUse == null || this.itemInUse.getItemDamage() > this.itemInUse.getMaxDamage() || this.itemInUse.stackSize <= 0) {
+                            if (this.itemInUse == null || this.itemInUse.getItemDamage() > this.itemInUse.getMaxDamage() || this.itemInUse.stackSize <= 0)
+                            {
                                 isBlocking = false;
                                 this.clearItemInUse();
+                                break;
                             }
-
-                            if (damageSumm <= 0.0D) break;
+                            System.out.println("6");
                         }
                     }
+                    System.out.println("Damage type = " + e.getKey().getUnlocalizedName() + " damage after blocking = " + damageSumm);
                 }
-                System.out.println(" damage after blocking = " + damageSumm);
                 damageSumm -= a;
                 if (damageSumm > 0.0F) f += damageSumm;
             }
@@ -471,11 +637,27 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Redirect(method = "attackTargetEntityWithCurrentItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
-    private boolean onAttackEntity(Entity entity, DamageSource ds, float damage) {
+    private boolean onAttackEntity(Entity entity, DamageSource ds, float damage)
+    {
+        Map<DamageType, Float> map;
+        if (this.inFightStance() && this.ggmEqupment.getHeldItem() != null && this.ggmEqupment.getHeldItem().getItem() instanceof IItemMeleeWeapon)
+        {
+            IItemMeleeWeapon tool = (IItemMeleeWeapon) thisEntity().getHeldItem().getItem();
+            Map<DamageType, UseSpendings> itemMap = tool.getDamageValuesMap();
+            map = new HashMap<>(itemMap.size(), 1.0F);
 
-        if (this.inFightStance() && this.ggmEqupment.getHeldItem() != null && this.ggmEqupment.getHeldItem().getItem() instanceof IItemMeleeWeapon) {
+            for (Map.Entry<DamageType, UseSpendings> e : itemMap.entrySet())
+            {
+                IAttributeInstance ai = thisEntity().getEntityAttribute(e.getValue().getAttribute());
 
-            damage = 0.0F;
+                if (ai != null) {
+                    float d = ((float) ai.getAttributeValue() * e.getValue().getAttributeMultiplier()) + e.getValue().getSpendsFromD();
+                    map.put(e.getKey(), d);
+                    damage += d;
+                }
+            }
+
+            /*damage = 0.0F;
             IItemMeleeWeapon tool = (IItemMeleeWeapon) thisEntity().getHeldItem().getItem();
             Map<DamageType, Map<IGGMAttribute, UseSpendings>> itemMap = tool.getDamageValuesMap();
             Map<DamageType, Float> map = new HashMap<>(itemMap.size(), 1.0F);
@@ -487,7 +669,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                 for(Map.Entry<IGGMAttribute, UseSpendings> ee : e.getValue().entrySet()) {
 
                     IAttributeInstance mainAttribute = this.getEntityAttribute(ee.getKey());
-                    IAttributeInstance spendAttribute = this.getEntityAttribute(ee.getValue().getDynamicAttribute());
+                    IAttributeInstance spendAttribute = this.getEntityAttribute(ee.getValue().getAttribute());
 
                     if (mainAttribute != null && (ee.getValue().getSpendsFromD() <= 0.0D || spendAttribute instanceof IGGMDynamicAttributeInstance)) {
 
@@ -510,15 +692,14 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                     map.put(e.getKey(), damage1);
                 }
             }
-            ((IGGMDamageSource) ds).setDamageValues(map);
+            ((IGGMDamageSource) ds).setDamageValues(map);*/
         }
 
         else if (this.attackCooldown <= 10) {
 
             damage = (float) thisEntity().getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
-            Map<DamageType, Float> map = new HashMap<>(1, 1.0F);
+            map = new HashMap<>(1, 1.0F);
             map.put(GGMBattleSystem.crushing, damage);
-            ((IGGMDamageSource) ds).setDamageValues(map);
             this.attackCooldown = 10;
         }
         else {
@@ -526,7 +707,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             return false;
         }
 
-        System.out.println("Debug in GGMENtityPlayer: " + ((IGGMDamageSource) ds).getDamageValuesMap());
+        ((IGGMDamageSource) ds).setDamageValues(map);
         return entity.attackEntityFrom(ds, damage);
     }
 
@@ -544,8 +725,27 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;readEntityFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V"))
-    private void onReadEntityFromNBT(NBTTagCompound compound, CallbackInfo ci) {
+    private void onReadEntityFromNBT(NBTTagCompound compound, CallbackInfo ci)
+    {
         this.ggmEqupment.readFromNBT(compound.getTagList("GGMEquipment", 10));
+    }
+
+    @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;readFromNBT(Lnet/minecraft/nbt/NBTTagList;)V"))
+    private void onReadEntityFromNBT11(NBTTagCompound compound, CallbackInfo ci)
+    {
+        for (ItemStack i : this.inventory.mainInventory)
+        {
+            if (i != null) System.out.println(i);
+        }
+    }
+
+    @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setScore(I)V"))
+    private void onReadEntityFromNBT111(NBTTagCompound compound, CallbackInfo ci)
+    {
+        for (ItemStack i : this.inventory.mainInventory)
+        {
+            if (i != null) System.out.println(i);
+        }
     }
 
     @Inject(method = "writeEntityToNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setTag(Ljava/lang/String;Lnet/minecraft/nbt/NBTBase;)V", ordinal = 0))

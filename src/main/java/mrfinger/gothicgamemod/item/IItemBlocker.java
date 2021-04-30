@@ -11,6 +11,8 @@ public interface IItemBlocker extends IItemEquip {
 
     Map<DamageType, Map<IGGMAttribute, UseSpendings>> getBlockersMap();
 
+    Map<DamageType, Map<IGGMAttribute, UseSpendings>> getBlockersMapToRed();
+
 
     void setDamageBlocker(Map<DamageType, Map<IGGMAttribute, UseSpendings>> map);
 

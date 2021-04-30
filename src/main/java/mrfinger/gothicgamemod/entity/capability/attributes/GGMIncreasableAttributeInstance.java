@@ -146,6 +146,11 @@ public class GGMIncreasableAttributeInstance extends ModifiableAttributeInstance
             iv = this.getIncreasingValue() / separator;
         }
 
+        if (mv - bv < iv / 2.0F) {
+            this.setBaseValue(mv);
+            return 0;
+        }
+
         for (int i = 1; i <= amount; ++i) {
 
             bv += iv;
@@ -172,160 +177,83 @@ public class GGMIncreasableAttributeInstance extends ModifiableAttributeInstance
         return amount;
     }
 
-    /*@Override
-    public int increaseAttribute(int amount) {
-
-        double bv = this.getBaseValue();
-        double mv = this.getMaxValue();
-
-        if (bv >= mv) return 0;
-
-        float iv = this.getIncreasingValue();
-        double increasingValue = this.calculateIncreasingValueWithArgs(iv);
-
-        if (mv - (bv + increasingValue) < increasingValue / 2.0D) {
-
-            this.setBaseValue(mv);
-            return 0;
-        }
-
-        float increaseValue = 0.0F;
-
-        for (int i = 1; i <= amount; ++i) {
-
-            increaseValue += this.calculateIncreasingValueWithAdded(increaseValue, iv);
-
-            if (mv - (bv + increaseValue) < 0.001D) {
-                this.setBaseValue(mv);
-                return i;
-            }
-        }
-
-        this.setBaseValue(bv + increaseValue);
-
-        return amount;
-    }*/
-
-    /*public static double calculateIncreasingValueWithAdded(double added, double increaseValue, double baseValue, float step, int maxIncreasesNeedLP) {
-
-        if (step <= 0.0F) return increaseValue;
-
-        baseValue += added;
-
-        if (baseValue >= step * maxIncreasesNeedLP) {
-            increaseValue /= (this.getMaxIncreasesNeedLP() + 1);
-            return increaseValue;
-        }
-
-        int separator = 1;
-        while (valueWithAdded >= step) {
-            separator++;
-            step += this.getValueAfterIncreasingValueDecreases();
-        }
-
-        increaseValue /= separator;
-
-        while ((valueWithAdded + increaseValue) > step) {
-            separator++;
-            increaseValue -= (((valueWithAdded + increaseValue) - step) / separator);
-        }
-
-        return increaseValue;
-    }*/
-
-    /*@Override
-    public double calculateIncreasingValueWithArgs(double increaseValue) {
-
-        float step = this.getValueAfterIncreasingValueDecreases();
-
-        if (step == 0.0F) return increaseValue;
-
-        if (this.getBaseValue() >= step * this.getMaxIncreasesNeedLP()) {
-            increaseValue /= (this.getMaxIncreasesNeedLP() + 1);
-            return increaseValue;
-        }
-
-        int separator = 1;
-        while (this.getBaseValue() >= step) {
-            separator++;
-            step += this.getValueAfterIncreasingValueDecreases();
-        }
-
-        increaseValue /= separator;
-
-        while ((this.getBaseValue() + increaseValue) > step) {
-            separator++;
-            increaseValue -= (((this.getBaseValue() + increaseValue) - step) / separator);
-        }
-
-        return increaseValue;
-    }*/
 
     @Override
-    public double calculateIncreasingValue(double value) {
+    public double calculateIncreasingValue(double value)
+    {
         return calculateIncreasingValueWithArgs(value, this.getBaseValue(), this.getValueAfterIncreasingValueDecreases(), this.getMaxIncreasesNeedLP());
     }
 
     @Override
-    public double calculateIncreasingValueWithAdded(double added, double value) {
-
+    public double calculateIncreasingValueWithAdded(double added, double value)
+    {
         return calculateIncreasingValueWithArgs(value, this.getBaseValue() + added, this.getValueAfterIncreasingValueDecreases(), this.getMaxIncreasesNeedLP());
     }
 
-    /*@Override
-    public double calculateIncreasingValueWithAdded(double added, double value) {
+
+    @Override
+    public double calculateDecreasingValue(double value) {
+        return calculateDecreasingValueWithArgs(value, this.getBaseValue(), this.getValueAfterIncreasingValueDecreases(), this.getMaxIncreasesNeedLP());
+    }
+
+    @Override
+    public double calculateDecreasingValueWithAdded(double added, double value) {
+        return calculateDecreasingValueWithArgs(value, this.getBaseValue() + added, this.getValueAfterIncreasingValueDecreases(), this.getMaxIncreasesNeedLP());
+    }
 
 
-        float step = this.getValueAfterIncreasingValueDecreases();
-
-        if (step == 0.0F) return value;
-
-        double valueWithAdded = this.getBaseValue() + added;
-
-        if (valueWithAdded >= step * this.getMaxIncreasesNeedLP()) {
-            value /= (this.getMaxIncreasesNeedLP() + 1);
-            return value;
-        }
-
-        int separator = 1;
-        while (valueWithAdded >= step) {
-            separator++;
-            step += this.getValueAfterIncreasingValueDecreases();
-        }
-
-        value /= separator;
-
-        while ((valueWithAdded + value) > step) {
-            separator++;
-            value -= (((valueWithAdded + value) - step) / separator);
-        }
-
-        return value;
-    }*/
-
-
-    public static double calculateIncreasingValueWithArgs(double increaseValue, double baseValue, float step, int maxIncreasesNeedLP) {
+    public static double calculateIncreasingValueWithArgs(double increaseValue, final double baseValue, float step, final int maxIncreasesNeedLP)
+    {
 
         if (step <= 0.0F) return increaseValue;
 
-        if (baseValue >= step * maxIncreasesNeedLP) {
+        if (baseValue >= step * maxIncreasesNeedLP)
+        {
             increaseValue /= maxIncreasesNeedLP + 1;
             return increaseValue;
         }
 
         int separator = 1;
-        float valueAfterIncreasingValueDecreases = step;
+        final float valueAfterIncreasingValueDecreases = step;
 
-        while (baseValue >= step) {
+        while (baseValue >= step)
+        {
             ++separator;
             step += valueAfterIncreasingValueDecreases;
         }
 
         increaseValue /= separator;
 
-        while ((baseValue + increaseValue) > step) {
+        while ((baseValue + increaseValue) > step)
+        {
             ++separator;
             increaseValue -= (((baseValue + increaseValue) - step) / separator);
+            step += valueAfterIncreasingValueDecreases;
+        }
+
+        return increaseValue;
+    }
+
+    public static double calculateDecreasingValueWithArgs(double increaseValue, final double baseValue, float step, final int maxIncreasesNeedLP)
+    {
+        if (step <= 0.0F || baseValue < step) return increaseValue;
+
+        int separator = 1;
+        final float valueAfterIncreasingValueDecreases = step;
+
+        while (baseValue >= step)
+        {
+            ++separator;
+            step += valueAfterIncreasingValueDecreases;
+        }
+
+        increaseValue /= separator;
+
+        while ((baseValue - increaseValue) < step)
+        {
+            --separator;
+            increaseValue += (step - baseValue) / separator;
+            step -= valueAfterIncreasingValueDecreases;
         }
 
         return increaseValue;

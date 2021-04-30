@@ -9,7 +9,7 @@ import net.minecraft.command.ICommandSender;
 
 import java.util.List;
 
-public class CommandSetExp extends CommandBase {
+public class CommandGGMSet extends CommandBase {
 
 
 
@@ -75,6 +75,7 @@ public class CommandSetExp extends CommandBase {
             }
             else if (variables[0].equals(Variables[5]))
             {
+                System.out.println("Debug in CommandGGMSet natural regen ");
                 IGGMModifiableAttributeInstance ai = (IGGMModifiableAttributeInstance) player.getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
                 if (ai != null && ai instanceof IGGMDynamicAttributeInstance)
                 {
@@ -87,6 +88,11 @@ public class CommandSetExp extends CommandBase {
     @Override
     public List addTabCompletionOptions(ICommandSender commandSender, String[] variables)
     {
+        /*if (variables.length == 2)
+        {
+            return variables[0].equals(Variables[3]) ? getListOfStringsMatchingLastWord(variables, (String[]) GGMCapabilities.AttributesMapByString.keySet().toArray()) : null;
+        }*/
+
         return variables.length == 1 ? getListOfStringsMatchingLastWord(variables, Variables) : null;
     }
 }

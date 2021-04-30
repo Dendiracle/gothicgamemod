@@ -1,7 +1,6 @@
 package mrfinger.gothicgamemod.entity.player;
 
-import mrfinger.gothicgamemod.entity.IGGMHumanoidInventory;
-import net.minecraft.item.ItemStack;
+import mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory;
 
 public interface IGGMInventoryPlayer extends IGGMHumanoidInventory {
 

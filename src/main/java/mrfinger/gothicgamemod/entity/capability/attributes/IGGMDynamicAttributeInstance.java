@@ -44,6 +44,11 @@ public interface IGGMDynamicAttributeInstance extends IGGMIncreasableAttributeIn
     int increaseNaturalRegen(int amount);
 
 
+    float calculateIncreasingRegenValue(float value);
+
+    float calculateIncreasingRegenValueWithAdded(float added, float value);
+
+
     RegenModifier getRegenModifier(int id, int operation, boolean isSaved);
 
     RegenModifier getRegenModifierByFullID(int id);

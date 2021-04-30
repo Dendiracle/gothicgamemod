@@ -9,19 +9,19 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 
 import java.util.Map;
 
-public interface IItemMeleeWeapon extends IItemEquip {
+public interface IItemMeleeWeapon extends IItemEquip, IItemTool {
 
 
-    Map<DamageType, Map<IGGMAttribute, UseSpendings>> getDamageValuesMap();
+    Map<DamageType, UseSpendings> getDamageValuesMap();
 
-    Map<DamageType, Map<IGGMAttribute, UseSpendings>> getDamageValuesMapToRed();
+    Map<DamageType, UseSpendings> getDamageValuesMapToRed();
 
 
     void setBaseDamage(DamageType type, float value);
 
-    void setBaseDamage(DamageType type, IGGMAttribute baseAttribute, IGGMAttribute dynamicAttribute, float value, float modifier);
+    void setBaseDamage(DamageType type, IGGMAttribute baseAttribute, float attributeMultiplier,  float damage);
 
-    void setExtraDamage(DamageType type, IGGMAttribute baseAttribute, IGGMAttribute dynamicAttribute, float attributeMultiplier, float spendsFromDynamicAttribute);
+    void setExtraDamage(DamageType type, IGGMAttribute baseAttribute, float attributeMultiplier, float damage);
 
 
     void onAttack(IGGMEntityLivingBase attacker, Map<DamageType, Float> damageValues, IGGMEntity victim);

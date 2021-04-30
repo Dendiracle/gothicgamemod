@@ -37,7 +37,7 @@ public class GGMPlayerEquipment implements IGGMInventoryPlayer {
 
     @Override
     public void setCurrentItem(int index) {
-        System.out.println("Debug in GGMPlayerEquipment: setting item, index " + index + " cur " + this.currentWeapon);
+
         if (index != this.currentWeapon && index >= 0 && index < this.weaponSlotsAmount) {
 
             if (this.equip[this.currentWeapon] != null) {
@@ -52,7 +52,6 @@ public class GGMPlayerEquipment implements IGGMInventoryPlayer {
 
             this.currentWeapon = index;
         }
-        System.out.println("Cur item is " + this.currentWeapon);
     }
 
     @Override
@@ -112,20 +111,18 @@ public class GGMPlayerEquipment implements IGGMInventoryPlayer {
 
     @Override
     public ItemStack decrStackSize(int slot, int value) {
-
         return this.removeItem(slot);
     }
 
     @Override
     public ItemStack getStackInSlotOnClosing(int slot) {
-
         return this.removeItem(slot);
     }
 
 
     @Override
-    public void setInventorySlotContents(int slot, ItemStack itemStack) {
-
+    public void setInventorySlotContents(int slot, ItemStack itemStack)
+    {
         this.removeItem(slot);
         this.equip[slot] = itemStack;
         this.onEquipItem(slot, itemStack);

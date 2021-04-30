@@ -36,6 +36,11 @@ public interface IGGMIncreasableAttributeInstance extends IGGMModifiableAttribut
 
 	double calculateIncreasingValueWithAdded(double added, double value);
 
+
+	double calculateDecreasingValue(double value);
+
+	double calculateDecreasingValueWithAdded(double added, double value);
+
 }
 
 

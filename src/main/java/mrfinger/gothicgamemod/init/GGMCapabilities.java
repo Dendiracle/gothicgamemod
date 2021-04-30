@@ -32,10 +32,10 @@ public class GGMCapabilities {
 	public static final Set<IAttribute> set = new HashSet<>();
 
 
-	public static final GGMDPAttributeInfo maxHealthAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 5, 0.0F, 0.02F, 1.0F, 10.0F, (byte) 5);
-	public static final GGMDPAttributeInfo maxStaminaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 5, 0.5F, 0.1F, 5.0F, 50.0F, (byte) 5);
-	public static final GGMDPAttributeInfo maxManaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 5, 0.1F, 0.05F, 1.0F, 10.0F, (byte) 5);
-	public static final GGMIncreasableAttributeInfo AIPlayer = new GGMIncreasableAttributeInfo(5.0F, 1000.0D, 1.0F, 50.0F, (byte) 5);
+	public static final GGMDPAttributeInfo maxHealthAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 0.0F, 0.02F, 1.0F, 10.0F, (byte) 5);
+	public static final GGMDPAttributeInfo maxStaminaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 0.5F, 0.1F, 5.0F, 50.0F, (byte) 5);
+	public static final GGMDPAttributeInfo maxManaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 0.1F, 0.05F, 1.0F, 10.0F, (byte) 5);
+	public static final GGMIncreasableAttributeInfo AIPlayer = new GGMIncreasableAttributeInfo(5.0F, 1000.0D, 1.0F, 50.0F, (byte) 4);
 
 	public static final String maxHealthS = "Health";
 	public static final String maxStaminaS = "Stamina";
@@ -57,14 +57,14 @@ public class GGMCapabilities {
 
 	public static void load(FMLPreInitializationEvent e) {
 
-		expGainFromAttributesMap.put(SharedMonsterAttributes.maxHealth, 10.0F);
-		expGainFromAttributesMap.put(SharedMonsterAttributes.movementSpeed, 0.4F);
+		expGainFromAttributesMap.put(SharedMonsterAttributes.maxHealth, 12.0F);
+		expGainFromAttributesMap.put(SharedMonsterAttributes.movementSpeed, 0.5F);
 		expGainFromAttributesMap.put(SharedMonsterAttributes.attackDamage, 2.0F);
 		expGainFromAttributesMap.put(SharedMonsterAttributes.knockbackResistance, 1.0F);
 		expGainFromAttributesMap.put(dexterity, 2.0F);
-		expGainFromAttributesMap.put(intelligence, 20.0F);
-		expGainFromAttributesMap.put(maxStamina, 10.0F);
-		expGainFromAttributesMap.put(maxMana, 10.0F);
+		expGainFromAttributesMap.put(intelligence, 2.0F);
+		expGainFromAttributesMap.put(maxStamina, 12.0F);
+		expGainFromAttributesMap.put(maxMana, 12.0F);
 		loadGGMAttributes();
 
 	}
