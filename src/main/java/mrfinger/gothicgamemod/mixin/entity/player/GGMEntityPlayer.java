@@ -14,7 +14,9 @@ import mrfinger.gothicgamemod.entity.player.IGGMInventoryPlayer;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.item.IItemBlocker;
+import mrfinger.gothicgamemod.item.IItemEquip;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
+import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
 import mrfinger.gothicgamemod.mixin.entity.GGMEntityLivingBase;
 import mrfinger.gothicgamemod.util.GGMTicks;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
@@ -377,9 +379,10 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         return super.getMaxAir() + (int) this.stamina.getAttributeValue();
     }
 
+
     @Override
-    public float getStaminaSpending() {
-        return 0.1F;
+    public float getStaminaSpendingFromJump() {
+        return this.getStaminaSpendingOnSprint() * 12.0F;
     }
 
     @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
@@ -389,6 +392,11 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
             ci.cancel();
         }
+    }
+
+    @Override
+    public float getStaminaSpendingOnSprint() {
+        return 0.1F;
     }
 
     @Inject(method = "addMovementStat", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;addExhaustion(F)V", ordinal = 2))
@@ -470,7 +478,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     {
         IGGMDamageSource gds = (IGGMDamageSource) source;
         float f;
-        System.out.println("Debug in GGMEntityPlayer: damageEntity");
+
         if (gds.isSettedValues())
         {
             f = 0.0F;
@@ -482,19 +490,15 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             for (Map.Entry<DamageType, Float> e : map.entrySet())
             {
                 float damageSumm = e.getValue();
-
                 if (isBlocking)
                 {
                     for (Map.Entry<IGGMAttribute, UseSpendings> ee : blocker.getBlockersMap().get(e.getKey()).entrySet())
                     {
-                        System.out.println("3");
                         IAttributeInstance mainAttribute = this.getEntityAttribute(ee.getKey());
                         IAttributeInstance spendAttribute = this.getEntityAttribute(ee.getValue().getAttribute());
-                        System.out.println(ee.getKey().getAttributeUnlocalizedName() + " " + ee.getValue().getAttribute().getAttributeUnlocalizedName());
+
                         if (mainAttribute != null && spendAttribute instanceof IGGMDynamicAttributeInstance)
                         {
-
-                            System.out.println("4");
                             double curr = ((IGGMDynamicAttributeInstance) spendAttribute).getCurrentValue();
                             if (curr <= 0.0D && ee.getValue().getSpendsFromD() > 0.0F) continue;
                             double canBlock = mainAttribute.getAttributeValue() * ee.getValue().getAttributeMultiplier();
@@ -511,7 +515,6 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                                 canBlock = damageSumm;
                             }
 
-                            System.out.println("5");
                             damageSumm -= canBlock;
                             ((IGGMDynamicAttributeInstance) spendAttribute).changeCurrentValue(-toSpendCurr);
                             float damageItem = (float) canBlock - blocker.getSustainability();
@@ -522,10 +525,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                                 this.clearItemInUse();
                                 break;
                             }
-                            System.out.println("6");
+                            if (damageSumm <= 0.0D) break;
                         }
                     }
-                    System.out.println("Damage type = " + e.getKey().getUnlocalizedName() + " damage after blocking = " + damageSumm);
                 }
                 damageSumm -= a;
                 if (damageSumm > 0.0F) f += damageSumm;
@@ -567,6 +569,14 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Override
     public int getAttackTicksLeft() {
         return this.attackTicksLeft;
+    }
+
+    @Override
+    public float getStaminaSpendingFromAttack()
+    {
+        System.out.println("Debug in GGMEntityPlayer: held item " + this.getGGMEquipment().getHeldItem());
+        if (this.getGGMEquipment().getHeldItem() != null) System.out.println("weight " + ((IItemEquip) this.getGGMEquipment().getHeldItem().getItem()).getWeight());
+        return 1.0F + (this.inFightStance ? (this.getGGMEquipment().getHeldItem() == null ? 0.0F : ((IItemEquip) this.getGGMEquipment().getHeldItem().getItem()).getWeight()) : 0.0F);
     }
 
     @Override
@@ -730,23 +740,6 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         this.ggmEqupment.readFromNBT(compound.getTagList("GGMEquipment", 10));
     }
 
-    @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;readFromNBT(Lnet/minecraft/nbt/NBTTagList;)V"))
-    private void onReadEntityFromNBT11(NBTTagCompound compound, CallbackInfo ci)
-    {
-        for (ItemStack i : this.inventory.mainInventory)
-        {
-            if (i != null) System.out.println(i);
-        }
-    }
-
-    @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setScore(I)V"))
-    private void onReadEntityFromNBT111(NBTTagCompound compound, CallbackInfo ci)
-    {
-        for (ItemStack i : this.inventory.mainInventory)
-        {
-            if (i != null) System.out.println(i);
-        }
-    }
 
     @Inject(method = "writeEntityToNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setTag(Ljava/lang/String;Lnet/minecraft/nbt/NBTBase;)V", ordinal = 0))
     private void onWriteEntityToNBT(NBTTagCompound compound, CallbackInfo ci) {
@@ -757,8 +750,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @ModifyVariable(method = "dropOneItem", at = @At(value = "LOAD", ordinal = 0))
     private ItemStack fixDroppingItem(ItemStack itemStack) {
 
-        if (this.inFightStance() && itemStack == null) {
-
+        if (this.inFightStance() && itemStack == null)
+        {
             itemStack = this.ggmEqupment.getSecHeldItem();
         }
         System.out.println("Debug in " + this.getClass() + " Ondropitem Item is: " + itemStack);

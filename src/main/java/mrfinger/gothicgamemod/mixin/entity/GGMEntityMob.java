@@ -61,6 +61,9 @@ public abstract class GGMEntityMob extends GGMEntityCreature implements IGGMEnti
     }
 
 
+
+
+
     public EntityMob thisEntity() {
         return (EntityMob) (Object) this;
     }

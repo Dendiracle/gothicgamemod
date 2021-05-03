@@ -23,10 +23,6 @@ public interface IGGMDynamicAttributeInstance extends IGGMIncreasableAttributeIn
 
     float getNaturalRegenIncreasingValue();
 
-    float getValueAfterNaturalRegenIncreasingValueDecreases();
-
-    byte getMaxNaturalRegenIncreasesNeedLP();
-
 
     void setCurrentValue(double value);
 

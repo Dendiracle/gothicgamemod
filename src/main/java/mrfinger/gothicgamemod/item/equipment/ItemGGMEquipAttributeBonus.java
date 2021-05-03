@@ -1,6 +1,7 @@
 package mrfinger.gothicgamemod.item.equipment;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -14,16 +15,43 @@ import java.util.UUID;
 public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGMEquip {
 
 
-    protected  final Map<IAttribute, Float> bonusMap;
+
+    protected final Map<IAttribute, Float> requiredsMap;
+
+    protected final Map<IAttribute, Float> bonusMap;
 
 
-    public ItemGGMEquipAttributeBonus(String unlocalizedName, String texture, byte index, Map<IAttribute, Float> bonusMap) {
+    public ItemGGMEquipAttributeBonus(String unlocalizedName, String texture, byte index, Map<IAttribute, Float> requiredsMap, Map<IAttribute, Float> bonusMap) {
         super(unlocalizedName, texture, index);
 
+        this.requiredsMap = requiredsMap;
         this.bonusMap = bonusMap;
         this.setCreativeTab(CreativeTabs.tabCombat);
     }
 
+
+    @Override
+    public Map<IAttribute, Float> getRequiredsMap() {
+        return this.requiredsMap;
+    }
+
+
+    @Override
+    public ItemGGMEquipAttributeBonus setRequireds(Map<IAttribute, Float> requireds) {
+        this.requiredsMap.putAll(requireds);
+        return this;
+    }
+
+    @Override
+    public boolean isMayEquip(IGGMEntityLivingBase entity)
+    {
+        for (Map.Entry<IAttribute, Float> e : this.requiredsMap.entrySet())
+        {
+            if (entity.getEntityAttribute(e.getKey()) == null || e.getValue() > entity.getEntityAttribute(e.getKey()).getBaseValue()) return false;
+        }
+
+        return true;
+    }
 
     @Override
     public void onItemEquiped(ItemStack itemStack, IGGMEntityLivingBase player) {

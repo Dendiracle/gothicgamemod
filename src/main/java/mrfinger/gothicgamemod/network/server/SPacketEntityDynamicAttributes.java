@@ -21,9 +21,7 @@ public class SPacketEntityDynamicAttributes implements IMessage {
     private Map<String, Double> map;
 
 
-    public SPacketEntityDynamicAttributes() {
-
-    };
+    public SPacketEntityDynamicAttributes() {}
 
     public SPacketEntityDynamicAttributes(int entityID, Collection<IGGMDynamicAttributeInstance> dpiCollection) {
 

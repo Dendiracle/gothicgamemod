@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ItemSword.class)
-public class GGMItemSword implements IItemTool {
+public abstract class GGMItemSword implements IItemTool {
 
 
     @Shadow private float field_150934_a;

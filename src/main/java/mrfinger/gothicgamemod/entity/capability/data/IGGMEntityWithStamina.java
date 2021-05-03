@@ -10,12 +10,12 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
 
     IGGMDynamicAttributeInstance getStaminaAttribute();
 
-    float getStaminaSpending();
+    float getStaminaSpendingFromJump();
 
     default boolean canJump() {
 
         IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
-        float d = this.getStaminaSpending() * 12.0F;
+        float d = this.getStaminaSpendingFromJump();
         double dd = stamina.getCurrentValue();
 
         if (dd < d) {
@@ -27,10 +27,12 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
     }
 
 
+    float getStaminaSpendingOnSprint();
+
     default void sprintUpdate() {
 
         IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
-        double d = this.getStaminaSpending();
+        double d = this.getStaminaSpendingOnSprint();
         double dd = stamina.getCurrentValue();
         if (dd < d) {
             this.setSprinting(false);
@@ -42,15 +44,13 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
 
     }
 
+
+    float getStaminaSpendingFromAttack();
+
     default boolean canAttack() {
 
         IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
-        float d = 1.0F;
-        ItemStack item = this.getEquipmentInSlot(0);
-
-        if (item != null && item.getItem() instanceof IItemMeleeWeapon) {
-            d += 2.0F;
-        }
+        float d = this.getStaminaSpendingFromAttack();
 
         if (stamina.getCurrentValue() < d) {
             return false;

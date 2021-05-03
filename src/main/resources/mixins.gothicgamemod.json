@@ -21,6 +21,7 @@
 		"entity.player.GGMEntityPlayerMP",
 		"entity.player.GGMInventoryPlayer",
 		"entity.ai.GGMEntityAIAttackOnCollide",
+		"item.GGMItem",
 		"item.GGMItemTool",
 		"item.GGMItemSword",
       	"item.GGMItemMeleeWeapon",

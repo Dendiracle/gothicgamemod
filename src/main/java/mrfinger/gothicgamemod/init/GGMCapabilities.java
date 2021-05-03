@@ -33,7 +33,7 @@ public class GGMCapabilities {
 
 
 	public static final GGMDPAttributeInfo maxHealthAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 0.0F, 0.02F, 1.0F, 10.0F, (byte) 5);
-	public static final GGMDPAttributeInfo maxStaminaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 0.5F, 0.1F, 5.0F, 50.0F, (byte) 5);
+	public static final GGMDPAttributeInfo maxStaminaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 1.0F, 0.1F, 5.0F, 50.0F, (byte) 5);
 	public static final GGMDPAttributeInfo maxManaAIPlayer = new GGMDPAttributeInfo(20.0F, 10000.0D, 10.0F, 500.0F, (byte) 4, 0.1F, 0.05F, 1.0F, 10.0F, (byte) 5);
 	public static final GGMIncreasableAttributeInfo AIPlayer = new GGMIncreasableAttributeInfo(5.0F, 1000.0D, 1.0F, 50.0F, (byte) 4);
 

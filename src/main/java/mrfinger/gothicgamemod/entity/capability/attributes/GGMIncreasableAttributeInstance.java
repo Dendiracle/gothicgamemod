@@ -91,12 +91,12 @@ public class GGMIncreasableAttributeInstance extends ModifiableAttributeInstance
         return this.attributeInfo.increasingValue;
     }
 
-    @Override
+
     public float getValueAfterIncreasingValueDecreases() {
         return this.attributeInfo.valueAfterIncreasingValueDecreases;
     }
 
-    @Override
+
     public byte getMaxIncreasesNeedLP() {
         return this.attributeInfo.maxIncreasesNeedLP;
     }

@@ -20,9 +20,9 @@ public class GGMServerConfigurationManager {
     @Inject(method = "initializeConnectionToPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetHandlerPlayServer;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 2))
     private void onInitializeConnectionToPlayer(NetworkManager networkManager, EntityPlayerMP entityPlayerMP, NetHandlerPlayServer netHandlerPlayServer, CallbackInfo ci) {
 
-        /*Container ggmContainer = ((IGGMEntityPlayerMP) entityPlayerMP).getGGMContainer();
-        netHandlerPlayServer.sendPacket(new S30PacketWindowItems(ggmContainer.windowId, ggmContainer.getInventory()));
-        System.out.println("Debug in ServerConfigurationManager");*/
+        /*System.out.println("Debug in ServerConfigurationManager");
+        Container ggmContainer = ((IGGMEntityPlayerMP) entityPlayerMP).getGGMContainer();
+        netHandlerPlayServer.sendPacket(new S30PacketWindowItems(ggmContainer.windowId, ggmContainer.getInventory()));*/
 
 
     }

@@ -28,7 +28,13 @@ public class GGMItems {
 
 	public static final ItemDebug itemDebug = new ItemDebug(Item.ToolMaterial.EMERALD);
 
-	public static final ItemGGMEquipAttributeBonus AmuletFranko = new ItemGGMEquipAttributeBonus("amulet_franko", "amulet_franko",(byte) 0, new HashMap<IAttribute, Float>(){
+	public static final ItemGGMEquipAttributeBonus AmuletFranko = new ItemGGMEquipAttributeBonus("amulet_franko", "amulet_franko",(byte) 0, new HashMap<IAttribute, Float>()
+	{
+		{
+			put(SharedMonsterAttributes.maxHealth, 100.0F);
+		}
+	}, new HashMap<IAttribute, Float>()
+	{
 		{
 			put(SharedMonsterAttributes.maxHealth, 40.0F);
 			put(SharedMonsterAttributes.attackDamage, 4.0F);
@@ -36,7 +42,10 @@ public class GGMItems {
 		}
 	});
 
-	public static final ItemGGMEquipAttributeBonus RingStrenght = new ItemGGMEquipAttributeBonus("ring_strenght", "amulet_franko",(byte) 1, new HashMap<IAttribute, Float>(){
+	public static final ItemGGMEquipAttributeBonus RingStrenght = new ItemGGMEquipAttributeBonus("ring_strenght", "amulet_franko",(byte) 1, new HashMap<IAttribute, Float>()
+	{
+
+	}, new HashMap<IAttribute, Float>(){
 		{
 			put(SharedMonsterAttributes.attackDamage, 5.0F);
 		}
@@ -47,7 +56,7 @@ public class GGMItems {
 
 	public static void load(FMLPreInitializationEvent e) {
 
-
+		((IItemBlocker) itemDebug).getBlockersMapToRed().get(GGMBattleSystem.crushing).remove((IGGMAttribute) SharedMonsterAttributes.attackDamage);
 		((IItemBlocker) itemDebug).setDamageBlocker(GGMBattleSystem.crushing, GGMCapabilities.dexterity, GGMCapabilities.maxMana, 1.0F, 1.0F);
 		registerItem(itemDebug);
 		registerItem(AmuletFranko);
@@ -55,7 +64,12 @@ public class GGMItems {
 		registerRune(runeFireBolt);
 		registerItem(scrollFireBolt);
 		registerItem(new Keks());
-		((IItemMeleeWeapon) GameData.getItemRegistry().getObjectById(276)).setExtraDamage(GGMBattleSystem.fire, (IGGMAttribute) SharedMonsterAttributes.maxHealth,0.4F, 1.0F);
+
+		IItemMeleeWeapon diamondSword = (IItemMeleeWeapon) GameData.getItemRegistry().getObjectById(276);
+		Map<IAttribute, Float> requiredsMap = new HashMap<>();
+		requiredsMap.put(SharedMonsterAttributes.attackDamage, 50.0F);
+		diamondSword.setRequireds(requiredsMap);
+		diamondSword.setExtraDamage(GGMBattleSystem.fire, (IGGMAttribute) SharedMonsterAttributes.maxHealth,0.4F, 1.0F);
     }
     
     public static void registerItem(Item item) {    	

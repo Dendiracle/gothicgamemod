@@ -18,6 +18,5 @@ public interface IItemBlocker extends IItemEquip {
 
     void setDamageBlocker(DamageType damageType, IGGMAttribute attribute, IGGMAttribute dynamicAttriibute, float attributeMultiplier, float blocksFromDA);
 
-    void setSustainability(float value);
 
 }

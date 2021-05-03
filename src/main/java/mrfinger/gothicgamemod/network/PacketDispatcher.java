@@ -20,8 +20,8 @@ public class PacketDispatcher {
     private static final SimpleNetworkWrapper dispatcher = NetworkRegistry.INSTANCE.newSimpleChannel(GothicMain.MODID);
 
 
-    public static void registerClientPackets() {
-
+    public static void registerClientPackets()
+    {
         clientRegisterMessage(CPacketChangeFightMode.Handler.class, CPacketChangeFightMode.class);
         clientRegisterMessage(CPacketStartAttack.Handler.class, CPacketStartAttack.class);
         clientRegisterMessage(CPacketEntitiesToAttack.Handler.class, CPacketEntitiesToAttack.class);
@@ -29,20 +29,33 @@ public class PacketDispatcher {
         clientRegisterMessage(CPacketOpenGui.Handler.class, CPacketOpenGui.class);
     }
 
-    public static void registerServerPackets() {
-
+    public static void registerServerPackets()
+    {
         servertRegisterMessage(SPacketEntityDynamicAttributes.Handler.class, SPacketEntityDynamicAttributes.class);
         servertRegisterMessage(SPacketExpValues.Handler.class, SPacketExpValues.class);
         servertRegisterMessage(SPacketAfterAttributesUpgraded.Handler.class, SPacketAfterAttributesUpgraded.class);
     }
 
+    public static void registerBiPackets()
+    {
+        registerBiMessage(BPacketSyncCurrentItemInGGMSlot.Handler.class, BPacketSyncCurrentItemInGGMSlot.class);
+    }
 
-    private static <REQ extends IMessage, REPLY extends IMessage> void clientRegisterMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType) {
+
+    private static <REQ extends IMessage, REPLY extends IMessage> void clientRegisterMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType)
+    {
         PacketDispatcher.dispatcher.registerMessage(messageHandler, requestMessageType, packetQuantity++, Side.SERVER);
     }
 
-    private static <REQ extends IMessage, REPLY extends IMessage> void servertRegisterMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType) {
+    private static <REQ extends IMessage, REPLY extends IMessage> void servertRegisterMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType)
+    {
         PacketDispatcher.dispatcher.registerMessage(messageHandler, requestMessageType, packetQuantity++, Side.CLIENT);
+    }
+
+    private static void registerBiMessage (Class handlerClass, Class messageClass)
+    {
+        PacketDispatcher.dispatcher.registerMessage (handlerClass, messageClass, packetQuantity, Side.CLIENT);
+        PacketDispatcher.dispatcher.registerMessage (handlerClass, messageClass, packetQuantity++, Side.SERVER);
     }
 
 

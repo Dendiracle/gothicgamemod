@@ -87,12 +87,11 @@ public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance
         return this.getAttributeInfo().naturalRegenIncreasingValue;
     }
 
-    @Override
+
     public float getValueAfterNaturalRegenIncreasingValueDecreases() {
         return this.getAttributeInfo().valueAfterNaturalRegenIncreasingValueDecreases;
     }
 
-    @Override
     public byte getMaxNaturalRegenIncreasesNeedLP() {
         return this.getAttributeInfo().maxNaturalRegenIncreasesNeedLP;
     }

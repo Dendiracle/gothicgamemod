@@ -10,8 +10,10 @@ import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.item.IItemBlocker;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
+import mrfinger.gothicgamemod.item.equipment.IItemRequiring;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Mixin({ItemTool.class, ItemSword.class})
-public abstract class GGMItemMeleeWeapon implements IItemMeleeWeapon, IItemBlocker {
+public abstract class GGMItemMeleeWeapon extends GGMItem implements IItemMeleeWeapon, IItemBlocker {
+
+
+    protected Map<IAttribute, Float> requiredsMap;
 
 
     protected DamageType baseDamageType;
@@ -35,7 +40,7 @@ public abstract class GGMItemMeleeWeapon implements IItemMeleeWeapon, IItemBlock
 
     protected float baseAttributeMultiplier;
 
-    private float baseDamage;
+    protected float baseDamage;
 
 
     protected Map<DamageType, UseSpendings> damageValues;
@@ -44,24 +49,61 @@ public abstract class GGMItemMeleeWeapon implements IItemMeleeWeapon, IItemBlock
     protected Map<DamageType, Map<IGGMAttribute, UseSpendings>> blockerMap;
 
 
+    protected float weight;
+
+
     protected float sustainability;
 
 
     @Inject(method = "<init>*", at = @At("RETURN"))
     private void onInit(CallbackInfo ci)
     {
+        this.requiredsMap = new HashMap<>();
         this.baseDamageType = GGMBattleSystem.cutting;
         this.baseAttribute = (IGGMAttribute) SharedMonsterAttributes.attackDamage;
-        this.baseAttributeMultiplier = 1.0F;
+        this.baseAttributeMultiplier = this.getDamageVsEntity() / 6.0F;
         this.baseDamage = this.getDamageVsEntity();
         this.blockerMap = new HashMap<>(GGMBattleSystem.standartDamageValuesBlockModifiers.size(), 1.0F);
 
         for (Map.Entry<DamageType, UseSpendings> e : GGMBattleSystem.standartDamageValuesBlockModifiers.entrySet())
         {
             Map<IGGMAttribute, UseSpendings> usMap = new HashMap<>(1, 1.0F);
-            usMap.put(e.getValue().getAttribute(), new UseSpendings(GGMCapabilities.maxStamina, this.getToolMaterial().getDamageVsEntity() * e.getValue().getAttributeMultiplier(), e.getValue().getSpendsFromD()));
+            usMap.put(e.getValue().getAttribute(), new UseSpendings(GGMCapabilities.maxStamina, this.getDamageVsEntity() * e.getValue().getAttributeMultiplier(), e.getValue().getSpendsFromD()));
             this.blockerMap.put(e.getKey(), usMap);
         }
+
+        this.weight = (float) this.getMaxDamage() / 100.0F;
+        this.sustainability = this.weight * 10.0F;
+    }
+
+
+    @Override
+    public Map<IAttribute, Float> getRequiredsMap()
+    {
+        return this.requiredsMap;
+    }
+
+
+    @Override
+    public IItemMeleeWeapon setRequireds(Map<IAttribute, Float> requireds)
+    {
+        this.requiredsMap.putAll(requireds);
+        return this;
+    }
+
+
+    @Override
+    public boolean isMayEquip(IGGMEntityLivingBase entity)
+    {
+        for (Map.Entry<IAttribute, Float> e : this.requiredsMap.entrySet())
+        {
+            if (entity.getEntityAttribute(e.getKey()) == null || e.getValue() > entity.getEntityAttribute(e.getKey()).getBaseValue())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -143,29 +185,24 @@ public abstract class GGMItemMeleeWeapon implements IItemMeleeWeapon, IItemBlock
     {
         for (Map.Entry<DamageType, Map<IGGMAttribute, UseSpendings>> e : map.entrySet())
         {
-            this.blockerMap.get(e.getValue()).putAll(e.getValue());
+            this.blockerMap.get(e.getKey()).putAll(e.getValue());
         }
     }
 
     @Override
-    public void setDamageBlocker(DamageType damageType, IGGMAttribute attribute, IGGMAttribute dynamicAttriibute, float attributeMultiplier, float blocksFromDA) {
-
+    public void setDamageBlocker(DamageType damageType, IGGMAttribute attribute, IGGMAttribute dynamicAttriibute, float attributeMultiplier, float blocksFromDA)
+    {
         Map<IGGMAttribute, UseSpendings> m = new HashMap<>(1, 1.0F);
         m.put(attribute, new UseSpendings(dynamicAttriibute, attributeMultiplier, blocksFromDA));
         Map<DamageType, Map<IGGMAttribute, UseSpendings>> map = new HashMap<>();
+        map.put(damageType, m);
         this.setDamageBlocker(map);
     }
 
 
     @Override
-    public void setSustainability(float sustainability) {
-        this.sustainability = sustainability;
-    }
-
-
-    @Override
     public float getWeight() {
-        return 1.0F;
+        return this.weight;
     }
 
     @Override
@@ -174,8 +211,20 @@ public abstract class GGMItemMeleeWeapon implements IItemMeleeWeapon, IItemBlock
     }
 
 
+    @Override
+    public void setWeight(float weight) {
+        this.weight = weight;
+    }
+
+    @Override
+    public void setSustainability(float sustainability) {
+        this.sustainability = sustainability;
+    }
+
+
     @Redirect(method = "getItemAttributeModifiers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Multimap;put(Ljava/lang/Object;Ljava/lang/Object;)Z"))
     private boolean removeModifierPut(Multimap map, Object attributeName, Object modifier) {
         return false;
     }
+
 }

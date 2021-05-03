@@ -1,6 +1,11 @@
 package mrfinger.gothicgamemod.entity;
 
+import mrfinger.gothicgamemod.battle.DamageType;
+
 public interface IGGMEntityCreature extends IGGMEntityLivingBase {
+
+
+    DamageType getStandartMeleeDamageType();
 
 
     boolean isAnimedAttack();

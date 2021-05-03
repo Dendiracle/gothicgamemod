@@ -1,6 +1,8 @@
 package mrfinger.gothicgamemod.mixin.entity;
 
+import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.IGGMEntityCreature;
+import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,6 +33,11 @@ public abstract class GGMEntityCreature extends GGMEntityLiving implements IGGME
 
     }
 
+
+    @Override
+    public DamageType getStandartMeleeDamageType() {
+        return GGMBattleSystem.crushing;
+    }
 
     @Override
     public void justAttack(Entity entity, float distance) {

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ItemTool.class)
-public class GGMItemTool implements IItemTool {
+public abstract class GGMItemTool implements IItemTool {
 
 
     @Shadow private float damageVsEntity;

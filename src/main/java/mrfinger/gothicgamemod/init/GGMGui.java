@@ -15,16 +15,16 @@ public class GGMGui {
 
 	public static final GGMGuiInGame guiInGame = new GGMGuiInGame();
 	private static int guiCount;
-	public static final int GGMGuiInvenory = guiCount++;
+	public static final int GGMGuiInvenory = 10;
 
 
-	public static void preInit(FMLPreInitializationEvent event) {
-
+	public static void preInit(FMLPreInitializationEvent event)
+	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(GothicMain.instance, new GuiHandler());
 	}
 
-	public static void preInitClient(FMLPreInitializationEvent event) {
-
+	public static void preInitClient(FMLPreInitializationEvent event)
+	{
 		MinecraftForge.EVENT_BUS.register(guiInGame);
 	}
 

@@ -51,13 +51,13 @@ public abstract class GGMNetHandlerPlayClient implements IGGMNetHandlerPlayClien
     @Inject(method = "handleWindowItems", at = @At(value = "JUMP"), cancellable = true)
     private void fixGGMCOntainerSync(S30PacketWindowItems packetWindowItems, CallbackInfo ci) {
 
-        Container container = ((IGGMAbstractClientPlayer) this.gameController.thePlayer).getGGMContainer();
+        /*Container container = ((IGGMAbstractClientPlayer) this.gameController.thePlayer).getGGMContainer();
 
         if (packetWindowItems.func_148911_c() == container.windowId) {
 
             container.putStacksInSlots(packetWindowItems.func_148910_d());
             ci.cancel();
-        }
+        }*/
     }
 
 }

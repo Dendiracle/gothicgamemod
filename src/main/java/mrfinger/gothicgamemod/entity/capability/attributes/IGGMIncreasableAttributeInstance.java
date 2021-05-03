@@ -22,10 +22,6 @@ public interface IGGMIncreasableAttributeInstance extends IGGMModifiableAttribut
 
 	float getIncreasingValue();
 
-	float getValueAfterIncreasingValueDecreases();
-
-	byte getMaxIncreasesNeedLP();
-
 
 	double increaseAttribute(double value);
 

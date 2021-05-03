@@ -1,7 +1,6 @@
 package mrfinger.gothicgamemod.proxy;
 
 
-import codechicken.lib.packet.PacketCustom;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -12,7 +11,6 @@ import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMKeyBindings;
 import mrfinger.gothicgamemod.init.GGMGui;
 import mrfinger.gothicgamemod.init.GRenderers;
-import mrfinger.gothicgamemod.network.ClientPacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -28,7 +26,6 @@ public class ClientProxy extends CommonProxy{
 	@Override
     public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
-		PacketCustom.assignHandler("Keks", new ClientPacketHandler());
 		GGMGui.preInitClient(e);
 		GGMCapabilities.loadClient();
 	}

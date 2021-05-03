@@ -5,7 +5,6 @@ import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 public interface IGGMEntityWithAttackAnim extends IGGMEntityLivingBase {
 
 
-
     int getNewAttackDuration();
 
     int getLastAttackDuration();

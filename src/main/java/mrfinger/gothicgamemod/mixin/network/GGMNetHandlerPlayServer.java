@@ -21,16 +21,6 @@ public class GGMNetHandlerPlayServer {
 
     @Shadow public EntityPlayerMP playerEntity;
 
-    /*@Inject(method = "processUseEntity", at = @At(value = "HEAD"), cancellable = true)
-    private void fixProcessUseEntity(C02PacketUseEntity packet, CallbackInfo ci) {
-        System.out.println("Process packet: " + (packet.func_149565_c() == C02PacketUseEntity.Action.ATTACK));
-        if (packet.func_149565_c() == C02PacketUseEntity.Action.ATTACK && packet.func_149564_a(this.serverController.worldServerForDimension(this.playerEntity.dimension)) == null) {
-            System.out.println("Process packet - StartAttack");
-            IGGMEntityPlayer player = (IGGMEntityPlayer) playerEntity;
-            player.startAttack();
-            ci.cancel();
-        }
-    }*/
 
     @Redirect(method = "processUseEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayerMP;attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V"))
     private void fixProcessUseEntity(EntityPlayerMP playerMP, Entity entity) {

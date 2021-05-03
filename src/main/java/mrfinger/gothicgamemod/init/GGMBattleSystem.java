@@ -26,6 +26,15 @@ public class GGMBattleSystem {
 
 
     public static final Map<DamageType, UseSpendings> standartDamageValuesBlockModifiers = new HashMap<>(6, 1.0F);
+    static {
+
+        standartDamageValuesBlockModifiers.put(cutting, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.16F, 1.0F));
+        standartDamageValuesBlockModifiers.put(crushing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.1F, 1.2F));
+        standartDamageValuesBlockModifiers.put(piersing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.2F, 0.8F));
+        standartDamageValuesBlockModifiers.put(fire, new UseSpendings(GGMCapabilities.intelligence, 0.03F, 1.0F));
+        standartDamageValuesBlockModifiers.put(cold, new UseSpendings(GGMCapabilities.intelligence, 0.03F, 1.0F));
+        standartDamageValuesBlockModifiers.put(electricity, new UseSpendings(GGMCapabilities.intelligence, 0.03F, 1.0F));
+    }
 
 
     public static void load(FMLPreInitializationEvent e) {
@@ -38,12 +47,6 @@ public class GGMBattleSystem {
         set.add(electricity);
 
 
-        standartDamageValuesBlockModifiers.put(cutting, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.5F, 1.0F));
-        standartDamageValuesBlockModifiers.put(crushing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.3F, 1.2F));
-        standartDamageValuesBlockModifiers.put(piersing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.7F, 0.8F));
-        standartDamageValuesBlockModifiers.put(fire, new UseSpendings(GGMCapabilities.intelligence, 0.1F, 1.0F));
-        standartDamageValuesBlockModifiers.put(cold, new UseSpendings(GGMCapabilities.intelligence, 0.1F, 1.0F));
-        standartDamageValuesBlockModifiers.put(electricity, new UseSpendings(GGMCapabilities.intelligence, 0.1F, 1.0F));
     }
 
 }

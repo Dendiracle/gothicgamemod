@@ -20,7 +20,7 @@ import java.util.List;
 public class GGMContainerPlayer extends Container implements IGGMContainer {
 
 
-    private final IGGMEntityPlayer player;
+    protected final IGGMEntityPlayer player;
 
     public List<GGMSlot> ggmSlots;
 
@@ -53,24 +53,29 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
 
         for (i = 0; i < 3; ++i) {
 
-            this.addSlotToContainerWithSync(new SlotHand(ggmInventoryPlayer, i * 2, true, 134, 8 + i * 18).setIconPos(16, 0));
-            this.addSlotToContainerWithSync(new SlotHand(ggmInventoryPlayer, i * 2 + 1,false,152, 8 + i * 18).setIconPos(32, 0));
+            this.addSlotToContainerWithSync(new SlotHand(this, ggmInventoryPlayer, i * 2, true, 134, 8 + i * 18).setIconPos(16, 0));
+            this.addSlotToContainerWithSync(new SlotHand(this, ggmInventoryPlayer, i * 2 + 1,false,152, 8 + i * 18).setIconPos(32, 0));
 
-            this.addSlotToContainerWithSync(new GGMSlotArmor(ggmInventoryPlayer, i + 9, (byte) (i + 3), 44, 8 + i * 18).setIconPos(i * 16 + 96, 0));
+            this.addSlotToContainerWithSync(new GGMSlotArmor(this, ggmInventoryPlayer, i + 9, (byte) (i + 3), 44, 8 + i * 18).setIconPos(i * 16 + 96, 0));
         }
 
-        this.addSlotToContainerWithSync(new GGMSlotArmor(ggmInventoryPlayer, 6, (byte) 0, 8, 8).setIconPos(48, 0));
-        this.addSlotToContainerWithSync(new GGMSlotArmor(ggmInventoryPlayer, 7, (byte) 1, 8, 26).setIconPos(64, 0));
-        this.addSlotToContainerWithSync(new GGMSlotArmor(ggmInventoryPlayer, 8, (byte) 1, 8, 44).setIconPos(64, 0));
+        this.addSlotToContainerWithSync(new GGMSlotArmor(this, ggmInventoryPlayer, 6, (byte) 0, 8, 8).setIconPos(48, 0));
+        this.addSlotToContainerWithSync(new GGMSlotArmor(this, ggmInventoryPlayer, 7, (byte) 1, 8, 26).setIconPos(64, 0));
+        this.addSlotToContainerWithSync(new GGMSlotArmor(this, ggmInventoryPlayer, 8, (byte) 1, 8, 44).setIconPos(64, 0));
     }
 
 
-    protected Slot addSlotToContainerWithSync(Slot slot) {
-
+    protected Slot addSlotToContainerWithSync(Slot slot)
+    {
         this.ggmSlots.add((GGMSlot) slot);
         return this.addSlotToContainer(slot);
     }
 
+
+    @Override
+    public IGGMEntityPlayer getEntityPlayer() {
+        return this.player;
+    }
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
@@ -219,11 +224,15 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
     public abstract static class GGMSlot extends Slot {
 
 
+        protected final IGGMContainer container;
+
         private int iconX, iconY;
 
 
-        public GGMSlot(IInventory inventory, int slotIndex, int x, int y) {
+        public GGMSlot(IGGMContainer container, IInventory inventory, int slotIndex, int x, int y) {
             super(inventory, slotIndex, x, y);
+
+            this.container = container;
         }
 
 
@@ -256,17 +265,17 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         byte armorIndex;
 
 
-        public GGMSlotArmor(IInventory inventory, int slotIndex, byte armorIndex, int x, int y) {
-            super(inventory, slotIndex, x, y);
+        public GGMSlotArmor(IGGMContainer container, IInventory inventory, int slotIndex, byte armorIndex, int x, int y) {
+            super(container, inventory, slotIndex, x, y);
 
             this.armorIndex = armorIndex;
         }
 
         @Override
-        public boolean isItemValid(ItemStack itemStack) {
-
-            if (itemStack != null && itemStack.getItem() instanceof IItemGGMEquip && ((IItemGGMEquip) itemStack.getItem()).getIndex() == this.armorIndex) {
-
+        public boolean isItemValid(ItemStack itemStack)
+        {
+            if (itemStack != null && itemStack.getItem() instanceof IItemGGMEquip && ((IItemGGMEquip) itemStack.getItem()).getIndex() == this.armorIndex && ((IItemGGMEquip) itemStack.getItem()).isMayEquip(this.container.getEntityPlayer()))
+            {
                 return true;
             }
 
@@ -281,23 +290,22 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         protected final boolean rh;
 
 
-        public SlotHand(IInventory inventory, int slotIndex, boolean rightHand, int x, int y) {
-            super(inventory, slotIndex, x, y);
+        public SlotHand(IGGMContainer container,  IInventory inventory, int slotIndex, boolean rightHand, int x, int y) {
+            super(container, inventory, slotIndex, x, y);
 
             this.rh = rightHand;
         }
 
 
         @Override
-        public boolean isItemValid(ItemStack stack) {
-
-            boolean b = false;
-
-            if (stack != null && stack.getItem() instanceof IItemMeleeWeapon) {
-                b = true;
+        public boolean isItemValid(ItemStack stack)
+        {
+            if (stack != null && stack.getItem() instanceof IItemMeleeWeapon && ((IItemMeleeWeapon) stack.getItem()).isMayEquip(this.container.getEntityPlayer()))
+            {
+                return true;
             }
 
-            return b;
+            return false;
         }
 
     }
