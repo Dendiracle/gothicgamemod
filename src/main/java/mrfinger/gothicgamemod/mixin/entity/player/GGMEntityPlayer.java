@@ -104,6 +104,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         this.ggmContainerEquipment = new GGMContainerPlayer(this);
         this.attackTicksLeft = (short) -20;
         this.lastAttackDuration = (short) this.getNewAttackDuration();
+        System.out.println("Debug in GGMEntityPlayer " + this.stepHeight);
     }
 
 
@@ -767,6 +768,13 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         }
 
         return inventoryPlayer.decrStackSize(index, count);
+    }
+
+
+    @ModifyVariable(method = "getBreakSpeed(Lnet/minecraft/block/Block;ZIIII)F", at = @At(value = "LOAD", ordinal = 0), ordinal = 0)
+    private float modifyBreakSpeed(float speedFromTool)
+    {
+        return speedFromTool + speedFromTool * (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() / 200.0F;
     }
 
 

@@ -40,7 +40,7 @@ public class GGMPlayerEquipment implements IGGMInventoryPlayer {
     @Override
     public void setCurrentItem(int index) {
 
-        if (index != this.currentWeapon && !this.player.inFightStance() && index >= 0 && index < this.weaponSlotsAmount) {
+        if (index != this.currentWeapon && this.player.getAttackTicksLeft() <= 0 && index >= 0 && index < this.weaponSlotsAmount) {
 
             if (this.equip[this.currentWeapon] != null) {
 
@@ -61,7 +61,7 @@ public class GGMPlayerEquipment implements IGGMInventoryPlayer {
 
         int a = toMore ? (this.currentWeapon >= this.weaponSlotsAmount - 1 ? 0 : this.currentWeapon + 1) : (this.currentWeapon <= 0 ? this.weaponSlotsAmount - 1 : this.currentWeapon - 1);
         this.setCurrentItem(a);
-        if (this.player.getEntityWorld().isRemote) PacketDispatcher.sendToServer(new BPacketSyncCurrentItemInGGMSlot((byte) this.currentWeapon));
+        if (this.player.getEntityWorld().isRemote()) PacketDispatcher.sendToServer(new BPacketSyncCurrentItemInGGMSlot((byte) this.currentWeapon));
     }
 
     @Override

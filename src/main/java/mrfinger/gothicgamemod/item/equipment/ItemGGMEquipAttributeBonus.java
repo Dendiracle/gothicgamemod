@@ -56,7 +56,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
     @Override
     public void onItemEquiped(ItemStack itemStack, IGGMEntityLivingBase player) {
 
-        if (!player.getEntityWorld().isRemote) {
+        if (player.isClientWorld()) {
 
             UUID id;
 
@@ -94,7 +94,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
     @Override
     public void onItemRemoved(ItemStack itemStack, IGGMEntityLivingBase player) {
 
-        if (!player.getEntityWorld().isRemote) {
+        if (!player.isClientWorld()) {
 
             UUID id = new UUID(itemStack.stackTagCompound.getLong("GGMIDMS"), itemStack.stackTagCompound.getLong("GGMIDLS"));
 

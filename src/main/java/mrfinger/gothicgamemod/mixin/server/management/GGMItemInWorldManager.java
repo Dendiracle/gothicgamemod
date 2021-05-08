@@ -54,6 +54,8 @@ public abstract class GGMItemInWorldManager {
         if (player.inFightStance())
         {
 
+            if (player.getAttackTicksLeft() > 0) cir.setReturnValue(false);
+
             int i = originalStack.stackSize;
             int j = originalStack.getItemDamage();
             ItemStack itemstack1 = originalStack.useItemRightClick(world, playerS);

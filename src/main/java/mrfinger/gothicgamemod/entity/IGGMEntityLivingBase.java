@@ -72,8 +72,6 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	void inreaseAttribute(IAttribute attribute, float value);
 
 
-	void jump();
-
 	double jumpHeight();
 
 
@@ -92,10 +90,10 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	void justAttack(Entity entity, float distance);
 
+	void tryAttack(IGGMEntity entity);
+
 
 	int getTotalArmorValue();
-
-	float applyArmorCalculations(DamageSource ds, float damage);
 
 	boolean attackEntityAsMob(Entity entity);
 
@@ -109,6 +107,9 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	void flagForLvlUpdate();
 
 	boolean isNeedExpUpdate();
+
+
+	boolean isClientWorld();
 
 
 	default EntityLivingBase thisEntity() {

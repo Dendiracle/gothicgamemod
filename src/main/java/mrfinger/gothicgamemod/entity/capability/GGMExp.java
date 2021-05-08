@@ -116,7 +116,7 @@ public class GGMExp implements IGGMExp {
 
             int simpleLvl = this.entity.getLvl();
             this.changeExp(exp);
-            if (this.entity.getEntityWorld().isRemote) {
+            if (this.entity.getEntityWorld().isRemote()) {
 
                 GGMGui.guiInGame.addGainedExp(exp);
             }

@@ -4,6 +4,9 @@
     "package": "mrfinger.gothicgamemod.mixin",
     "refmap": "mixins.gothicgamemod.refmap.json",
     "mixins": [
+		"server.GGMMinecraftServer",
+		"world.GGMWorld",
+		"world.GGMWorldServer",
 		"entity.ai.attributes.GGMBaseAttributeMap",
 		"entity.ai.attributes.GGMServersideAttributeMap",
 		"entity.ai.attributes.GGMBaseAttribute",

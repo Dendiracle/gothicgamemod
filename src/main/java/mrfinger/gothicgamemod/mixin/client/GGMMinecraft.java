@@ -82,8 +82,14 @@ public class GGMMinecraft {
     }
 
 
+    @Inject(method = "func_147121_ag", at = @At(value = "HEAD"), cancellable = true)
+    private void fixUsingItem1(CallbackInfo ci)
+    {
+        if (((IGGMEntityPlayer) this.thePlayer).getAttackTicksLeft() > 0) ci.cancel();
+    }
+
     @Redirect(method = "func_147121_ag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;getCurrentItem()Lnet/minecraft/item/ItemStack;", ordinal = 1))
-    private ItemStack fixUsingItem(InventoryPlayer inventoryPlayer) {
+    private ItemStack fixUsingItem2(InventoryPlayer inventoryPlayer) {
 
         IGGMEntityPlayer player = (IGGMEntityPlayer) this.thePlayer;
 

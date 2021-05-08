@@ -2,7 +2,7 @@ package mrfinger.gothicgamemod.entity;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 
-public interface IGGMEntityCreature extends IGGMEntityLivingBase {
+public interface IGGMEntityCreature extends IGGMEntityLiving {
 
 
     DamageType getStandartMeleeDamageType();

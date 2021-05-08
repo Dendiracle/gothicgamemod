@@ -11,19 +11,13 @@ import mrfinger.gothicgamemod.entity.animals.EntityMeatBug;
 import mrfinger.gothicgamemod.entity.animals.EntityNikita;
 import mrfinger.gothicgamemod.entity.animals.EntityScavenger;
 import mrfinger.gothicgamemod.entity.effects.EntityFireBolt;
-import mrfinger.gothicgamemod.fractions.Fraction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class GEntities {	
 	
 
 	public static int EXPModifier = 10;
-	
-	public static final Fraction emptyFraction = new Fraction();
-	
-	public static final Fraction scavengers = new Fraction();
 	
 	
 	
@@ -37,12 +31,6 @@ public class GEntities {
 		loadThrowingEntity();
 		registerEntity(EntityDebug.class, "EntityDebug", 0x00FFFF, 0x00FFFF);
 
-	}
-	
-	private static void loadFractions() {
-		scavengers.fractionSet.add(EntityScavenger.class);
-		scavengers.enemiesSet.add(EntityPlayer.class);
-		scavengers.enemiesSet.add(EntityGWolf.class);
 	}
 
 	private static void loadHostileMobs() {

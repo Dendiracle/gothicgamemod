@@ -243,7 +243,7 @@ public abstract class EntityGothicAnimal extends EntityMob {
 		
 		protected final World 		world;
 		
-		protected final Fraction 	fraction;
+		protected Fraction 	fraction;
 		
 		protected double 			coordX,
 									coordY,
@@ -266,8 +266,8 @@ public abstract class EntityGothicAnimal extends EntityMob {
 		AnimalsPack(World world, Fraction fraction, double x, double y, double z) {
 			
 			this.world = world;			
-			if (fraction == null) this.fraction = GEntities.emptyFraction;
-			else this.fraction = fraction;
+			//if (fraction == null) this.fraction = GEntities.emptyFraction;
+			//else this.fraction = fraction;
 			
 			this.coordX = x;
 			this.coordY = y;

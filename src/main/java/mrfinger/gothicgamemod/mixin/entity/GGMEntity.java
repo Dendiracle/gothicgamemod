@@ -1,6 +1,7 @@
 package mrfinger.gothicgamemod.mixin.entity;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,21 +34,32 @@ public abstract class GGMEntity implements IGGMEntity {
 
     @Shadow public abstract void setEating(boolean p_70019_1_);
 
+    @Shadow public float stepHeight;
+
     @Override
     public int getEntityId() {
         return this.entityId;
     }
 
     @Override
-    public World getEntityWorld() {
-        return this.worldObj;
-    }
-
-
-    @Inject(method = "moveEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;updateFallState(DZ)V"))
-    private void debug(CallbackInfo ci)
+    public IGGMWorld getEntityWorld()
     {
-        //if (!this.worldObj.isRemote) System.out.println("debug in GGMEntity " + this.motionY);
+        return (IGGMWorld) this.worldObj;
     }
 
+
+    @Override
+    public double getPosX() {
+        return posX;
+    }
+
+    @Override
+    public double getPosY() {
+        return posY;
+    }
+
+    @Override
+    public double getPosZ() {
+        return posZ;
+    }
 }

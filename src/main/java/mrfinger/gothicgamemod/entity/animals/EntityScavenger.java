@@ -1,9 +1,10 @@
 package mrfinger.gothicgamemod.entity.animals;
 
 import mrfinger.gothicgamemod.GothicMain;
+import mrfinger.gothicgamemod.entity.packentities.EntityHerd;
 import net.minecraft.world.World;
 
-public class EntityScavenger extends EntityGothicAnimal {	
+public class EntityScavenger extends EntityGothicAnimal {
 		
 	public EntityScavenger(World p_i1738_1_) {
 		super(p_i1738_1_, true);
@@ -58,7 +59,6 @@ public class EntityScavenger extends EntityGothicAnimal {
 
 	@Override
 	protected String attackSound() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
