@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.entity.capability;
 
-import mrfinger.gothicgamemod.entity.capability.attributes.IGGMIncreasableAttributeInstance;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMIncreasableAttributeInstance;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 

@@ -1,8 +1,5 @@
 package mrfinger.gothicgamemod.util;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
 public class GGMMathHelper extends MathHelper {

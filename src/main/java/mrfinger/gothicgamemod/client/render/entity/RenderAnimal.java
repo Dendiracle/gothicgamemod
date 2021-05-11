@@ -1,16 +1,13 @@
 package mrfinger.gothicgamemod.client.render.entity;
 
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
+import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.client.model.AnimalModel;
-import mrfinger.gothicgamemod.entity.animals.EntityGothicAnimal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class RenderAnimal extends RenderLiving {
 		
@@ -20,7 +17,7 @@ public class RenderAnimal extends RenderLiving {
 	
 	public RenderAnimal(AnimalModel model, String texture, float shadowSize) {
 		super(model, shadowSize);
-		this.textureLocation = new ResourceLocation("gothicgame:textures/entity/" + texture);
+		this.textureLocation = new ResourceLocation(GothicMain.MODID + ":textures/entity/" + texture);
 		this.animalModel = model;
 	}
 

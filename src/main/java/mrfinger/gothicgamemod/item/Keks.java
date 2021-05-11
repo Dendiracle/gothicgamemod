@@ -1,7 +1,5 @@
 package mrfinger.gothicgamemod.item;
 
-import java.util.UUID;
-
 import cpw.mods.fml.common.Mod.EventHandler;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -9,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import java.util.UUID;
 
 public class Keks extends Item{
 	

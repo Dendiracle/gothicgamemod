@@ -1,17 +1,17 @@
 package mrfinger.gothicgamemod.mixin.entity;
 
-import java.util.*;
-
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.capability.attributes.*;
-import mrfinger.gothicgamemod.init.GGMCapabilities;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.*;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Map;
 
 
 @Mixin(EntityLivingBase.class)
@@ -38,99 +40,75 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;setHealth(F)V"))
-	private void deleteHealthing(EntityLivingBase entity, float value) {
-
+	private void deleteHealthing(EntityLivingBase entity, float value)
+	{
 		this.restoreCurrentValuesFull();
-
 	}
 
 	@Inject(method = "<init>*", at = @At(value = "RETURN"))
-	private void init(CallbackInfo ci) {
-
+	private void init(CallbackInfo ci)
+	{
 		this.lvl = this.initialLevel();
 		this.flagForLvlUpdate();
 	}
 
-	@Inject(method = "entityInit", at = @At("HEAD"))
-	private void onEntityInit(CallbackInfo ci) {
-
-	}
-
-
-	@Override
-	public int initialLevel() {
-
-    	float l = 0.0F;
-    	Map<IAttribute, IAttributeInstance> map = ((IGGMBaseAttributeMap) this.attributeMap).getAllAttributesMap();
-
-    	for (Map.Entry<IAttribute, IAttributeInstance> e : map.entrySet()) {
-
-    		Float o = GGMCapabilities.expGainFromAttributesMap.get(e.getKey());
-
-    		if (o != null && o > 0.0F) l += e.getValue().getBaseValue() / o;
-		}
-
-		return Math.round(l);
-	}
-
 
 	@Inject(method = "writeEntityToNBT", at = @At("TAIL"))
-	private void onWriteEntityToNBT(NBTTagCompound nbt, CallbackInfo ci) {
-
+	private void onWriteEntityToNBT(NBTTagCompound nbt, CallbackInfo ci)
+	{
 		this.saveExp(nbt);
 	}
 
 	@Inject(method = "readEntityFromNBT", at = @At("TAIL"))
-	private void onReadEntityToNBT(NBTTagCompound nbt, CallbackInfo ci) {
-
+	private void onReadEntityToNBT(NBTTagCompound nbt, CallbackInfo ci)
+	{
 		this.loadExp(nbt);
 	}
-	
-	
-	@Override
-	public void saveExp(NBTTagCompound nbt) {
-		
-		nbt.setInteger("LVL", this.lvl);
-	}
-	
-	@Override
-	public void loadExp(NBTTagCompound nbt) {
-		
-		this.setLvl(nbt.getInteger("LVL"));
-	}
 
-
-	@Override
-	public void restoreCurrentValuesFull() {
-
-    	this.setHealth(this.getMaxHealth());
-	}
-
-
-	@Override
-	public void setLvl(int lvl) {
-
-    	if (lvl >= 0) {
-
-    		if (lvl != this.lvl) {
-
-    			this.flagForLvlUpdate();
-    			this.lvl = lvl;
-			}
-		}
-    	else {
-    		throw new IllegalArgumentException("Level of entity cannot be less than 0");
-		}
-	}
 
 	@Override
 	public int getLvl() {
 		return lvl;
 	}
 
+	@Override
+	public void setLvl(int lvl)
+	{
+		if (lvl >= 0) {
+
+			if (lvl != this.lvl) {
+
+				this.flagForLvlUpdate();
+				this.lvl = lvl;
+			}
+		}
+		else {
+			throw new IllegalArgumentException("Level of entity cannot be less than 0");
+		}
+	}
 
 	@Override
-	public IGGMDynamicAttributeInstance getDP(IAttribute attribute) {
+	public void saveExp(NBTTagCompound nbt)
+	{
+		nbt.setInteger("LVL", this.lvl);
+	}
+
+	@Override
+	public void loadExp(NBTTagCompound nbt)
+	{
+		this.setLvl(nbt.getInteger("LVL"));
+	}
+
+
+	@Override
+	public void restoreCurrentValuesFull()
+	{
+    	this.setHealth(this.getMaxHealth());
+	}
+
+
+	@Override
+	public IGGMDynamicAttributeInstance getDP(IGGMAttribute attribute) {
 		return ((IGGMBaseAttributeMap) this.attributeMap).getDPI(attribute);
 	}
 
@@ -193,25 +171,10 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}*/
 
 
-	@Override
-	public void inreaseAttribute(IAttribute attribute, float value) {
-
-		IAttributeInstance ai = this.getEntityAttribute(attribute);
-
-		if (ai != null && ai instanceof IGGMIncreasableAttributeInstance) {
-
-			((IGGMIncreasableAttributeInstance) ai).increaseAttribute(value);
-		}
-	}
-
 	@Redirect(method = "jump", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionY:D", ordinal = 0))
-	private void jumpFix(EntityLivingBase entity, double motionY) {
+	private void jumpFix(EntityLivingBase entity, double motionY)
+	{
 		entity.motionY = this.jumpHeight();
-	}
-
-	@Override
-	public double jumpHeight() {
-		return 0.41999998688697815D;
 	}
 
 

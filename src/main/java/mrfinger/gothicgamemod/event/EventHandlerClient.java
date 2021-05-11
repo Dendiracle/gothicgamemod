@@ -1,18 +1,17 @@
 package mrfinger.gothicgamemod.event;
 
-import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.init.GGMGui;
-import mrfinger.gothicgamemod.network.PacketDispatcher;
-import mrfinger.gothicgamemod.network.client.CPacketChangeFightMode;
-import mrfinger.gothicgamemod.network.client.CPacketOpenGui;
-import org.lwjgl.input.Keyboard;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import mrfinger.gothicgamemod.client.gui.GGMGuiCharachterMenu;
+import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
+import mrfinger.gothicgamemod.init.GGMGui;
 import mrfinger.gothicgamemod.init.GGMKeyBindings;
+import mrfinger.gothicgamemod.network.PacketDispatcher;
+import mrfinger.gothicgamemod.network.client.CPacketChangeFightMode;
+import mrfinger.gothicgamemod.network.client.CPacketOpenGui;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.input.Keyboard;
 
 public class EventHandlerClient {
 	

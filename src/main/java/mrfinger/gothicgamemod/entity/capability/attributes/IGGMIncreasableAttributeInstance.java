@@ -1,7 +1,5 @@
 package mrfinger.gothicgamemod.entity.capability.attributes;
 
-import mrfinger.gothicgamemod.entity.capability.IIncreaseble;
-
 public interface IGGMIncreasableAttributeInstance extends IGGMModifiableAttributeInstance {
 
 
@@ -12,9 +10,6 @@ public interface IGGMIncreasableAttributeInstance extends IGGMModifiableAttribut
 
 	boolean setBonuses();
 
-	
-	void changeBaseValue(double changeValue);
-
 
 	float getDefaultValue();
 
@@ -22,8 +17,6 @@ public interface IGGMIncreasableAttributeInstance extends IGGMModifiableAttribut
 
 	float getIncreasingValue();
 
-
-	double increaseAttribute(double value);
 
 	int increaseAttribute(int amount);
 

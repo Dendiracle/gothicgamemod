@@ -1,6 +1,5 @@
 package mrfinger.gothicgamemod.entity.animals;
 
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.world.World;
 
 public class EntityGWolf extends EntityGothicAnimal {

@@ -5,13 +5,14 @@ import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PackEntity {
 
@@ -47,9 +48,11 @@ public class PackEntity {
         System.out.println("Debug in PackEntity init");
         this.world = world;
         this.fraction = fraction;
+        this.aabb = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
         this.entitiesSet = new HashSet<>();
-        this.enemiesSet = new HashSet<>();
+
+        this.aggressiveness = 0.3F;
     }
 
 
@@ -61,10 +64,16 @@ public class PackEntity {
         this.aabb.setBounds(x - this.rad, y, z - this.rad, x + this.rad, y + this.height, z + this.rad);
     }
 
+
+    public Set<IEntityHerd> getEntitiesSet() {
+        return entitiesSet;
+    }
+
     public void addEntityToPack(IEntityHerd entity)
     {
         if (this.entitiesSet.add(entity))
         {
+            entity.onAddToPack(this);
             this.setSize((float) calculatePackRadiusWithAdd(this.rad, entity.getNeedSpaceMultiplier() * this.fraction.getSpaceForEntity()), this.height);
         }
     }
@@ -73,6 +82,7 @@ public class PackEntity {
     {
         if (this.entitiesSet.remove(entity))
         {
+            entity.onRemoveFromPack(this);
             this.setSize((float) calculatePackRadiusWithout(this.rad, entity.getNeedSpaceMultiplier() * this.fraction.getSpaceForEntity()), this.height);
         }
     }
@@ -105,11 +115,6 @@ public class PackEntity {
         this.fraction = fraction;
     }
 
-    public void addEnemy(IGGMEntityLivingBase entity)
-    {
-        this.enemiesSet.add(entity);
-    }
-
 
     public void onHalfSecUpdate()
     {
@@ -125,22 +130,51 @@ public class PackEntity {
             }
             else if (this.aggrLevel < 1.0F)
             {
-                for (IGGMEntityLivingBase annoyer : list) {
-
-                    if (this.fraction.enemiesSet.contains(annoyer.getClass()))
+                int countOfNotEnemies = 0;
+                for (IGGMEntityLivingBase annoyer : list)
+                {
+                    if (!annoyer.inCreative() && this.fraction.enemiesSet.contains(annoyer.getFraction()))
                     {
-                        float d = (float) this.getDistanceTo(annoyer.getPosX(), annoyer.getPosY(), annoyer.getPosZ());
+                        float squareDist = (float) this.getDistanceSQToEntity(annoyer);
+                        float squareRad = this.rad * this.rad;
 
-                        if (d < this.rad) {
-
+                        if (squareDist < squareRad)
+                        {
                             for (IEntityHerd entity : this.entitiesSet)
                             {
                                 if (entity.canEntityBeSeen((Entity) annoyer))
                                 {
-                                    this.aggrLevel += this.aggressiveness * ((this.rad - d) / this.rad);
+                                    this.aggrLevel += this.aggressiveness * ((squareRad - squareDist) / squareRad);
                                     break;
                                 }
+                                else
+                                {
+                                    ++countOfNotEnemies;
+
+                                    if (countOfNotEnemies == list.size())
+                                    {
+                                        this.aggrLevel = 0.0F;
+                                    }
+                                }
                             }
+                        }
+                        else
+                        {
+                            ++countOfNotEnemies;
+
+                            if (countOfNotEnemies == list.size())
+                            {
+                                this.aggrLevel = 0.0F;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ++countOfNotEnemies;
+
+                        if (countOfNotEnemies == list.size())
+                        {
+                            this.aggrLevel = 0.0F;
                         }
                     }
                 }
@@ -185,12 +219,77 @@ public class PackEntity {
                     entity.setEntityToAttack(list.get(index), this.getChaseDuration(entity));
                 }
             }
+        }
 
-            for (IEntityHerd entity : this.entitiesSet)
+        float squareMaxRangeToMembers = this.getMaxRangeToMembers();
+        squareMaxRangeToMembers *= squareMaxRangeToMembers;
+
+        List<IEntityHerd> awaykers = new LinkedList();
+        for (IEntityHerd entity : this.entitiesSet)
+        {
+            double squareDistance = this.getDistanceSQToEntity(entity);
+
+            if (squareDistance > squareMaxRangeToMembers)
             {
-                entity.updatePathFindingToEntityToAttack();
+                awaykers.add(entity);
             }
         }
+
+        for (IEntityHerd awayker : awaykers)
+        {
+            this.removeEntityFromPack(awayker);
+        }
+
+        if (this.aggrLevel <= 0.0F)
+        {
+            int size = this.entitiesSet.size();
+            int i = size * 10;
+            int range = MathHelper.floor_float(this.rad - this.fraction.getSimplePackRange() * 0.5F);
+            int doubleRange = range * 2;
+            int height = (int) (this.height - this.fraction.getSimplePackHeight() * 0.5F);
+            //System.out.println("Debug in PackEntity just living");
+            //System.out.println(" packsize " + size + " rad " + this.rad + " range " + range + " height " + height);
+            for (IEntityHerd entity : this.entitiesSet)
+            {
+                Random random = entity.getRand();
+
+                if (entity.canJustLive() && random.nextInt(i) < size)
+                {
+                    int x = 0;
+                    int y = 0;
+                    int z = 0;
+                    float blockWeight = -0.1F;
+
+                    for (int l = 0; l < 5; ++l)
+                    {
+                        int x1 = (int) this.posX + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
+                        int y1 = (int) this.posY + random.nextInt(height);
+                        int z1 = (int) this.posZ + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
+
+                        float blockWeight1 = entity.getBlockPathWeight(x1, y1, z1);
+
+                        if (blockWeight1 > blockWeight)
+                        {
+                            x = x1;
+                            y = y1;
+                            z = z1;
+                            blockWeight = blockWeight1;
+                        }
+                    }
+                    //System.out.println(x + " " + y + " " + z + " blockeweight " + blockWeight);
+                    if (blockWeight >= 0.0F)
+                    {
+                        entity.setPath(this.world.getEntityPathToXYZ((Entity) entity, x, y, z, 10.0F, true, false, false, true));
+                    }
+                }
+
+
+
+            }
+
+
+        }
+
     }
 
 
@@ -203,7 +302,7 @@ public class PackEntity {
     public double getDistanceSQ(double x, double y, double z)
     {
         x -= this.posX;
-        y -= this.posZ;
+        y -= this.posY;
         z -= this.posZ;
 
         return x * x + y * y + z * z;

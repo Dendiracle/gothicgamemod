@@ -1,9 +1,12 @@
 package mrfinger.gothicgamemod.entity.capability.attributes;
 
-import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 
 public class GGMIncreasableAttributeInstance extends ModifiableAttributeInstance implements IGGMIncreasableAttributeInstance {
 

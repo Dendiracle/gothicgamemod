@@ -1,22 +1,23 @@
 package mrfinger.gothicgamemod.mixin.entity.player;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.entity.capability.GGMExp;
 import mrfinger.gothicgamemod.entity.capability.IGGMExp;
-import mrfinger.gothicgamemod.entity.capability.attributes.*;
-import mrfinger.gothicgamemod.battle.DamageType;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipment;
+import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMInventoryPlayer;
+import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
+import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.item.IItemBlocker;
 import mrfinger.gothicgamemod.item.IItemEquip;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
-import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
 import mrfinger.gothicgamemod.mixin.entity.GGMEntityLivingBase;
 import mrfinger.gothicgamemod.util.GGMTicks;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
@@ -30,21 +31,23 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.event.ForgeEventFactory;
-import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(EntityPlayer.class)
 public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGGMEntityPlayer {
@@ -104,7 +107,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         this.ggmContainerEquipment = new GGMContainerPlayer(this);
         this.attackTicksLeft = (short) -20;
         this.lastAttackDuration = (short) this.getNewAttackDuration();
-        System.out.println("Debug in GGMEntityPlayer " + this.stepHeight);
+
     }
 
 
@@ -151,10 +154,17 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public void restoreCurrentValuesFull() {
+    public Fraction getStandartFraction() {
+        return GGMFractions.humans;
+    }
 
-        for (IGGMDynamicAttributeInstance ai : ((IGGMBaseAttributeMap) this.getAttributeMap()).getDPIColl()) {
+    @Override
+    public void restoreCurrentValuesFull()
+    {
+        Collection<IGGMDynamicAttributeInstance> dpiColl = ((IGGMBaseAttributeMap) this.getAttributeMap()).getDPIColl();
 
+        for (IGGMDynamicAttributeInstance ai : dpiColl)
+        {
             ai.restore();
         }
     }
@@ -209,8 +219,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Inject(method = "onLivingUpdate", at = @At("TAIL"))
-    private void onOnLivingUpdate(CallbackInfo ci) {
-
+    private void onOnLivingUpdate(CallbackInfo ci)
+    {
         if (!thisEntity().worldObj.isRemote) {
 
             if (!this.isDead) {
@@ -440,7 +450,6 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     {
         if (this.itemInUse != null && this.inFightStance())
         {
-            System.out.println("Debug in GGMEntityPlayer: fixItemUseFinish");
 
             this.updateItemUse(this.itemInUse, 16);
             int i = this.itemInUse.stackSize;
@@ -474,7 +483,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
 
-    @Redirect(method = "damageEntity", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ISpecialArmor$ArmorProperties;ApplyArmor(Lnet/minecraft/entity/EntityLivingBase;[Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/DamageSource;D)F"))
+    @Redirect(method = "damageEntity", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ISpecialArmor$ArmorProperties;ApplyArmor(Lnet/minecraft/entity/EntityLivingBase;[Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/DamageSource;D)F", remap = false))
     private float onCalculateArmorAbsorption(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
     {
         IGGMDamageSource gds = (IGGMDamageSource) source;
@@ -708,7 +717,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
         else if (this.attackCooldown <= 10) {
 
-            damage = (float) thisEntity().getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+            damage = (float) thisEntity().getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() * 0.5F;
             map = new HashMap<>(1, 1.0F);
             map.put(GGMBattleSystem.crushing, damage);
             this.attackCooldown = 10;
@@ -771,10 +780,10 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
 
-    @ModifyVariable(method = "getBreakSpeed(Lnet/minecraft/block/Block;ZIIII)F", at = @At(value = "LOAD", ordinal = 0), ordinal = 0)
+    @ModifyVariable(method = "getBreakSpeed(Lnet/minecraft/block/Block;ZIIII)F", at = @At(value = "LOAD", ordinal = 0), ordinal = 0, remap = false)
     private float modifyBreakSpeed(float speedFromTool)
     {
-        return speedFromTool + speedFromTool * (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() / 200.0F;
+        return speedFromTool + speedFromTool * (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() * 0.005F;
     }
 
 

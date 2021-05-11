@@ -1,7 +1,5 @@
 package mrfinger.gothicgamemod.entity.capability;
 
-import codechicken.lib.packet.PacketCustom;
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.init.GGMGui;
 import net.minecraft.nbt.NBTTagCompound;
 

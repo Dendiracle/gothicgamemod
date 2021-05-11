@@ -2,8 +2,6 @@ package mrfinger.gothicgamemod.entity.capability.data;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
-import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
-import net.minecraft.item.ItemStack;
 
 public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
 

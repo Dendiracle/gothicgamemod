@@ -2,7 +2,6 @@ package mrfinger.gothicgamemod.battle;
 
 
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
-import net.minecraft.entity.ai.attributes.IAttribute;
 
 public class UseSpendings {
 

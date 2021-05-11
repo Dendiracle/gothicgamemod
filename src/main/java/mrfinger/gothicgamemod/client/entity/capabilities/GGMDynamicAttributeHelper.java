@@ -1,7 +1,6 @@
 package mrfinger.gothicgamemod.client.entity.capabilities;
 
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
-import mrfinger.gothicgamemod.entity.capability.attributes.IGGMIncreasableAttributeInstance;
 
 public class GGMDynamicAttributeHelper extends GGMIncreasableAttributeHelper
 {

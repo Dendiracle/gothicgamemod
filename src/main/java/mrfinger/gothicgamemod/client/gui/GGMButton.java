@@ -1,12 +1,11 @@
 package mrfinger.gothicgamemod.client.gui;
 
-import mrfinger.gothicgamemod.client.entity.capabilities.GGMIncreasableAttributeHelper;
-import org.lwjgl.opengl.GL11;
-
 import mrfinger.gothicgamemod.GothicMain;
+import mrfinger.gothicgamemod.client.entity.capabilities.GGMIncreasableAttributeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public abstract class GGMButton extends GuiButton
 {

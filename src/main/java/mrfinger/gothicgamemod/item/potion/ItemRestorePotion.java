@@ -1,12 +1,6 @@
 package mrfinger.gothicgamemod.item.potion;
 
-import cpw.mods.fml.common.Mod.EventHandler;
-import mrfinger.gothicgamemod.GothicMain;
-import mrfinger.gothicgamemod.util.RestoreValues;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class ItemRestorePotion extends Item {
 	

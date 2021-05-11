@@ -1,7 +1,5 @@
 package mrfinger.gothicgamemod.mixin.entity;
 
-import mrfinger.gothicgamemod.entity.capability.attributes.GGMIncreasableAttributeInfo;
-import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.projectile.EntityArrow;

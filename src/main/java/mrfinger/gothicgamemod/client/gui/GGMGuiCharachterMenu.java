@@ -1,27 +1,26 @@
 package mrfinger.gothicgamemod.client.gui;
 
-import java.util.ArrayList;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.client.entity.IGGMAbstractClientPlayer;
 import mrfinger.gothicgamemod.client.entity.capabilities.GGMDynamicAttributeHelper;
 import mrfinger.gothicgamemod.client.entity.capabilities.GGMIncreasableAttributeHelper;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMIncreasableAttributeInstance;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
+import mrfinger.gothicgamemod.init.GGMKeyBindings;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.client.CPacketAttributesToUpgrade;
-import net.minecraft.entity.SharedMonsterAttributes;
-import org.lwjgl.input.Keyboard;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mrfinger.gothicgamemod.GothicMain;
-import mrfinger.gothicgamemod.init.GGMKeyBindings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
 
 @SideOnly(Side.CLIENT)
 public class GGMGuiCharachterMenu extends GuiScreen  {

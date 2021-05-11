@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public interface IGGMBaseAttributeMap {
-
+public interface IGGMBaseAttributeMap
+{
 
     IAttributeInstance getAttributeInstance(IAttribute attribute);
 
@@ -27,7 +27,7 @@ public interface IGGMBaseAttributeMap {
     Collection getAllAttributes();
 
 
-    IGGMDynamicAttributeInstance getDPI(IAttribute attribute);
+    IGGMDynamicAttributeInstance getDPI(IGGMAttribute attribute);
 
     Collection<IGGMDynamicAttributeInstance> getDPIColl();
 

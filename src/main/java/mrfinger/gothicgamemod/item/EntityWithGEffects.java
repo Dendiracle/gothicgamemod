@@ -1,14 +1,14 @@
 package mrfinger.gothicgamemod.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mrfinger.gothicgamemod.entity.capability.effects.GEffect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityWithGEffects implements IExtendedEntityProperties {
 		

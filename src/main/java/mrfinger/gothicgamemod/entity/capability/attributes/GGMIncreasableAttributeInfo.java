@@ -1,8 +1,5 @@
 package mrfinger.gothicgamemod.entity.capability.attributes;
 
-import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
-import net.minecraft.entity.ai.attributes.IAttribute;
-
 public class GGMIncreasableAttributeInfo {
 
 

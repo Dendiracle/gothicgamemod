@@ -1,14 +1,12 @@
 package mrfinger.gothicgamemod.entity.player;
 
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.IGGMEntityExperienceable;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityCaster;
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithStamina;
-import mrfinger.gothicgamemod.inventory.IGGMContainer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

@@ -2,8 +2,6 @@ package mrfinger.gothicgamemod.command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class CommandGothicStats extends CommandBase{
 

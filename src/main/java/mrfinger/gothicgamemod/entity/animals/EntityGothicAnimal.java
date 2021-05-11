@@ -1,10 +1,6 @@
 package mrfinger.gothicgamemod.entity.animals;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import mrfinger.gothicgamemod.fractions.Fraction;
-import mrfinger.gothicgamemod.init.GEntities;
 import mrfinger.gothicgamemod.util.GGMTicks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,6 +9,9 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class EntityGothicAnimal extends EntityMob {
 	
@@ -33,7 +32,7 @@ public abstract class EntityGothicAnimal extends EntityMob {
 	public EntityGothicAnimal(World world, boolean herdAnimal) {
 		super(world);
 		this.herdAnimal = herdAnimal;
-		if (herdAnimal) {
+		/*if (herdAnimal) {
 			
 			AnimalsPack pack = EntityGothicAnimal.getClosestPack(this);
 			
@@ -42,7 +41,7 @@ public abstract class EntityGothicAnimal extends EntityMob {
 			}
 			
 			this.pack = pack;
-		}
+		}*/
 	}
 	
 	@Override
@@ -224,7 +223,7 @@ public abstract class EntityGothicAnimal extends EntityMob {
 			
 			float dd = pack.getDistancetoEntity(entity);
 			
-			if (dd < d && pack.fraction.fractionSet.contains(entity.getClass())) {
+			if (dd < d && pack.fraction.alliesSet.contains(entity.getClass())) {
 				d = dd;
 				p = pack;
 			}

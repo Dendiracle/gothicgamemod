@@ -34,7 +34,7 @@ public abstract class GGMEntityTrackerEntry {
 
     }
 
-    @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "INVOKE", target = "Ljava/util/Set;clear()V"))
+    @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "INVOKE", target = "Ljava/util/Set;clear()V", remap = false))
     private void updateDynamicProperties(CallbackInfo ci) {
 
         IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.myEntity;

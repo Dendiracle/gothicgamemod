@@ -4,7 +4,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-import java.util.*;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class GGMDynamicAttributeInstance extends GGMIncreasableAttributeInstance implements IGGMDynamicAttributeInstance {
 

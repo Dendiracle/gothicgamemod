@@ -1,9 +1,12 @@
 package mrfinger.gothicgamemod.entity;
 
-import mrfinger.gothicgamemod.entity.capability.EntitySkills;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
+import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMModifiableAttributeInstance;
-import mrfinger.gothicgamemod.entity.capability.skills.IGGMSkillInstance;
+import mrfinger.gothicgamemod.fractions.Fraction;
+import mrfinger.gothicgamemod.init.GGMCapabilities;
+import mrfinger.gothicgamemod.init.GGMFractions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
@@ -11,40 +14,70 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
+
+import java.util.Collection;
+import java.util.Map;
 
 public interface IGGMEntityLivingBase extends IGGMEntity {
 
 
-	int initialLevel();
-	
-	
-	void saveExp(NBTTagCompound nbt);
-	
-	void loadExp(NBTTagCompound nbt);
-	
-	
-	void saveSkills(NBTTagCompound compound);
-	
-	void loadSkills(NBTTagCompound compound);
-	
-	
-	void saveAbilities(NBTTagCompound compound);
-	
-	void loadAbilities(NBTTagCompound compound);
-	
-	
-	void restoreCurrentValuesFull();
+	default int initialLevel()
+	{
+		float l = 0.0F;
+		Map<IAttribute, IAttributeInstance> map = ((IGGMBaseAttributeMap) this.getAttributeMap()).getAllAttributesMap();
+
+		for (Map.Entry<IAttribute, IAttributeInstance> e : map.entrySet()) {
+
+			Float o = GGMCapabilities.expGainFromAttributesMap.get(e.getKey());
+
+			if (o != null && o > 0.0F) l += e.getValue().getBaseValue() / o;
+		}
+
+		return Math.round(l);
+	}
 
 
-	int getLvl();
+	default int getLvl()
+	{
+		return 0;
+	}
 
-	void setLvl(int lvl);
+	default void setLvl(int lvl) {}
+
+
+	default void saveExp(NBTTagCompound nbt) {}
+
+	default void loadExp(NBTTagCompound nbt) {}
+	
+	
+	default void restoreCurrentValuesFull()
+	{
+		Collection<IGGMDynamicAttributeInstance> dpiColl = ((IGGMBaseAttributeMap) this.getAttributeMap()).getDPIColl();
+
+		for (IGGMDynamicAttributeInstance ai : dpiColl)
+		{
+			ai.restore();
+		}
+	}
+
+
+	default Fraction getFraction()
+	{
+		return this.getStandartFraction();
+	}
+
+	default Fraction getStandartFraction()
+	{
+		return GGMFractions.neutralFraction;
+	}
 
 
 	void onLivingUpdate();
 
-	int getMaxAir();
+	default int getMaxAir()
+	{
+		return 300;
+	}
 
 
 	ItemStack getHeldItem();
@@ -54,10 +87,16 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	IAttributeInstance getEntityAttribute(IAttribute attribute);
 
-	IGGMDynamicAttributeInstance getDP(IAttribute attribute);
+	default IGGMDynamicAttributeInstance getDP(IGGMAttribute attribute)
+	{
+		return ((IGGMBaseAttributeMap) this.getAttributeMap()).getDPI(attribute);
+	}
 
 
-	IAttributeInstance getHealthAttribute();
+	default IAttributeInstance getHealthAttribute()
+	{
+		return this.getDP(GGMCapabilities.maxHealth);
+	}
 
 	float getHealth();
 
@@ -65,14 +104,19 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	float getMaxHealth();
 
-	
-	IGGMSkillInstance getSkill(EntitySkills name);
+
+	default void inreaseAttribute(IAttribute attribute, float value)
+	{
+		IGGMModifiableAttributeInstance ai = (IGGMModifiableAttributeInstance) this.getEntityAttribute(attribute);
+
+		ai.increaseAttribute(value);
+	}
 
 
-	void inreaseAttribute(IAttribute attribute, float value);
-
-
-	double jumpHeight();
+	default double jumpHeight()
+	{
+		return 0.41999998688697815D;
+	}
 
 
 	default boolean isCanSprint() {
@@ -83,30 +127,48 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	void setSprinting(boolean sprinting);
 
-	void setDisallowSprintTimer(int timer);
+	default void setDisallowSprintTimer(int timer) {}
 
-	int getDisallowSprintTimer();
-
-
-	void justAttack(Entity entity, float distance);
-
-	void tryAttack(IGGMEntity entity);
+	default int getDisallowSprintTimer()
+	{
+		return 0;
+	}
 
 
-	int getTotalArmorValue();
+	default void justAttack(Entity entity, float distance) {}
+
+	default void tryAttack(IGGMEntity entity, float distance) {}
+
+
+	default int getTotalArmorValue()
+	{
+		return 0;
+	}
 
 	boolean attackEntityAsMob(Entity entity);
 
-	int attackDuration();
+	default int attackDuration()
+	{
+		return 20;
+	}
 
-	float attackDistance();
+	default float attackDistance()
+	{
+		return 1.0F;
+	}
 
 	ItemStack getEquipmentInSlot(int slot);
 
 
-	void flagForLvlUpdate();
+	default void flagForLvlUpdate()
+	{
 
-	boolean isNeedExpUpdate();
+	}
+
+	default boolean isNeedExpUpdate()
+	{
+		return false;
+	}
 
 
 	boolean isClientWorld();

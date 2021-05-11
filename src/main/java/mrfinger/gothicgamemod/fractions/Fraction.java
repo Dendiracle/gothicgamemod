@@ -1,9 +1,7 @@
 package mrfinger.gothicgamemod.fractions;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
-
-import net.minecraft.entity.EntityLivingBase;
 
 public class Fraction {
 
@@ -17,9 +15,9 @@ public class Fraction {
 	}
 	
 	
-	public final Set<Class<? extends EntityLivingBase>> fractionSet = new LinkedHashSet();
+	public final Set<Fraction> alliesSet = new HashSet<>();
 	
-	public final Set<Class<? extends EntityLivingBase>> enemiesSet = new LinkedHashSet();
+	public final Set<Fraction> enemiesSet = new HashSet<>();
 
 
 	@Override
@@ -32,6 +30,13 @@ public class Fraction {
 	public boolean equals(Object obj)
 	{
 		return obj instanceof Fraction && this.unlocalizedName.equals(((Fraction) obj).unlocalizedName);
+	}
+
+
+	@Override
+	public String toString()
+	{
+		return "Fraction is " + this.unlocalizedName;
 	}
 
 }

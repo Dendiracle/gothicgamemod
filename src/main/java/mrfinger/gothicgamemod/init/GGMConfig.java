@@ -1,11 +1,5 @@
 package mrfinger.gothicgamemod.init;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.entity.capability.attributes.GGMIncreasableAttributeInfo;
 import net.minecraft.entity.EntityList;
@@ -14,6 +8,12 @@ import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class GGMConfig {
 	

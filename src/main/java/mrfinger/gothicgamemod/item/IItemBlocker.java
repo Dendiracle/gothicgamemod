@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.item;
 
-import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.battle.DamageType;
+import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 
 import java.util.Map;

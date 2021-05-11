@@ -1,8 +1,5 @@
 package mrfinger.gothicgamemod.entity.capability.abilities;
 
-import mrfinger.gothicgamemod.util.Packet;
-import net.minecraft.nbt.NBTTagCompound;
-
 /*public class Switchable implements IGothicAbility {
 	
 	private boolean active;

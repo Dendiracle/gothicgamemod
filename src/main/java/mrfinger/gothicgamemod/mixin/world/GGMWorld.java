@@ -1,11 +1,10 @@
 package mrfinger.gothicgamemod.mixin.world;
 
-import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
+import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
-import mrfinger.gothicgamemod.util.GGMTicks;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,7 +74,9 @@ public abstract class GGMWorld implements IGGMWorld {
         {
             for (PackEntity pack : fractions)
             {
-                if (pack.getDistanceSQToEntity(entity) <= pack.getMaxRangeToMembers()) return pack;
+                float maxRangeSQ = pack.getMaxRangeToMembers();
+                maxRangeSQ *= maxRangeSQ;
+                if (pack.getDistanceSQToEntity(entity) <= maxRangeSQ) return pack;
             }
         }
 

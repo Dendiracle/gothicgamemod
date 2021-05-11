@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -27,6 +28,8 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd {
     public EntityHerd(World world)
     {
         super(world);
+
+        this.findNewPack();
     }
 
 
@@ -43,15 +46,34 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd {
 
 
     @Override
+    public void onAddToPack(PackEntity pack)
+    {
+        System.out.println("Debug in EntityHerd adding to pack");
+    }
+
+    @Override
+    public void onRemoveFromPack(PackEntity pack)
+    {
+        System.out.println("Debug in EntityHerd removing from pack");
+        if (this.chaseCount == 0)
+        {
+            this.findNewPack();
+        }
+    }
+
+
+    @Override
     public PackEntity findNewPack()
     {
         PackEntity pack = this.getEntityWorld().findRightPack(this);
+
         if (this.pack != pack)
         {
             if (this.pack != null) this.pack.removeEntityFromPack(this);
             pack.addEntityToPack(this);
             this.pack = pack;
         }
+
         return pack;
     }
 
@@ -96,21 +118,38 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd {
     {
         this.worldObj.theProfiler.startSection("ai");
 
-        if (this.entityToAttack != null && this.entityToAttack.isEntityAlive())
+        if (this.entityToAttack != null)
         {
-            if (this.canEntityBeSeen((Entity) this.entityToAttack))
+            System.out.println("Debig in EntityHerd chase = " + this.chaseCount);
+            if (this.entityToAttack instanceof EntityPlayerMP && ((EntityPlayerMP)this.entityToAttack).theItemInWorldManager.isCreative())
             {
-                this.tryAttack(this.entityToAttack);
+                this.nullifyEntityToAttack();
             }
-        }
-        else
-        {
-            this.entityToAttack = null;
-        }
+            else if (this.entityToAttack.isEntityAlive())
+            {
+                if (this.canEntityBeSeen((Entity) this.entityToAttack))
+                {
+                    float distance = (float) this.entityToAttack.getDistanceSqToEntity(this);
 
-        if (this.entityToAttack instanceof EntityPlayerMP && ((EntityPlayerMP)this.entityToAttack).theItemInWorldManager.isCreative())
-        {
-            this.entityToAttack = null;
+                    if (distance < 9.0F)
+                    {
+                        this.chaseCount = this.getDefaultChaseDuration();
+                    }
+
+                    this.updatePathFindingToEntityToAttack();
+
+                    this.tryAttack(this.entityToAttack, distance);
+                }
+
+                if (--this.chaseCount == 0)
+                {
+                    this.nullifyEntityToAttack();
+                }
+            }
+            else
+            {
+                this.nullifyEntityToAttack();
+            }
         }
 
         this.worldObj.theProfiler.endSection();
@@ -185,14 +224,61 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd {
         else
         {
             super.updateEntityActionState();
-            this.pathToEntity = null;
         }
     }
 
+
+    @Override
+    public void nullifyEntityToAttack()
+    {
+        this.entityToAttack = null;
+        this.chaseCount = 0;
+        this.pathToEntity = null;
+
+        if (this.pack == null)
+        {
+            this.findNewPack();
+        }
+    }
+
+
+    @Override
+    public void setPath(PathEntity path)
+    {
+        this.pathToEntity = path;
+    }
 
     @Override
     public void updatePathFindingToEntityToAttack()
     {
         this.pathToEntity = this.worldObj.getPathEntityToEntity(this, (Entity) this.entityToAttack, 16.0F, true, false, false, true);
     }
+
+
+    @Override
+    public boolean attackEntityFrom(DamageSource damageSource, float damage)
+    {
+        boolean flag = super.attackEntityFrom(damageSource, damage);
+
+        if (flag)
+        {
+            this.setEntityToAttack((IGGMEntity) damageSource.getSourceOfDamage());
+        }
+
+        return flag;
+    }
+
+    @Override
+    public float getBlockPathWeight(int x, int y, int z)
+    {
+        return 0.0F;
+    }
+
+
+    @Override
+    public boolean canJustLive()
+    {
+        return this.pathToEntity == null;
+    }
+
 }

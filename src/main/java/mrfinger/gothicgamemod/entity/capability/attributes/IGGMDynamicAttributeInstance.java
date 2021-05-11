@@ -1,9 +1,5 @@
 package mrfinger.gothicgamemod.entity.capability.attributes;
 
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-
-import java.util.UUID;
-
 public interface IGGMDynamicAttributeInstance extends IGGMIncreasableAttributeInstance {
 
 

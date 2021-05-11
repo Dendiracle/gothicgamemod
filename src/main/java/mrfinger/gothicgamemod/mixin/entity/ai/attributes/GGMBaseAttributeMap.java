@@ -1,7 +1,9 @@
 package mrfinger.gothicgamemod.mixin.entity.ai.attributes;
 
 import mrfinger.gothicgamemod.entity.capability.attributes.*;
-import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 @Mixin(BaseAttributeMap.class)
-public abstract class GGMBaseAttributeMap implements IGGMBaseAttributeMap {
-
+public abstract class GGMBaseAttributeMap implements IGGMBaseAttributeMap
+{
 
     @Shadow @Final protected Map attributesByName;
     @Shadow @Final protected Map attributes;
@@ -79,7 +81,7 @@ public abstract class GGMBaseAttributeMap implements IGGMBaseAttributeMap {
 
 
     @Override
-    public IGGMDynamicAttributeInstance getDPI(IAttribute attribute) {
+    public IGGMDynamicAttributeInstance getDPI(IGGMAttribute attribute) {
         return this.dpiMap.get(attribute);
     }
 

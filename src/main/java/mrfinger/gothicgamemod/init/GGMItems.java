@@ -1,15 +1,8 @@
 package mrfinger.gothicgamemod.init;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-import mrfinger.gothicgamemod.battle.UseSpendings;
-import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.debug.ItemDebug;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.item.IItemBlocker;
@@ -21,6 +14,11 @@ import mrfinger.gothicgamemod.item.magic.ItemMagicCast;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.item.Item;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GGMItems {
 	

@@ -5,7 +5,6 @@ import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
-import net.minecraft.entity.ai.attributes.IAttribute;
 
 import java.util.Map;
 

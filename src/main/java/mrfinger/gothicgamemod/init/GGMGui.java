@@ -1,14 +1,10 @@
 package mrfinger.gothicgamemod.init;
 
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.client.gui.GGMGuiInGame;
 import mrfinger.gothicgamemod.handlers.GuiHandler;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 public class GGMGui {

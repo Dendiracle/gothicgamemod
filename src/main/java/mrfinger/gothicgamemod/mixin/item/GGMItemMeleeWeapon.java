@@ -10,14 +10,11 @@ import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.item.IItemBlocker;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
-import mrfinger.gothicgamemod.item.equipment.IItemRequiring;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -222,7 +219,7 @@ public abstract class GGMItemMeleeWeapon extends GGMItem implements IItemMeleeWe
     }
 
 
-    @Redirect(method = "getItemAttributeModifiers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Multimap;put(Ljava/lang/Object;Ljava/lang/Object;)Z"))
+    @Redirect(method = "getItemAttributeModifiers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Multimap;put(Ljava/lang/Object;Ljava/lang/Object;)Z", remap = false))
     private boolean removeModifierPut(Multimap map, Object attributeName, Object modifier) {
         return false;
     }

@@ -1,25 +1,22 @@
 package mrfinger.gothicgamemod.mixin.entity.player;
 
-import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
-import mrfinger.gothicgamemod.init.GGMGui;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.management.ItemInWorldManager;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
 @Mixin(EntityPlayerMP.class)
 public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGMEntityPlayerMP {
 
 
+    @Shadow @Final public ItemInWorldManager theItemInWorldManager;
     protected Entity[] entitiesToAttack;
 
     protected boolean repeatStartAttack;
@@ -95,6 +92,11 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
 
     }
 
+
+    @Override
+    public boolean inCreative() {
+        return this.theItemInWorldManager.isCreative();
+    }
 
     @Override
     public EntityPlayerMP thisEntity() {

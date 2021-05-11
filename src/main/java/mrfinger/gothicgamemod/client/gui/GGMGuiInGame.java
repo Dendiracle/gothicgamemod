@@ -1,25 +1,23 @@
 package mrfinger.gothicgamemod.client.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.client.multiplayer.IGGMPlayerControllerMP;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.init.GGMCapabilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GGMGuiInGame extends Gui {
 	

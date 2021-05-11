@@ -6,9 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Random;
 
 @Mixin(Entity.class)
 public abstract class GGMEntity implements IGGMEntity {
@@ -36,6 +35,9 @@ public abstract class GGMEntity implements IGGMEntity {
 
     @Shadow public float stepHeight;
 
+    @Shadow protected Random rand;
+
+
     @Override
     public int getEntityId() {
         return this.entityId;
@@ -61,5 +63,11 @@ public abstract class GGMEntity implements IGGMEntity {
     @Override
     public double getPosZ() {
         return posZ;
+    }
+
+
+    @Override
+    public Random getRand() {
+        return this.rand;
     }
 }

@@ -1,21 +1,19 @@
 package mrfinger.gothicgamemod.entity.capability.skills;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import mrfinger.gothicgamemod.api.CMap;
-import mrfinger.gothicgamemod.api.ICMap;
 import mrfinger.gothicgamemod.entity.capability.EntitySkills;
 import mrfinger.gothicgamemod.entity.capability.IModifiable;
 import mrfinger.gothicgamemod.entity.capability.data.GothicSkill;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-	
+import java.util.HashMap;
+import java.util.Map;
 
-public class GGMSkillInstance implements IGGMSkillInstance {
-		
 	
+/*
+public  class GGMSkillInstance implements IGGMSkillInstance {
+		
+
 	public final EntitySkills				name;
 	
 	public final EntityLivingBase 			entity;
@@ -26,8 +24,7 @@ public class GGMSkillInstance implements IGGMSkillInstance {
 	
 	protected float 						value,
 											learnedFromNotLP;
-	
-	protected final Map<Integer, ICMap.IPair<IModifiable.ModifierType, Float>> skillModifiersMap;
+
 	
 	
 	public GGMSkillInstance(GothicSkill skill, EntityLivingBase entity) {
@@ -36,8 +33,7 @@ public class GGMSkillInstance implements IGGMSkillInstance {
 		
 		this.value = skill.nativeValue;
 		this.maxCanLearnFromNotLP = skill.maxCanLearnFromNotLP;
-		
-		skillModifiersMap = new HashMap<Integer, ICMap.IPair<ModifierType, Float>>(1, 0.9F);
+
 	}
 	
 	
@@ -162,4 +158,4 @@ public class GGMSkillInstance implements IGGMSkillInstance {
 	}
 
 
-}
+}*/
