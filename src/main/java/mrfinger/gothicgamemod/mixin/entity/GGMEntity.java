@@ -6,6 +6,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 
@@ -36,6 +39,7 @@ public abstract class GGMEntity implements IGGMEntity {
     @Shadow public float stepHeight;
 
     @Shadow protected Random rand;
+
 
 
     @Override
@@ -69,5 +73,17 @@ public abstract class GGMEntity implements IGGMEntity {
     @Override
     public Random getRand() {
         return this.rand;
+    }
+
+
+    @Inject(method = "mountEntity", at = @At("HEAD"), cancellable = true)
+    private void onMountEntity(Entity entity, CallbackInfo ci)
+    {
+        if (this.cancelMount((IGGMEntity) entity)) ci.cancel();
+    }
+
+    protected boolean cancelMount(IGGMEntity entity)
+    {
+        return false;
     }
 }

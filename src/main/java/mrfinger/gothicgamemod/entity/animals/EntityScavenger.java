@@ -30,8 +30,8 @@ public class EntityScavenger extends EntityHerd
 	{
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.9D);
-		this.setSize(0.5F, 0.9F);
+		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
+		this.setSize(0.5F, 1.2F);
 	}
 
 

@@ -62,8 +62,12 @@ public interface IGGMEntityExperienceable extends IGGMEntityLivingBase {
         }
 
         this.getExpCap().changeLP(-needLP);
-
     }
 
+
+    default void gainExp(int value)
+    {
+        this.getExpCap().gainExp(value);
+    }
 
 }

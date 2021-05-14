@@ -101,8 +101,16 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd {
     public void setEntityToAttack(IGGMEntity entity)
     {
         this.entityToAttack = entity;
-        if (entity != null) this.chaseCount = this.getDefaultChaseDuration();
-        else this.chaseCount = 0;
+        if (entity != null)
+        {
+            this.chaseCount = this.getDefaultChaseDuration();
+            this.setSprinting(true);
+        }
+        else
+        {
+            this.chaseCount = 0;
+            this.setSprinting(false);
+        }
     }
 
     @Override
@@ -278,7 +286,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd {
     @Override
     public boolean canJustLive()
     {
-        return this.pathToEntity == null;
+        return this.pathToEntity == null && this.getCurrentAnimation() == null;
     }
 
 }

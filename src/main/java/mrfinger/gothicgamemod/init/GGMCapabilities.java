@@ -107,6 +107,8 @@ public class GGMCapabilities {
 		((RangedAttribute) attackDamage).setShouldWatch(true);
 		attackDamage.setBonus(SharedMonsterAttributes.knockbackResistance, 0.0005F);
 
+		dexterity.setBonus(SharedMonsterAttributes.movementSpeed, 0.0005F);
+
 		set.add(maxHealth);
 		set.add(maxStamina);
 		set.add(maxMana);

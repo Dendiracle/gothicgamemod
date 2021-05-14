@@ -1,10 +1,15 @@
 package mrfinger.gothicgamemod.mixin.entity;
 
 import mrfinger.gothicgamemod.battle.DamageType;
+import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.AnimationEntityLiving;
+import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffect;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,26 +20,35 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashMap;
 import java.util.Map;
-
 
 @Mixin(EntityLivingBase.class)
 public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntityLivingBase {
 
 
     private int 							lvl;
-
     private boolean							needExpUpdate;
 
 	private int 							disSprintTimer;
 
-
     @Shadow private BaseAttributeMap 		attributeMap;
+
+
+    protected Map<IGGMEffect, IGGMEffectInstance> tickingEffectsMap;
+	protected Map<IGGMEffect, IGGMEffectInstance> attackEffectsMap;
+	protected Map<IGGMEffect, IGGMEffectInstance> otherEffectsMap;
+
+
+    protected IAnimation currentAnimation;
+    protected IAnimation defaulAnimation;
+
 
 	@Shadow protected float 				lastDamage;
 
@@ -50,6 +64,13 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	{
 		this.lvl = this.initialLevel();
 		this.flagForLvlUpdate();
+
+		this.tickingEffectsMap 	= new HashMap<>();
+		this.attackEffectsMap 	= new HashMap<>();
+		this.otherEffectsMap	= new HashMap<>();
+
+		this.defaulAnimation = new AnimationEntityLiving(this);
+		this.currentAnimation = this.getDefaultAnimation();
 	}
 
 
@@ -119,8 +140,15 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 
-	@Inject(method = "onLivingUpdate", at = @At("TAIL"))
-	private void onOnLivingUpdate(CallbackInfo ci) {
+	@Inject(method = "onLivingUpdate", at = @At("HEAD"))
+	private void onOnLivingUpdate(CallbackInfo ci)
+	{
+		for (IGGMEffectInstance effect : this.tickingEffectsMap.values())
+		{
+			effect.onEntityUpdate();
+		}
+
+		if (this.currentAnimation != null) this.currentAnimation.onUpdate();
 
     	if (this.disSprintTimer > 0 ) --this.disSprintTimer;
 	}
@@ -130,19 +158,103 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		return this.getMaxAir();
 	}
 
+
+	@Override
+	public Map<IGGMEffect, IGGMEffectInstance> getEffectsMap()
+	{
+		return this.tickingEffectsMap;
+	}
+
+	@Override
+	public Map<IGGMEffect, IGGMEffectInstance> getAttackEffectsMap()
+	{
+		return attackEffectsMap;
+	}
+
+	@Override
+	public Map<IGGMEffect, IGGMEffectInstance> getOtherEffectsMap()
+	{
+		return otherEffectsMap;
+	}
+
+
+	@Override
+	public IAnimation getCurrentAnimation() {
+		return this.currentAnimation;
+	}
+
+	@Override
+	public IAnimation getDefaultAnimation()
+	{
+		return this.defaulAnimation;
+	}
+
+	@Override
+	public void setAnimation(IAnimation animation)
+	{
+		this.currentAnimation = this.currentAnimation.onSetNewAnimation(animation);
+
+		if (this.currentAnimation == null) this.currentAnimation = this.getDefaultAnimation();
+
+		this.currentAnimation.setEntity(this);
+	}
+
+	@Override
+	public boolean endAnimation()
+	{
+		IAnimation old = this.getCurrentAnimation();
+
+		if (old.canEndAnimation())
+		{
+			this.currentAnimation = this.getDefaultAnimation();
+			old.onEndAnimation();
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public int getMaxAir() {
 		return 300;
 	}
 
 
-	@Inject(method = "attackEntityFrom", at = @At(value = "HEAD"))
-	private void cancelCancel(DamageSource ds, float damage, CallbackInfoReturnable<Boolean> ci) {
+	public void onKillEntity(EntityLivingBase entity)
+	{
+		for (IGGMEffectInstance effect : this.attackEffectsMap.values())
+		{
+			effect.onKillEntity((IGGMEntityLivingBase) entity);
+		}
+	}
+
+
+	@Inject(method = "attackEntityFrom", at = @At(value = "JUMP", ordinal = 1), cancellable = true)
+	private void cancelCancel(DamageSource ds, float damage, CallbackInfoReturnable<Boolean> ci)
+	{
+		boolean cancel = false;
+
+		for (IGGMEffectInstance effect : this.attackEffectsMap.values())
+		{
+			if (effect.onAttackEntityFrom((IGGMDamageSource) ds, damage)) cancel = true;
+		}
+
+		if (cancel) ci.setReturnValue(true);
 
     	if (((IGGMDamageSource) ds).isSettedValues()) {
     		this.lastDamage = 0.0F;
 		}
 	}
+
+	@Inject(method = "onDeath", at = @At(value = "JUMP", ordinal = 1))
+	private void onDeathOfEntity(DamageSource damageSource, CallbackInfo ci)
+	{
+		for (IGGMEffectInstance effect : this.attackEffectsMap.values())
+		{
+			effect.onDeath((IGGMDamageSource) damageSource);
+		}
+	}
+
 
 	@Inject(method = "applyArmorCalculations", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/EntityLivingBase;damageArmor(F)V"), cancellable = true)
 	private void onApplyArmorCalculations(DamageSource ds, float damage, CallbackInfoReturnable<Float> cir) {
@@ -171,10 +283,25 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}*/
 
 
+	@Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
+	private void onJumpHead(CallbackInfo ci)
+	{
+		if (this.currentAnimation.denyJump()) ci.cancel();
+	}
+
+
 	@Redirect(method = "jump", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionY:D", ordinal = 0))
 	private void jumpFix(EntityLivingBase entity, double motionY)
 	{
-		entity.motionY = this.jumpHeight();
+		double origin = this.jumpHeight();
+		double newMotion = origin;
+
+		for (IGGMEffectInstance effect : this.otherEffectsMap.values())
+		{
+			newMotion = effect.onJump(origin, newMotion);
+		}
+
+		entity.motionY = newMotion;
 	}
 
 
@@ -266,6 +393,20 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 
+	@Override
+	protected boolean cancelMount(IGGMEntity entity)
+	{
+		boolean flag = false;
+
+		for (IGGMEffectInstance effect : this.otherEffectsMap.values())
+		{
+			if (effect.onMountEntity(entity)) flag = true;
+		}
+
+		flag = this.currentAnimation.denyMount(entity, flag);
+
+		return flag;
+	}
 
 
 

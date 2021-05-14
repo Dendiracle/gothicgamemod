@@ -12,7 +12,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 public class EventHandlerEntity {
 	
 	
-	@SubscribeEvent
+	/*@SubscribeEvent
 	public void onLivingDeath(LivingDeathEvent event)
 	{
 		Entity from = event.source.getEntity();
@@ -25,7 +25,7 @@ public class EventHandlerEntity {
 			if (to instanceof IGGMEntityPlayer) gainExp += 100;
 			statsFrom.getExpCap().gainExp(gainExp);
 	    }
-	}
+	}*/
 
 
 }

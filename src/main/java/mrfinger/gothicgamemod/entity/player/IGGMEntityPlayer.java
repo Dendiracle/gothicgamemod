@@ -29,8 +29,13 @@ public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperi
         Container getGGMContainer();
 
 
+        boolean isUsingItem();
+
         boolean isUsingLH();
 
+        void setItemInUse(ItemStack itemStack, int duration);
+
+        void stopUsingItem();
 
         void clearItemInUse();
 

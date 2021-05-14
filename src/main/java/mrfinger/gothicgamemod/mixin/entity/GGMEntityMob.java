@@ -2,7 +2,10 @@ package mrfinger.gothicgamemod.mixin.entity;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
+import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityMob;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffect;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
@@ -13,7 +16,9 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +26,11 @@ import java.util.Map;
 @Mixin(EntityMob.class)
 public abstract class GGMEntityMob extends GGMEntityCreature implements IGGMEntityMob {
 
-    int aaa;
+
+    @Inject(method = "<init>*", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci)
+    {
+    }
 
 
     @Redirect(method = "attackEntityAsMob", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
@@ -54,10 +63,14 @@ public abstract class GGMEntityMob extends GGMEntityCreature implements IGGMEnti
         }
 
         ((IGGMDamageSource) ds).setDamageValues(map);
+
+        for (IGGMEffectInstance effect : this.attackEffectsMap.values())
+        {
+            ds = (DamageSource) effect.onAttackTarget((IGGMEntity) entity, (IGGMDamageSource) ds, damage);
+        }
+
         return entity.attackEntityFrom(ds, damage);
     }
-
-
 
 
 

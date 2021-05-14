@@ -110,14 +110,10 @@ public class GGMExp implements IGGMExp {
     @Override
     public boolean gainExp(int exp) {
 
-        if (exp > 0) {
-
+        if (exp > 0)
+        {
             int simpleLvl = this.entity.getLvl();
             this.changeExp(exp);
-            if (this.entity.getEntityWorld().isRemote()) {
-
-                GGMGui.guiInGame.addGainedExp(exp);
-            }
             if (this.entity.getLvl() > simpleLvl) {
 
                 this.changeLP((this.entity.getLvl() - simpleLvl) * this.lpFLvl);

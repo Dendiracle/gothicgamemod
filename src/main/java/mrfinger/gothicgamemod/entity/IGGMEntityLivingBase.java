@@ -1,9 +1,12 @@
 package mrfinger.gothicgamemod.entity;
 
+import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMModifiableAttributeInstance;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffect;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMFractions;
@@ -74,9 +77,44 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	void onLivingUpdate();
 
+
+	default IAnimation getCurrentAnimation()
+	{
+		return null;
+	}
+
+	default IAnimation getDefaultAnimation()
+	{
+		return null;
+	}
+
+	default void setAnimation(IAnimation animation) {}
+
+	default boolean endAnimation()
+	{
+		return false;
+	}
+
+
 	default int getMaxAir()
 	{
 		return 300;
+	}
+
+
+	default Map<IGGMEffect, IGGMEffectInstance> getEffectsMap()
+	{
+		return null;
+	}
+
+	default Map<IGGMEffect, IGGMEffectInstance> getAttackEffectsMap()
+	{
+		return null;
+	}
+
+	default Map<IGGMEffect, IGGMEffectInstance> getOtherEffectsMap()
+	{
+		return null;
 	}
 
 

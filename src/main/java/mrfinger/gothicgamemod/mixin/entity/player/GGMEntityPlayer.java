@@ -2,16 +2,21 @@ package mrfinger.gothicgamemod.mixin.entity.player;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
+import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.GGMExp;
 import mrfinger.gothicgamemod.entity.capability.IGGMExp;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffect;
+import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
 import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipment;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMInventoryPlayer;
 import mrfinger.gothicgamemod.fractions.Fraction;
+import mrfinger.gothicgamemod.init.GEntities;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMFractions;
@@ -21,6 +26,7 @@ import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
 import mrfinger.gothicgamemod.mixin.entity.GGMEntityLivingBase;
 import mrfinger.gothicgamemod.util.GGMTicks;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -64,8 +70,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
     protected IGGMDynamicAttributeInstance  mana;
 
-
-    private byte magicCircle;
+    //protected Map<IGGMEffect, IGGMEffectInstance> useItemEffectsMap;
 
     @Shadow private ItemStack itemInUse;
     @Shadow private int itemInUseCount;
@@ -107,6 +112,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         this.ggmContainerEquipment = new GGMContainerPlayer(this);
         this.attackTicksLeft = (short) -20;
         this.lastAttackDuration = (short) this.getNewAttackDuration();
+
+        //this.useItemEffectsMap 	= new HashMap<>();
 
     }
 
@@ -236,7 +243,6 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         }
 
         this.updateAttack();
-        this.controlCurrentItem();
     }
 
 
@@ -396,11 +402,16 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         return this.getStaminaSpendingOnSprint() * 12.0F;
     }
 
+    @Override
+    public double jumpHeight() {
+        return 0.42D + this.getEntityAttribute(GGMCapabilities.dexterity).getAttributeValue() * 0.0005D;
+    }
+
     @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
     private void onJump(CallbackInfo ci) {
 
-        if (!this.capabilities.isCreativeMode && !this.canJump()) {
-
+        if (!this.capabilities.isCreativeMode && (this.currentAnimation.denyJump() || !this.canJump()))
+        {
             ci.cancel();
         }
     }
@@ -411,10 +422,11 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Inject(method = "addMovementStat", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;addExhaustion(F)V", ordinal = 2))
-    private void onSprinting(CallbackInfo ci) {
-
+    private void onSprinting(CallbackInfo ci)
+    {
         this.sprintUpdate();
     }
+
 
     @Override
     public boolean isUsingLH() {
@@ -424,8 +436,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "setItemInUse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", ordinal = 1))
     private void onSetItemInUse(ItemStack itemStack, int count, CallbackInfo ci) {
 
-        if (this.inFightStance && itemStack == this.getGGMEquipment().getSecHeldItem()) {
-
+        if (this.inFightStance && itemStack == this.getGGMEquipment().getSecHeldItem())
+        {
             this.isUsingLH = true;
         }
         else {
@@ -433,6 +445,16 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             this.isUsingLH = false;
         }
     }
+
+    /*@ModifyVariable(method = "setItemInUse", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraftforge/event/ForgeEventFactory;onItemUseStart(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)I"), ordinal = 0)
+    private int itemUseEffectModifyingOnStart(int origin)
+    {
+        int newValue = origin;
+        for (IGGMEffectInstance effect : this.useItemEffectsMap.values())
+        {
+            effect.onSetItemInUse()
+        }
+    }*/
 
     @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;getCurrentItem()Lnet/minecraft/item/ItemStack;", ordinal = 0))
     private ItemStack fixUsingItem1(InventoryPlayer inventoryPlayer) {
@@ -480,6 +502,18 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         }
     }
 
+
+    @Inject(method = "setItemInUse", at = @At("HEAD"), cancellable = true)
+    private void useItemSettingDenying(ItemStack itemStack, int duration, CallbackInfo ci)
+    {
+        if (this.currentAnimation.denySetItemInUse(itemStack, duration)) ci.cancel();
+    }
+
+    @Inject(method = "setItemInUse", at = @At(value = "JUMP", ordinal = 1))
+    private void animationOnSetUseItemEvent(ItemStack itemStack, int duration, CallbackInfo ci)
+    {
+        this.currentAnimation.onSetItemInUse(itemStack, duration);
+    }
 
 
 
@@ -728,11 +762,32 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         }
 
         ((IGGMDamageSource) ds).setDamageValues(map);
+
+        for (IGGMEffectInstance effect : this.attackEffectsMap.values())
+        {
+            ds = (DamageSource) effect.onAttackTarget((IGGMEntity) entity, (IGGMDamageSource) ds, damage);
+        }
+
         return entity.attackEntityFrom(ds, damage);
     }
 
-    private void controlCurrentItem() {
+    @Inject(method = "onKillEntity", at = @At("HEAD"))
+    private void onKillingEntity(EntityLivingBase entity, CallbackInfo ci)
+    {
+        for (IGGMEffectInstance effect : this.attackEffectsMap.values())
+        {
+            effect.onKillEntity((IGGMEntityLivingBase) entity);
+        }
 
+        int gainExp = ((IGGMEntityLivingBase) entity).getLvl() * GEntities.EXPModifier;
+        if (entity instanceof EntityPlayer) gainExp += 10 * GEntities.EXPModifier;
+        this.gainExp(gainExp);
+    }
+
+
+
+    /*private void controlCurrentItem()
+    {
         if (this.inFightStance && this.prevCurItem != this.inventory.currentItem) {
 
             this.ggmEqupment.setCurrentItem(this.inventory.currentItem);
@@ -741,7 +796,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         else {
             this.prevCurItem = (byte) this.inventory.currentItem;
         }
-    }
+    }*/
 
 
     @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;readEntityFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V"))
@@ -783,7 +838,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @ModifyVariable(method = "getBreakSpeed(Lnet/minecraft/block/Block;ZIIII)F", at = @At(value = "LOAD", ordinal = 0), ordinal = 0, remap = false)
     private float modifyBreakSpeed(float speedFromTool)
     {
-        return speedFromTool + speedFromTool * (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() * 0.005F;
+        float newSpeed = speedFromTool + speedFromTool * (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() * 0.005F;
+
+        return newSpeed;
     }
 
 

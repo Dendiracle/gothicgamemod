@@ -14,20 +14,21 @@ public class GGMIncreasableAttributeInstance extends ModifiableAttributeInstance
     protected final GGMIncreasableAttributeInfo attributeInfo;
 
 
-    public GGMIncreasableAttributeInstance(IGGMBaseAttributeMap attributeMap, IGGMAttribute attribute, GGMIncreasableAttributeInfo attributeInfo) {
+    public GGMIncreasableAttributeInstance(IGGMBaseAttributeMap attributeMap, IGGMAttribute attribute, GGMIncreasableAttributeInfo attributeInfo)
+    {
         super((BaseAttributeMap) attributeMap, attribute);
 
         this.attributeInfo = attributeInfo;
         this.setBaseValue(attributeInfo.defaultValue);
 
-        if (this.isBonus()) {
-
+        if (this.isBonus())
+        {
             UUID id = ((IGGMAttribute) this.genericAttribute).getModifierID();
             Map<IGGMAttribute, Float> map = ((IGGMAttribute) this.genericAttribute).getAttributeModifiersMap();
             double thisValue = this.getAttributeValue();
 
-            for (Map.Entry<IGGMAttribute, Float> e : map.entrySet()) {
-
+            for (Map.Entry<IGGMAttribute, Float> e : map.entrySet())
+            {
                 this.attributeMap.getAttributeInstance(e.getKey()).applyModifier(new AttributeModifier(id, "BonusFromStat", thisValue * e.getValue(), 0).setSaved(false));
             }
         }
@@ -45,16 +46,16 @@ public class GGMIncreasableAttributeInstance extends ModifiableAttributeInstance
     }
 
     @Override
-    public boolean setBonuses() {
-
-        if (this.isBonus()) {
-
+    public boolean setBonuses()
+    {
+        if (this.isBonus())
+        {
             UUID id = ((IGGMAttribute) this.genericAttribute).getModifierID();
             Map<IGGMAttribute, Float> map = ((IGGMAttribute) this.genericAttribute).getAttributeModifiersMap();
             double thisValue = this.getAttributeValue();
 
-            for (Map.Entry<IGGMAttribute, Float> e : map.entrySet()) {
-
+            for (Map.Entry<IGGMAttribute, Float> e : map.entrySet())
+            {
                 ((IGGMModifiableAttributeInstance) this.attributeMap.getAttributeInstance(e.getKey())).setModifierAmount(id,thisValue * e.getValue());
             }
 
