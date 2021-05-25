@@ -1,5 +1,8 @@
 package mrfinger.gothicgamemod.mixin.entity.player;
 
+import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.entity.animations.AnimationFightStanceMP;
+import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,44 +20,42 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
 
 
     @Shadow @Final public ItemInWorldManager theItemInWorldManager;
-    protected Entity[] entitiesToAttack;
-
-    protected boolean repeatStartAttack;
 
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-
+    private void onInit(CallbackInfo ci)
+    {
+        this.equpmentAndFightAnim = new AnimationFightStanceMP(this);
+        this.ggmContainerEquipment = new GGMContainerPlayer(this);
     }
 
     @Override
-    public void upgradeCapabilities() {
+    public void upgradeCapabilities()
+    {
 
     }
 
 
     @Inject(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
-    private void syncGGMContainer(CallbackInfo ci) {
+    private void syncGGMContainer(CallbackInfo ci)
+    {
 
     }
 
 
     @Override
-    public void setEntitiesToAttack(Entity[] entities) {
-        if (this.attackTicksLeft > -20) this.entitiesToAttack = entities;
+    public void setFightAnimationTargets(IGGMEntity[] entities)
+    {
+        this.equpmentAndFightAnim.setTargets(entities);
     }
 
-    @Override
-    public void repeatAttack() {
-        this.repeatStartAttack = true;
-    }
-
+/*
     @Override
     public void updateAttack() {
 
         if (this.attackTicksLeft > -20) {
 
-            if (this.entitiesToAttack != null && this.attackTicksLeft <= this.getAttackTick()) {
+            if (this.entitiesToAttack != null && this.attackTicksLeft <= this.getAttackSeries()) {
 
                 int a = this.entitiesToAttack.length;
                 if (a > 2) a = 2;
@@ -84,11 +85,12 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
         }
 
         super.updateAttack();
-    }
+    }*/
 
 
     @Inject(method = "readEntityFromNBT", at = @At("TAIL"))
-    private void sendContainer(NBTTagCompound compound, CallbackInfo ci) {
+    private void sendContainer(NBTTagCompound compound, CallbackInfo ci)
+    {
 
     }
 
@@ -99,7 +101,8 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
     }
 
     @Override
-    public EntityPlayerMP thisEntity() {
+    public EntityPlayerMP thisEntity()
+    {
         return (EntityPlayerMP) (Object) this;
     }
 }

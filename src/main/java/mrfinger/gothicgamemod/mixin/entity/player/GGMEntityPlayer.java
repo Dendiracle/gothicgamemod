@@ -2,19 +2,19 @@ package mrfinger.gothicgamemod.mixin.entity.player;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
+import mrfinger.gothicgamemod.battle.hittypes.IHitType;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.GGMExp;
 import mrfinger.gothicgamemod.entity.capability.IGGMExp;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
-import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffect;
 import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
-import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipment;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMInventoryPlayer;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GEntities;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
@@ -26,7 +26,6 @@ import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
 import mrfinger.gothicgamemod.mixin.entity.GGMEntityLivingBase;
 import mrfinger.gothicgamemod.util.GGMTicks;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -50,6 +49,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,40 +78,22 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Shadow public InventoryPlayer inventory;
 
 
-    @Shadow protected abstract void onItemUseFinish();
-
-
     @Shadow protected abstract void updateItemUse(ItemStack p_71010_1_, int p_71010_2_);
 
-    protected IGGMInventoryPlayer ggmEqupment;
+    @Shadow public abstract void stopUsingItem();
+
+    protected IGGMPlayerEquipmentAnimationFightStance equpmentAndFightAnim;
 
     protected Container ggmContainerEquipment;
 
-    protected boolean isUsingLH;
-
-
     protected byte attackCooldown;
-
-    protected boolean inFightStance;
-
-    protected boolean changeStance;
-
-    protected short attackTicksLeft;
-
-    protected short lastAttackDuration;
-
-    protected byte attackSeries;
-
-    protected byte prevCurItem;
 
 
     @Inject(method = "<init>*", at = @At(value = "RETURN"))
-    private void init(CallbackInfo ci) {
+    private void init(CallbackInfo ci)
+    {
         this.exp = new GGMExp(this, 500, 10);
-        this.ggmEqupment = new GGMPlayerEquipment(this);
-        this.ggmContainerEquipment = new GGMContainerPlayer(this);
-        this.attackTicksLeft = (short) -20;
-        this.lastAttackDuration = (short) this.getNewAttackDuration();
+
 
         //this.useItemEffectsMap 	= new HashMap<>();
 
@@ -155,7 +137,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Redirect(method = "applyEntityAttributes", at = @At(value = "INVOKE", target ="Lnet/minecraft/entity/ai/attributes/IAttributeInstance;setBaseValue(D)V"))
-    private void fixStrengtRegistry(IAttributeInstance attributeInstance, double value) {
+    private void fixStrengtRegistry(IAttributeInstance attributeInstance, double value)
+    {
 
     }
 
@@ -241,137 +224,24 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                 }
             }
         }
-
-        this.updateAttack();
     }
 
 
-    /*@SideOnly(Side.CLIENT)
-    @Inject(method = "getItemInUse", at = @At(value = "HEAD"), cancellable = true)
-    private void fixItemUseGetter(CallbackInfoReturnable<ItemStack> cir)
+    @Override
+    public void setAnimation(IAnimation animation)
     {
-        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse);
+        super.setAnimation(animation);
+
+        if (this.itemInUse != null && this.currentAnimation.denyUsingItems()) this.stopUsingItem();
     }
 
-    @Inject(method = "isUsingItem", at = @At(value = "HEAD"), cancellable = true)
-    private void fixItemUseBool(CallbackInfoReturnable<Boolean> cir)
+    @Override
+    public void clearAnimation()
     {
-        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse != null);
+        super.clearAnimation();
+
+        if (this.itemInUse != null && this.currentAnimation.denyUsingItems()) this.stopUsingItem();
     }
-
-    @SideOnly(Side.CLIENT)
-    @Inject(method = "getItemInUseDuration", at = @At(value = "HEAD"), cancellable = true)
-    private void fixItemUseDurationGetter(CallbackInfoReturnable<Integer> cir)
-    {
-        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse != null ? this.ggmItemInUse.getMaxItemUseDuration() - this.itemInUseCount : 0);
-    }
-
-    @Inject(method = "stopUsingItem", at = @At("HEAD"), cancellable = true)
-    private void fixStopUsingItem(CallbackInfo ci)
-    {
-        if (this.inFightStance())
-        {
-            if (this.ggmItemInUse != null)
-            {
-                this.ggmItemInUse.onPlayerStoppedUsing(this.worldObj, thisEntity(), this.itemInUseCount);
-            }
-
-            ci.cancel();
-        }
-    }
-
-    @Redirect(method = "clearItemInUse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", opcode = Opcodes.GETFIELD))
-    private ItemStack fixClearItemInUse(EntityPlayer player)
-    {
-        if (this.inFightStance()) return this.ggmItemInUse;
-        return this.itemInUse;
-    }
-
-    @Inject(method = "getItemInUseDuration", at = @At(value = "HEAD"), cancellable = true)
-    private void fixIsBlocking(CallbackInfoReturnable<Boolean> cir)
-    {
-        if (this.inFightStance) cir.setReturnValue(this.ggmItemInUse != null && this.ggmItemInUse.getItem().getItemUseAction(this.itemInUse) == EnumAction.block);
-    }
-
-
-    @Inject(method = "onUpdate", at = @At(value = "JUMP", opcode = 0))
-    private void onGGMItemInUseUpdate(CallbackInfo ci)
-    {
-        if (this.inFightStance() && this.ggmItemInUse != null)
-        {
-            ItemStack item = this.ggmEqupment.getSecHeldItem() != null ? this.ggmEqupment.getSecHeldItem() : this.ggmEqupment.getHeldItem();
-
-            if (item == this.ggmItemInUse)
-            {
-                item.getItem().onUsingTick(item, thisEntity(), itemInUseCount);
-
-                if (--this.itemInUseCount <= 0 && !this.worldObj.isRemote)
-                {
-                    this.onItemUseFinish();
-                }
-            }
-            else
-            {
-                this.clearItemInUse();
-            }
-        }
-    }
-
-    @Inject(method = "onItemUseFinish", at = @At("HEAD"), cancellable = true)
-    private void fixItemUseFinish(CallbackInfo ci)
-    {
-        if (this.inFightStance())
-        {
-            if (this.ggmItemInUse != null)
-            {
-                byte inLH = this.ggmEqupment.getSecHeldItem() == this.ggmItemInUse ? (byte) 1 : (byte) 0;
-                int i = this.ggmItemInUse.stackSize;
-                ItemStack itemstack = this.ggmItemInUse.onFoodEaten(this.worldObj, thisEntity());
-
-                if (itemstack != null && itemstack.stackSize > 0) {
-                    if (itemstack != this.ggmItemInUse || itemstack.stackSize != i) {
-                        this.ggmEqupment.setInventorySlotContents(this.ggmEqupment.getCurrentItemIndex() * 2 + inLH, itemstack);
-
-                    }
-                }
-                else
-                {
-                    this.ggmEqupment.setInventorySlotContents(this.ggmEqupment.getCurrentItemIndex() * 2 + inLH, null);
-                }
-
-                this.clearItemInUse();
-
-            }
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "setItemInUse", at = @At("HEAD"), cancellable = true)
-    private void fixItemInUseSetter(ItemStack itemStack, int duration, CallbackInfo ci)
-    {
-        if (this.inFightStance())
-        {
-            if (this.ggmItemInUse != itemStack)
-            {
-                if (duration <= 0) ci.cancel();
-                this.ggmItemInUse = itemStack;
-                this.itemInUseCount = duration;
-
-                if (!this.worldObj.isRemote)
-                {
-                    this.setEating(true);
-                }
-            }
-            ci.cancel();
-        }
-    }
-
-    @Redirect(method = "getItemIcon", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", opcode = Opcodes.GETFIELD))
-    private ItemStack fixItemIconGetter(EntityPlayer player)
-    {
-        if (this.inFightStance()) return this.ggmItemInUse;
-        return this.itemInUse;
-    }*/
 
 
     @Override
@@ -381,8 +251,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public IGGMInventoryPlayer getGGMEquipment() {
-        return this.ggmEqupment;
+    public IGGMPlayerEquipmentAnimationFightStance getGGMEquipment() {
+        return this.equpmentAndFightAnim;
     }
 
     @Override
@@ -403,7 +273,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Override
-    public double jumpHeight() {
+    public double getJumpHeight() {
         return 0.42D + this.getEntityAttribute(GGMCapabilities.dexterity).getAttributeValue() * 0.0005D;
     }
 
@@ -429,22 +299,18 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public boolean isUsingLH() {
-        return isUsingLH;
+    public ItemStack getSecHeldItem()
+    {
+        return this.equpmentAndFightAnim.getSecHeldItem();
     }
 
-    @Inject(method = "setItemInUse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;itemInUse:Lnet/minecraft/item/ItemStack;", ordinal = 1))
-    private void onSetItemInUse(ItemStack itemStack, int count, CallbackInfo ci) {
-
-        if (this.inFightStance && itemStack == this.getGGMEquipment().getSecHeldItem())
-        {
-            this.isUsingLH = true;
-        }
-        else {
-
-            this.isUsingLH = false;
-        }
+    @Override
+    public boolean isUsingLH()
+    {
+        return this.equpmentAndFightAnim.isUsingLH();
     }
+
+
 
     /*@ModifyVariable(method = "setItemInUse", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraftforge/event/ForgeEventFactory;onItemUseStart(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)I"), ordinal = 0)
     private int itemUseEffectModifyingOnStart(int origin)
@@ -452,55 +318,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         int newValue = origin;
         for (IGGMEffectInstance effect : this.useItemEffectsMap.values())
         {
-            effect.onSetItemInUse()
+            effect.onItemUseSetted()
         }
     }*/
-
-    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;getCurrentItem()Lnet/minecraft/item/ItemStack;", ordinal = 0))
-    private ItemStack fixUsingItem1(InventoryPlayer inventoryPlayer) {
-
-        if (this.inFightStance && this.isUsingLH) {
-
-            return this.ggmEqupment.getSecHeldItem();
-        }
-
-        return inventory.getCurrentItem();
-    }
-
-    @Inject(method = "onItemUseFinish", at = @At(value = "HEAD"), cancellable = true)
-    private void fixItemUseFinish(CallbackInfo ci)
-    {
-        if (this.itemInUse != null && this.inFightStance())
-        {
-
-            this.updateItemUse(this.itemInUse, 16);
-            int i = this.itemInUse.stackSize;
-            int index = this.ggmEqupment.getCurrentItemIndex() * 2;
-
-            if (this.isUsingLH)
-            {
-                ++index;
-            }
-
-            ItemStack itemstack = this.itemInUse.onFoodEaten(this.worldObj, thisEntity());
-
-            itemstack = ForgeEventFactory.onItemUseFinish(thisEntity(), itemInUse, itemInUseCount, itemstack);
-
-            if (itemstack != this.itemInUse || itemstack != null && itemstack.stackSize != i)
-            {
-                this.getGGMEquipment().setInventorySlotContents(index, itemstack);
-
-                if (itemstack != null && itemstack.stackSize == 0)
-                {
-                    this.getGGMEquipment().setInventorySlotContents(index, null);
-                }
-            }
-
-            this.clearItemInUse();
-
-            ci.cancel();
-        }
-    }
 
 
     @Inject(method = "setItemInUse", at = @At("HEAD"), cancellable = true)
@@ -512,9 +332,15 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "setItemInUse", at = @At(value = "JUMP", ordinal = 1))
     private void animationOnSetUseItemEvent(ItemStack itemStack, int duration, CallbackInfo ci)
     {
-        this.currentAnimation.onSetItemInUse(itemStack, duration);
+        this.currentAnimation.onItemUseSetted(itemStack, duration);
+        System.out.println("Debug in GGMEntityPlayer currentAnimation.onItemUseSetted");
     }
 
+    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/Item;onUsingTick(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;I)V"))
+    private void animationOnItemUsingTick(CallbackInfo ci)
+    {
+        this.currentAnimation.onUsingItem(this.itemInUse, this.itemInUseCount);
+    }
 
 
     @Redirect(method = "damageEntity", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ISpecialArmor$ArmorProperties;ApplyArmor(Lnet/minecraft/entity/EntityLivingBase;[Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/DamageSource;D)F", remap = false))
@@ -527,8 +353,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         {
             f = 0.0F;
             int a = this.getTotalArmorValue();
-            boolean isBlocking = this.isBlocking();
-            IItemBlocker blocker = isBlocking ? (IItemBlocker) this.itemInUse.getItem() : null;
+            boolean isBlocking = this.equpmentAndFightAnim.isBlocking();
+            IItemBlocker blocker = isBlocking ? (IItemBlocker) this.equpmentAndFightAnim.getBlockItem().getItem() : null;
             Map<DamageType, Float> map = gds.getDamageValuesMap();
 
             for (Map.Entry<DamageType, Float> e : map.entrySet())
@@ -587,77 +413,59 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public int getNewAttackDuration() {
+    public short getNewAttackDuration(IHitType hitType) {
         return 20;
     }
 
     @Override
-    public int getNewAttackCooldown() {
-        return 10;
-    }
-
-    public int getAttackCooldown() {
-        return this.attackCooldown;
+    public IHitType getLastAttackHitTYpe()
+    {
+        return this.equpmentAndFightAnim.getLastHitType();
     }
 
     @Override
-    public int getLastAttackDuration() {
-        return this.lastAttackDuration;
+    public short getLastAttackDuration() {
+        return this.equpmentAndFightAnim.getAttackDuration();
     }
 
     @Override
-    public int getAttackTick() {
-        return 16;
+    public short getAttackCount() {
+        return this.equpmentAndFightAnim.getAtackCount();
     }
 
     @Override
-    public int getAttackTicksLeft() {
-        return this.attackTicksLeft;
+    public short getAttackTick() {
+        return this.equpmentAndFightAnim.getAttackTick();
     }
+
+    @Override
+    public byte getAttackSeries()
+    {
+        return this.equpmentAndFightAnim.getAttackSeries();
+    }
+
 
     @Override
     public float getStaminaSpendingFromAttack()
     {
-        System.out.println("Debug in GGMEntityPlayer: held item " + this.getGGMEquipment().getHeldItem());
-        if (this.getGGMEquipment().getHeldItem() != null) System.out.println("weight " + ((IItemEquip) this.getGGMEquipment().getHeldItem().getItem()).getWeight());
-        return 1.0F + (this.inFightStance ? (this.getGGMEquipment().getHeldItem() == null ? 0.0F : ((IItemEquip) this.getGGMEquipment().getHeldItem().getItem()).getWeight()) : 0.0F);
+        return 1.0F + (this.inFightStance() ? (this.getGGMEquipment().getHeldItem() == null ? 0.0F : ((IItemEquip) this.getGGMEquipment().getHeldItem().getItem()).getWeight()) : 0.0F);
     }
 
     @Override
-    public boolean inFightStance() {
-        if (this.attackTicksLeft > 0) this.inFightStance = true;
-        return this.inFightStance;
+    public boolean inFightStance()
+    {
+        return this.currentAnimation == this.equpmentAndFightAnim;
     }
 
     @Override
-    public boolean isChangingStance() {
-        return this.changeStance;
+    public boolean isChangingStance()
+    {
+        return (this.inFightStance() && this.needEndAnimation) || this.animationToSet == this.equpmentAndFightAnim;
     }
 
-    @Override
-    public void repeatAttack() {}
 
-    @Override
-    public void startAttack() {
 
-        if (!this.inFightStance()) {
-            this.setInFightStance(true);
-        }
-
-        if (this.attackCooldown <= 0 && this.inFightStance()) {
-
-            if (this.attackTicksLeft <= 1 && (this.capabilities.isCreativeMode || this.canAttack())) {
-
-                this.attackTicksLeft = (short) this.getNewAttackDuration();
-                this.lastAttackDuration = this.attackTicksLeft;
-            } else {
-                this.repeatAttack();
-            }
-        }
-
-    }
-
-    @Override
+    /*@Override
     public void updateAttack() {
 
         if (this.attackTicksLeft > -20) {
@@ -677,24 +485,52 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
             --this.attackCooldown;
         }
+    }*/
+
+    @Override
+    public void setInFightStance(boolean inFightStance)
+    {
+        if (inFightStance)
+        {
+            if (!this.inFightStance())
+            {
+                this.tryEndAnimation(this.equpmentAndFightAnim);
+            }
+        }
+        else
+        {
+            if (this.inFightStance())
+            {
+                this.tryEndAnimation();
+            }
+        }
     }
 
     @Override
-    public void setInFightStance(boolean inFightStance) {
-        this.inFightStance = this.attackTicksLeft > 0 ? true : inFightStance;
-        if (this.inFightStance != inFightStance) this.changeStance = this.changeStance ? false : true;
+    public void changeStance()
+    {
+        this.setInFightStance(!this.inFightStance());
+    }
+
+
+    @Override
+    public void startAttack(IHitType hitType)
+    {
+        this.equpmentAndFightAnim.setAnimationHit(hitType, this.getNewAttackDuration(hitType));
     }
 
     @Override
-    public void changeStance() {
-        this.setInFightStance(this.inFightStance ? false : true);
+    public boolean attackEntityAsMob(Entity entity)
+    {
+        this.attackTargetEntityWithCurrentItem(entity);
+        return false;
     }
 
     @Redirect(method = "attackTargetEntityWithCurrentItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
     private boolean onAttackEntity(Entity entity, DamageSource ds, float damage)
     {
         Map<DamageType, Float> map;
-        if (this.inFightStance() && this.ggmEqupment.getHeldItem() != null && this.ggmEqupment.getHeldItem().getItem() instanceof IItemMeleeWeapon)
+        if (this.inFightStance() && this.equpmentAndFightAnim.getHeldItem() != null && this.equpmentAndFightAnim.getHeldItem().getItem() instanceof IItemMeleeWeapon)
         {
             IItemMeleeWeapon tool = (IItemMeleeWeapon) thisEntity().getHeldItem().getItem();
             Map<DamageType, UseSpendings> itemMap = tool.getDamageValuesMap();
@@ -790,7 +626,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     {
         if (this.inFightStance && this.prevCurItem != this.inventory.currentItem) {
 
-            this.ggmEqupment.setCurrentItem(this.inventory.currentItem);
+            this.equpmentAndFightAnim.setCurrentItem(this.inventory.currentItem);
             this.inventory.currentItem = this.prevCurItem;
         }
         else {
@@ -802,22 +638,22 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "readEntityFromNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;readEntityFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V"))
     private void onReadEntityFromNBT(NBTTagCompound compound, CallbackInfo ci)
     {
-        this.ggmEqupment.readFromNBT(compound.getTagList("GGMEquipment", 10));
+        this.equpmentAndFightAnim.readFromNBT(compound.getTagList("GGMEquipment", 10));
     }
 
 
     @Inject(method = "writeEntityToNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setTag(Ljava/lang/String;Lnet/minecraft/nbt/NBTBase;)V", ordinal = 0))
     private void onWriteEntityToNBT(NBTTagCompound compound, CallbackInfo ci) {
-        compound.setTag("GGMEquipment", this.ggmEqupment.writeToNBT(new NBTTagList()));
+        compound.setTag("GGMEquipment", this.equpmentAndFightAnim.writeToNBT(new NBTTagList()));
     }
 
 
-    @ModifyVariable(method = "dropOneItem", at = @At(value = "LOAD", ordinal = 0))
+    /*@ModifyVariable(method = "dropOneItem", at = @At(value = "LOAD", ordinal = 0))
     private ItemStack fixDroppingItem(ItemStack itemStack) {
 
         if (this.inFightStance() && itemStack == null)
         {
-            itemStack = this.ggmEqupment.getSecHeldItem();
+            itemStack = this.equpmentAndFightAnim.getSecHeldItem();
         }
         System.out.println("Debug in " + this.getClass() + " Ondropitem Item is: " + itemStack);
         return itemStack;
@@ -828,12 +664,11 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
         if (this.inFightStance()) {
 
-            return this.ggmEqupment.decrStackSize(ggmEqupment.getCurrentItemIndex(), count);
+            return this.equpmentAndFightAnim.decrStackSize(equpmentAndFightAnim.getCurrentItemIndex(), count);
         }
 
         return inventoryPlayer.decrStackSize(index, count);
-    }
-
+    }*/
 
     @ModifyVariable(method = "getBreakSpeed(Lnet/minecraft/block/Block;ZIIII)F", at = @At(value = "LOAD", ordinal = 0), ordinal = 0, remap = false)
     private float modifyBreakSpeed(float speedFromTool)

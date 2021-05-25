@@ -1,5 +1,6 @@
 package mrfinger.gothicgamemod.entity.animals;
 
+import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.packentities.EntityHerd;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
@@ -14,7 +15,6 @@ public class EntityScavenger extends EntityHerd
 	public EntityScavenger(World world)
 	{
 		super(world);
-
 	}
 
 
@@ -50,5 +50,12 @@ public class EntityScavenger extends EntityHerd
 		}
 
 		return -1.0F;
+	}
+
+
+	@Override
+	public void tryAttack(IGGMEntity entity, float distance)
+	{
+
 	}
 }

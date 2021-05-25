@@ -24,9 +24,12 @@ public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperi
         InventoryPlayer getInventoryPlayer();
 
 
-        IGGMInventoryPlayer getGGMEquipment();
+        IGGMPlayerEquipmentAnimationFightStance getGGMEquipment();
 
         Container getGGMContainer();
+
+
+        ItemStack getSecHeldItem();
 
 
         boolean isUsingItem();
@@ -43,10 +46,6 @@ public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperi
         boolean isBlocking();
 
 
-        int getNewAttackCooldown();
-
-        int getAttackCooldown();
-
         boolean inFightStance();
 
         boolean isChangingStance();
@@ -54,8 +53,6 @@ public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperi
         void changeStance();
 
         void setInFightStance(boolean b);
-
-        void repeatAttack();
 
         void attackTargetEntityWithCurrentItem(Entity entity);
 

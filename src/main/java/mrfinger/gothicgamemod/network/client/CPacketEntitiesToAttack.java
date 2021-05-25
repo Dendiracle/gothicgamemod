@@ -3,6 +3,7 @@ package mrfinger.gothicgamemod.network.client;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import mrfinger.gothicgamemod.network.server.AbstractServerMessageHandler;
 import net.minecraft.entity.Entity;
@@ -67,7 +68,7 @@ public class CPacketEntitiesToAttack implements IMessage {
 
             }
 
-            ((IGGMEntityPlayerMP) player).setEntitiesToAttack(entityArray);
+            ((IGGMEntityPlayerMP) player).setFightAnimationTargets((IGGMEntity[]) entityArray);
 
             return null;
         }

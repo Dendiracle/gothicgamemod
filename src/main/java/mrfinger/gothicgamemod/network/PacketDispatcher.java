@@ -27,6 +27,7 @@ public class PacketDispatcher {
         clientRegisterMessage(CPacketEntitiesToAttack.Handler.class, CPacketEntitiesToAttack.class);
         clientRegisterMessage(CPacketAttributesToUpgrade.Handler.class, CPacketAttributesToUpgrade.class);
         clientRegisterMessage(CPacketOpenGui.Handler.class, CPacketOpenGui.class);
+        clientRegisterMessage(CPacketSetItemInUseInFightAnim.Handler.class, CPacketSetItemInUseInFightAnim.class);
     }
 
     public static void registerServerPackets()

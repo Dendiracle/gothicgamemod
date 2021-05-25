@@ -113,8 +113,8 @@ public abstract class GGMItemMeleeWeapon extends GGMItem implements IItemMeleeWe
 
             map = new HashMap<>(1, 1.0F);
         }
-        else {
-
+        else
+        {
             map = new HashMap<>(this.damageValues.size() + 1, 1.0F);
             map.putAll(this.damageValues);
         }

@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.mixin.entity.player;
 
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMInventoryPlayer;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(InventoryPlayer.class)
-public abstract class GGMInventoryPlayer implements IGGMInventoryPlayer {
+public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimationFightStance {
 
 
     @Shadow public ItemStack[] mainInventory;
@@ -330,11 +330,11 @@ public abstract class GGMInventoryPlayer implements IGGMInventoryPlayer {
 
         for (int i = 0; i < this.equip.length; ++i) {
 
-            //this.equip[i] = ItemStack.copyItemStack(((IGGMInventoryPlayer) ip).getGGMEquipmentInSlot(i));
+            //this.equip[i] = ItemStack.copyItemStack(((IGGMPlayerEquipmentAnimationFightStance) ip).getGGMEquipmentInSlot(i));
             System.out.println("HHHHHHHHHHHHHH");
             this.equip[i] = null;
             System.out.println("LLLLLLLLLLLLLL");
-            ((IGGMInventoryPlayer) ip).getGGMEquipmentInSlot(i);
+            ((IGGMPlayerEquipmentAnimationFightStance) ip).getGGMEquipmentInSlot(i);
         }
     }*/
 

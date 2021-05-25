@@ -31,7 +31,8 @@ public class CPacketChangeFightMode implements IMessage {
     }
 
 
-    public static class Handler extends AbstractServerMessageHandler<CPacketChangeFightMode> {
+    public static class Handler extends AbstractServerMessageHandler<CPacketChangeFightMode>
+    {
 
         @Override
         public IMessage handleServerMessage(EntityPlayer player, CPacketChangeFightMode message, MessageContext ctx) {

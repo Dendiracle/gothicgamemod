@@ -17,25 +17,44 @@ public interface IAnimation {
     void onUpdate();
 
 
-    default boolean canEndAnimation()
-    {
-        return false;
-    }
-
     default IAnimation onSetNewAnimation(IAnimation animation)
     {
         return this;
     }
 
-    void onEndAnimation();
+    boolean tryEndAnimation();
 
+    default void onEndAnimation() {}
+
+
+    default boolean denyDropItems()
+    {
+        return true;
+    }
+
+    default boolean denyDigging()
+    {
+        return true;
+    }
+
+    default boolean denyUsingItems()
+    {
+        return true;
+    }
 
     default boolean denySetItemInUse(ItemStack itemStack, int duration)
     {
         return true;
     }
 
-    default void onSetItemInUse(ItemStack itemStack, int duration) {}
+    default void onItemUseSetted(ItemStack itemStack, int duration) {}
+
+    default void onUsingItem(ItemStack itemStack, int duration) {}
+
+    default boolean denyChangeItem()
+    {
+        return true;
+    }
 
 
     default void onTakingDamage(IGGMDamageSource damageSource, float damage) {}
@@ -53,5 +72,5 @@ public interface IAnimation {
         return true;
     }
 
-    default void onJump() {}
+    default void onJumped() {}
 }

@@ -49,45 +49,7 @@ public abstract class GGMItemInWorldManager {
 
         if (player.inFightStance())
         {
-
-            if (player.getAttackTicksLeft() > 0) cir.setReturnValue(false);
-
-            int i = originalStack.stackSize;
-            int j = originalStack.getItemDamage();
-            ItemStack itemstack1 = originalStack.useItemRightClick(world, playerS);
-
-            if (itemstack1 == originalStack && (itemstack1 == null || itemstack1.stackSize == i && itemstack1.getMaxItemUseDuration() <= 0 && itemstack1.getItemDamage() == j))
-            {
-                cir.setReturnValue(false);
-            }
-            else
-            {
-
-                int slotIndex = player.getGGMEquipment().getCurrentItemIndex() * 2;
-                if (player.isUsingLH()) ++slotIndex;
-                player.getGGMEquipment().setInventorySlotContents(slotIndex, itemstack1);
-
-                if (this.isCreative())
-                {
-                    itemstack1.stackSize = i;
-
-                    if (itemstack1.isItemStackDamageable())
-                    {
-                        itemstack1.setItemDamage(j);
-                    }
-                }
-
-                if (itemstack1.stackSize == 0)
-                {
-                    player.getGGMEquipment().setInventorySlotContents(slotIndex, null);
-                    MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thisPlayerMP, itemstack1));
-                }
-
-                if (!playerS.isUsingItem())
-                {
-                    player.sendContainerToPlayer(player.getGGMContainer());
-                }
-            }
+            player.getGGMEquipment().setUseItem();
 
             cir.setReturnValue(true);
         }
@@ -107,48 +69,20 @@ public abstract class GGMItemInWorldManager {
     }*/
 
     @Redirect(method = "tryUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayerMP;sendContainerToPlayer(Lnet/minecraft/inventory/Container;)V"))
-    private void fixUsingItem2(EntityPlayerMP playerS, Container containerPlayer) {
-
+    private void fixUsingItem2(EntityPlayerMP playerS, Container containerPlayer)
+    {
         IGGMEntityPlayerMP player = (IGGMEntityPlayerMP) playerS;
 
-        if (player.inFightStance()) {
-
+        if (player.inFightStance())
+        {
             player.sendContainerToPlayer(player.getGGMContainer());
         }
-        else {
+        else
+        {
 
             player.sendContainerToPlayer(containerPlayer);
         }
     }
-
-    @Inject(method = "tryUseItem", at = @At("TAIL"))
-    private void debug1(EntityPlayer p_73085_1_, World p_73085_2_, ItemStack p_73085_3_, CallbackInfoReturnable cir)
-    {
-        System.out.println("GGMItemInWorldManager TAIL " + p_73085_1_.inventory.mainInventory[p_73085_1_.inventory.currentItem]);
-    }
-    /*@Inject(method = "tryUseItem", at = @At("HEAD"))
-    private void debug1(EntityPlayer p_73085_1_, World p_73085_2_, ItemStack p_73085_3_, CallbackInfoReturnable cir)
-    {
-        System.out.println("GGMItemInWorldManager head");
-    }
-
-    @Inject(method = "tryUseItem", at = @At(value = "RETURN", opcode = 0))
-    private void debug2(EntityPlayer p_73085_1_, World p_73085_2_, ItemStack p_73085_3_, CallbackInfoReturnable cir)
-    {
-        System.out.println("GGMItemInWorldManager ret false");
-    }
-
-    @Inject(method = "tryUseItem", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayer;inventory:Lnet/minecraft/entity/player/InventoryPlayer;", ordinal = 0))
-    private void debug3(EntityPlayer p_73085_1_, World p_73085_2_, ItemStack p_73085_3_, CallbackInfoReturnable cir)
-    {
-        System.out.println("GGMItemInWorldManager preInventory: " + p_73085_1_.inventory.mainInventory[p_73085_1_.inventory.currentItem]);
-    }
-
-    @Inject(method = "tryUseItem", at = @At(value = "JUMP", ordinal = 2))
-    private void debug4(EntityPlayer p_73085_1_, World p_73085_2_, ItemStack p_73085_3_, CallbackInfoReturnable cir)
-    {
-        System.out.println("GGMItemInWorldManager postInventory: " + p_73085_1_.inventory.mainInventory[p_73085_1_.inventory.currentItem]);
-    }*/
 
 
 }

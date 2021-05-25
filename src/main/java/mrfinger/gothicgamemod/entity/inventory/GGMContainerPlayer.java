@@ -3,7 +3,7 @@ package mrfinger.gothicgamemod.entity.inventory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMInventoryPlayer;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.inventory.IGGMContainer;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
 import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
@@ -33,7 +33,7 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         this.ggmSlots = new ArrayList<>();
         this.player = player;
         InventoryPlayer inventoryPlayer = player.getInventoryPlayer();
-        IGGMInventoryPlayer ggmInventoryPlayer = player.getGGMEquipment();
+        IGGMPlayerEquipmentAnimationFightStance ggmInventoryPlayer = player.getGGMEquipment();
         int i, j;
 
         for (i = 0; i < 4; ++i) {
@@ -277,12 +277,7 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         @Override
         public boolean isItemValid(ItemStack itemStack)
         {
-            if (itemStack != null && itemStack.getItem() instanceof IItemGGMEquip && ((IItemGGMEquip) itemStack.getItem()).getIndex() == this.armorIndex && ((IItemGGMEquip) itemStack.getItem()).isMayEquip(this.container.getEntityPlayer()))
-            {
-                return true;
-            }
-
-            return false;
+            return itemStack != null && itemStack.getItem() instanceof IItemGGMEquip && ((IItemGGMEquip) itemStack.getItem()).getIndex() == this.armorIndex && ((IItemGGMEquip) itemStack.getItem()).isMayEquip(this.container.getEntityPlayer());
         }
     }
 
@@ -303,12 +298,7 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         @Override
         public boolean isItemValid(ItemStack stack)
         {
-            if (stack != null && stack.getItem() instanceof IItemMeleeWeapon && ((IItemMeleeWeapon) stack.getItem()).isMayEquip(this.container.getEntityPlayer()))
-            {
-                return true;
-            }
-
-            return false;
+            return stack != null && stack.getItem() instanceof IItemMeleeWeapon && ((IItemMeleeWeapon) stack.getItem()).isMayEquip(this.container.getEntityPlayer());
         }
 
     }

@@ -27,6 +27,16 @@ public interface IGGMEffectInstance
     }
 
 
+    default boolean denyDigging()
+    {
+        return true;
+    }
+
+    default boolean denyUsingItems()
+    {
+        return true;
+    }
+
     default int onSetItemInUse(ItemStack itemStack, int duration)
     {
         return duration;

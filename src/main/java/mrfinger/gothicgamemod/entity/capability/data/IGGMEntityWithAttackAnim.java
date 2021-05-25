@@ -1,20 +1,24 @@
 package mrfinger.gothicgamemod.entity.capability.data;
 
+import mrfinger.gothicgamemod.battle.hittypes.IHitType;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 
 public interface IGGMEntityWithAttackAnim extends IGGMEntityLivingBase {
 
 
-    int getNewAttackDuration();
+    short getNewAttackDuration(IHitType hitType);
 
-    int getLastAttackDuration();
+    IHitType getLastAttackHitTYpe();
 
-    int getAttackTick();
+    short getLastAttackDuration();
 
-    int getAttackTicksLeft();
+    short getAttackCount();
 
-    void startAttack();
+    short getAttackTick();
 
-    void updateAttack();
+    byte getAttackSeries();
+
+
+    void startAttack(IHitType hitType);
 
 }

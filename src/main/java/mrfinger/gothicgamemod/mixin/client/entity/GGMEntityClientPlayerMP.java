@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @SideOnly(Side.CLIENT)
 @Mixin(EntityClientPlayerMP.class)
-public abstract class GGMEntityClientPlayerMP extends GGMAbstractClientPlayer implements IGGMEntityClientPlayerMP {
+public abstract class GGMEntityClientPlayerMP extends GGMEntityPlayerSP implements IGGMEntityClientPlayerMP {
 
 
     public EntityClientPlayerMP thisEntity() {

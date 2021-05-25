@@ -2,6 +2,8 @@ package mrfinger.gothicgamemod.mixin.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mrfinger.gothicgamemod.battle.hittypes.HittypeSplash;
+import mrfinger.gothicgamemod.battle.hittypes.IHitType;
 import mrfinger.gothicgamemod.client.multiplayer.IGGMPlayerControllerMP;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
@@ -35,41 +37,40 @@ public class GGMPlayerControllerMP implements IGGMPlayerControllerMP {
     }
 
     @Override
-    public void startAttack() {
-
-        if (this.attackPenalty <= 0) {
-
-            if (player().getAttackTicksLeft() <= 1) {
-
+    public void startAttack()
+    {
+        if (this.attackPenalty <= 0)
+        {
+            if (player().getAttackCount() <= 0)
+            {
                 PacketDispatcher.sendToServer(new CPacketStartAttack((short) 0));
-                player().startAttack();
+                player().startAttack(new HittypeSplash());
             }
-            else {
-
-                this.attackPenalty = player().getLastAttackDuration() + player().getAttackTicksLeft();
+            else
+            {
+                this.attackPenalty = player().getLastAttackDuration() + player().getAttackCount();
             }
         }
-
-
     }
 
 
     @Inject(method = "updateController", at = @At("TAIL"))
-    private void onUpdate(CallbackInfo ci) {
-
-        if (this.attackPenalty > 0) {
+    private void onUpdate(CallbackInfo ci)
+    {
+        if (this.attackPenalty > 0)
+        {
             --this.attackPenalty;
         }
     }
 
 
     @ModifyArg(method = "sendUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/client/C08PacketPlayerBlockPlacement;<init>(IIIILnet/minecraft/item/ItemStack;FFF)V"))
-    private ItemStack fixUsingItem1(ItemStack itemStack) {
-
+    private ItemStack fixUsingItem1(ItemStack itemStack)
+    {
         ItemStack secHeldItem = player().getGGMEquipment().getSecHeldItem();
 
-        if (player().inFightStance() && secHeldItem != null && secHeldItem.stackSize > 0) {
-
+        if (player().inFightStance() && secHeldItem != null && secHeldItem.stackSize > 0)
+        {
             itemStack = secHeldItem;
         }
 
@@ -77,20 +78,19 @@ public class GGMPlayerControllerMP implements IGGMPlayerControllerMP {
     }
 
     @Redirect(method = "sendUseItem", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;", opcode = Opcodes.PUTFIELD))
-    private void fixUsingItem2(ItemStack[] mainInventory, int index, ItemStack itemStack) {
-
-        if (player().inFightStance()) {
-
+    private void fixUsingItem2(ItemStack[] mainInventory, int index, ItemStack itemStack)
+    {
+        if (player().inFightStance())
+        {
             int slotIndex = player().getGGMEquipment().getCurrentItemIndex() * 2;
             if (player().getGGMEquipment().getSecHeldItem() != null) ++slotIndex;
             player().getGGMEquipment().setInventorySlotContents(slotIndex, itemStack);
         }
-        else {
-
+        else
+        {
             mainInventory[index] = itemStack;
         }
     }
-
 
 
     private IGGMEntityPlayer player() {

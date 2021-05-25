@@ -98,15 +98,17 @@ public class GGMGuiInGame extends Gui {
 			if (player.inFightStance()) {
 
 				int k = player.getGGMEquipment().getCurrentItemIndex() * 20;
-
 				this.drawTexturedModalRect(w - 43, h - 63 + k, 92, 62, 44, 24);
 
-				if (pcontroller.getAttackPenalty() > 0) {
+				if (pcontroller.getAttackPenalty() > 0)
+				{
 					k = pcontroller.getAttackPenalty() * 16 / player.getLastAttackDuration();
 				}
-				else {
-					k = player.getAttackTicksLeft() * 16 / player.getLastAttackDuration();
+				else
+				{
+					k = player.getAttackCount() * 16 / player.getLastAttackDuration();
 				}
+
 				k = k < 0 ? 0 : k;
 				this.drawTexturedModalRect(w / 2 + 10, h / 2 - 7, 32, 28, 4, 16);
 				this.drawTexturedModalRect(w / 2 + 10, h / 2 - 7, 28, 28, 4, k);

@@ -24,11 +24,11 @@ public abstract class GGMModifiableAttributeInstance implements IGGMModifiableAt
     {
         IGGMAttributeModifier am = (IGGMAttributeModifier) this.getModifier(id);
 
-        if (am == null) return;
-
-        am.setAmount(amount);
-
-        this.flagForUpdate();
+        if (am != null)
+        {
+            am.setAmount(amount);
+            this.flagForUpdate();
+        }
     }
 
 

@@ -88,12 +88,28 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 		return null;
 	}
 
+	default IAnimation getAnimationToSet()
+	{
+		return null;
+	}
+
 	default void setAnimation(IAnimation animation) {}
 
-	default boolean endAnimation()
+	/*
+	* Returns true if after this method currentAnimation
+	* is null or default.
+	 */
+	default boolean tryEndAnimation()
 	{
-		return false;
+		return true;
 	}
+
+	default boolean tryEndAnimation(IAnimation animation)
+	{
+		return true;
+	}
+
+	default void clearAnimation() {}
 
 
 	default int getMaxAir()
@@ -151,7 +167,23 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	}
 
 
-	default double jumpHeight()
+	default boolean isDeniedDropItems()
+	{
+		return false;
+	}
+
+	default boolean isDeniedDigging()
+	{
+		return false;
+	}
+
+	default boolean isDeniedUsingItems()
+	{
+		return false;
+	}
+
+
+	default double getJumpHeight()
 	{
 		return 0.41999998688697815D;
 	}
@@ -185,7 +217,7 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	boolean attackEntityAsMob(Entity entity);
 
-	default int attackDuration()
+	default short attackDuration()
 	{
 		return 20;
 	}

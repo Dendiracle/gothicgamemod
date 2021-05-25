@@ -25,14 +25,14 @@ public class AnimationEntityLiving extends AbstractAnimation {
 
 
     @Override
-    public boolean canEndAnimation()
-    {
-        return true;
+    public IAnimation onSetNewAnimation(IAnimation animation) {
+        return animation;
     }
 
     @Override
-    public IAnimation onSetNewAnimation(IAnimation animation) {
-        return animation;
+    public boolean tryEndAnimation()
+    {
+        return true;
     }
 
     @Override
@@ -42,11 +42,34 @@ public class AnimationEntityLiving extends AbstractAnimation {
 
 
     @Override
+    public boolean denyDropItems()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean denyDigging()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean denyUsingItems()
+    {
+        return false;
+    }
+
+    @Override
     public boolean denySetItemInUse(ItemStack itemStack, int duration)
     {
         return false;
     }
 
+    @Override
+    public boolean denyChangeItem()
+    {
+        return false;
+    }
 
     @Override
     public boolean denyMount(IGGMEntity entity, boolean flag)

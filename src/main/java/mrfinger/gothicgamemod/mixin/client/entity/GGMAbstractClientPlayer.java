@@ -3,7 +3,9 @@ package mrfinger.gothicgamemod.mixin.client.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.client.entity.IGGMAbstractClientPlayer;
+import mrfinger.gothicgamemod.client.entity.animations.hits.AnimationFightStanceClient;
 import mrfinger.gothicgamemod.client.gui.GGMGuiCharachterMenu;
+import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
 import mrfinger.gothicgamemod.mixin.entity.player.GGMEntityPlayer;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.client.CPacketEntitiesToAttack;
@@ -24,19 +26,20 @@ public abstract class GGMAbstractClientPlayer extends GGMEntityPlayer implements
 
 
     @Inject(method = "<init>*", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-
+    private void onInit(CallbackInfo ci)
+    {
         GGMGuiCharachterMenu.loadStatHelpers(this);
-
+        this.equpmentAndFightAnim = new AnimationFightStanceClient(this);
+        this.ggmContainerEquipment = new GGMContainerPlayer(this);
     }
 
-
+/*
     @Override
     public void updateAttack() {
 
         if (this.attackTicksLeft > -20) {
 
-            if (this.attackTicksLeft == this.getAttackTick()) {
+            if (this.attackTicksLeft == this.getAttackSeries()) {
 
                 EntityLivingBase[] uArray;
                 float[] angles;
@@ -275,7 +278,7 @@ public abstract class GGMAbstractClientPlayer extends GGMEntityPlayer implements
         }
 
         super.updateAttack();
-    }
+    }*/
 
     /*@Override
     public void updateAttack() {
@@ -284,7 +287,7 @@ public abstract class GGMAbstractClientPlayer extends GGMEntityPlayer implements
 
         if (this.attackTicksLeft > -20) {
 
-            if (this.attackTicksLeft == this.getAttackTick()) {
+            if (this.attackTicksLeft == this.getAttackSeries()) {
 
                 EntityLivingBase[] uArray;
                 float[] angles;

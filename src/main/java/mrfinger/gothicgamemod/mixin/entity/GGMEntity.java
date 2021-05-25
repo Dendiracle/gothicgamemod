@@ -21,26 +21,23 @@ public abstract class GGMEntity implements IGGMEntity {
     @Shadow public World worldObj;
 
     @Shadow public double posX;
-
     @Shadow public double posY;
-
     @Shadow public double posZ;
 
-    @Shadow public boolean isDead;
+    @Shadow public float rotationYaw;
+    @Shadow public float rotationPitch;
 
     @Shadow public double motionY;
-
     @Shadow public double motionZ;
-
     @Shadow public double motionX;
-
-    @Shadow public abstract void setEating(boolean p_70019_1_);
 
     @Shadow public float stepHeight;
 
+    @Shadow public boolean isDead;
+
     @Shadow protected Random rand;
 
-
+    @Shadow public Entity ridingEntity;
 
     @Override
     public int getEntityId() {
@@ -69,6 +66,43 @@ public abstract class GGMEntity implements IGGMEntity {
         return posZ;
     }
 
+    @Override
+    public float getRotationYaw()
+    {
+        return this.rotationYaw;
+    }
+
+    @Override
+    public float getRotationPitch()
+    {
+        return this.rotationPitch;
+    }
+
+
+    @Override
+    public double getMotionX()
+    {
+        return motionX;
+    }
+
+    @Override
+    public double getMotionY()
+    {
+        return motionY;
+    }
+
+    @Override
+    public double getMotionZ()
+    {
+        return motionZ;
+    }
+
+
+    @Override
+    public Entity getRidingEntity()
+    {
+        return this.ridingEntity;
+    }
 
     @Override
     public Random getRand() {

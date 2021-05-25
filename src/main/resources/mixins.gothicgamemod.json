@@ -37,10 +37,13 @@
     ],
     "client": [
 		"client.entity.GGMAbstractClientPlayer",
+		"client.entity.GGMEntityPlayerSP",
+		"client.entity.GGMEntityClientPlayerMP",
 		"network.GGMNetHandlerPlayClient",
 		"client.GGMMinecraft",
 		"client.GGMPlayerControllerMP",
-		"client.model.GGMModelBiped"
+		"client.model.GGMModelBiped",
+      "client.renderer.entity.GGMRenderManager"
 	],
     "server": [
 	]

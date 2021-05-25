@@ -20,7 +20,6 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -48,6 +47,9 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
     protected IAnimation currentAnimation;
     protected IAnimation defaulAnimation;
+    protected IAnimation animationToSet;
+
+    protected boolean needEndAnimation;
 
 
 	@Shadow protected float 				lastDamage;
@@ -71,6 +73,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 		this.defaulAnimation = new AnimationEntityLiving(this);
 		this.currentAnimation = this.getDefaultAnimation();
+		this.animationToSet = this.getDefaultAnimation();
 	}
 
 
@@ -148,6 +151,11 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 			effect.onEntityUpdate();
 		}
 
+		if (this.needEndAnimation)
+		{
+			this.tryEndAnimation();
+		}
+
 		if (this.currentAnimation != null) this.currentAnimation.onUpdate();
 
     	if (this.disSprintTimer > 0 ) --this.disSprintTimer;
@@ -190,6 +198,12 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
+	public IAnimation getAnimationToSet()
+	{
+		return this.animationToSet;
+	}
+
+	@Override
 	public void setAnimation(IAnimation animation)
 	{
 		this.currentAnimation = this.currentAnimation.onSetNewAnimation(animation);
@@ -200,25 +214,81 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
-	public boolean endAnimation()
+	public boolean tryEndAnimation()
 	{
-		IAnimation old = this.getCurrentAnimation();
-
-		if (old.canEndAnimation())
+		if (this.currentAnimation.tryEndAnimation())
 		{
-			this.currentAnimation = this.getDefaultAnimation();
-			old.onEndAnimation();
+			this.clearAnimation();
 			return true;
 		}
 
+		this.needEndAnimation = true;
 		return false;
 	}
+
+	@Override
+	public boolean tryEndAnimation(IAnimation animation)
+	{
+		if (animation != null) this.animationToSet = animation;
+
+		if (this.currentAnimation.tryEndAnimation())
+		{
+			this.clearAnimation();
+			return true;
+		}
+
+		this.needEndAnimation = true;
+		return false;
+	}
+
+	@Override
+	public void clearAnimation()
+	{
+		IAnimation old = this.getCurrentAnimation();
+		this.currentAnimation = this.getAnimationToSet();
+		this.animationToSet = this.getDefaultAnimation();
+		old.onEndAnimation();
+		this.needEndAnimation = false;
+	}
+
 
 	@Override
 	public int getMaxAir() {
 		return 300;
 	}
 
+
+	@Override
+	public boolean isDeniedDropItems()
+	{
+		return this.currentAnimation.denyDropItems();
+	}
+
+	@Override
+	public boolean isDeniedDigging()
+	{
+		if (this.currentAnimation.denyDigging()) return true;
+
+		for (IGGMEffectInstance effect : this.otherEffectsMap.values())
+		{
+			if (effect.denyDigging()) return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isDeniedUsingItems()
+	{
+		if (this.currentAnimation.denyUsingItems()) return true;
+
+		for (IGGMEffectInstance effect : this.otherEffectsMap.values())
+		{
+			if (effect.denyUsingItems()) return true;
+		}
+
+		return false;
+	}
 
 	public void onKillEntity(EntityLivingBase entity)
 	{
@@ -293,7 +363,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	@Redirect(method = "jump", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionY:D", ordinal = 0))
 	private void jumpFix(EntityLivingBase entity, double motionY)
 	{
-		double origin = this.jumpHeight();
+		double origin = this.getJumpHeight();
 		double newMotion = origin;
 
 		for (IGGMEffectInstance effect : this.otherEffectsMap.values())
@@ -302,6 +372,12 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		}
 
 		entity.motionY = newMotion;
+	}
+
+	@Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ForgeHooks;onLivingJump(Lnet/minecraft/entity/EntityLivingBase;)V"))
+	private void onJumped(CallbackInfo ci)
+	{
+		this.currentAnimation.onJumped();
 	}
 
 
@@ -354,7 +430,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
-	public int attackDuration() {
+	public short attackDuration() {
 		return 20;
 	}
 
@@ -362,6 +438,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	public float attackDistance() {
 		return 2.0F;
 	}
+
 
 	@Override
 	public void flagForLvlUpdate() {
@@ -407,60 +484,5 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 		return flag;
 	}
-
-
-
-	/*@Override
-	public void immobilize() {
-		if (this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getModifier(this.immobilizeModifierID) == null)
-			this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).applyModifier(this.immobilizeModifier);
-	}
-
-	@Override
-	public void returnMobility() {
-		this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).removeModifier(this.immobilizeModifier);		
-	}*/
-	
-	
-	
-	/*public void setCastDuration(Spell spell, ItemStack item, int time, float takeMana) {
-		if (this.castDuration <= 0) {
-			if(!entity.worldObj.isRemote) {
-				this.castingSpell = spell;
-				this.item = item;
-				this.castDuration = time;
-				this.takingManaAfterSpell = takeMana;
-				this.immobilize();
-			}
-		}
-	}
-	
-	public void nullifyCastingSpell() {
-		this.castingSpell = null;
-		this.item = null;
-		this.castDuration = 0;
-		this.takingManaAfterSpell = 0.0F;
-		this.returnMobility();
-	}
-	
-	public void finishCast(ItemStack item) {
-		this.statsMap.get(EntityAttributes.mana);
-		this.castingSpell.createSpell();		
-		if ((item != null && ((ItemMagicCast) this.item.getItem()).expendable()) && !(this.entity instanceof EntityPlayer && ((EntityPlayer)this.entity).capabilities.isCreativeMode)) item.stackSize--;
-		this.nullifyCastingSpell();
-	}
-	
-	public ItemStack getUsingItemStack() {
-		return this.item;
-	}*/
-
-
-
-
-	/*@Override
-	public boolean isCastingSpell() {
-		return this.castDuration > 0;
-	}*/
-
 
 }
