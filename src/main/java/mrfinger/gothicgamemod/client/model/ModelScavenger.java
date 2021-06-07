@@ -1,20 +1,21 @@
 package mrfinger.gothicgamemod.client.model;
 
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
 public class ScavengerModel extends AnimalModel
 {
-    ModelRenderer RightFoot;
-    ModelRenderer RightShin;
-    ModelRenderer RightHip;
-    ModelRenderer LeftFoot;
-    ModelRenderer Corpus;
-    ModelRenderer LeftShin;
-    ModelRenderer LeftHip;
-    ModelRenderer Neck;
-    ModelRenderer Head;
+    public ModelRenderer RightFoot;
+    public ModelRenderer RightShin;
+    public ModelRenderer RightHip;
+    public ModelRenderer LeftFoot;
+    public ModelRenderer Corpus;
+    public ModelRenderer LeftShin;
+    public ModelRenderer LeftHip;
+    public ModelRenderer Neck;
+    public ModelRenderer Head;
 
     public ScavengerModel()
     {
@@ -78,10 +79,12 @@ public class ScavengerModel extends AnimalModel
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5, float f7)
+    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
     {
         super.render(entity, f, f1, f2, f3, f4, f5);
-        setRotationAngles(f, f1, f2, f3, f4, f5, entity, f7);
+
+        this.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
+
         RightFoot.render(f5);
         RightShin.render(f5);
         RightHip.render(f5);
@@ -101,9 +104,8 @@ public class ScavengerModel extends AnimalModel
     }
 
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity, float f8)
+    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
     {
-        super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
         float f6 = (180F / (float)Math.PI);
         //this.Head.setRotationPoint(0F, (-24F) + 24F * f1, 0F);
         //this.Head.rotateAngleX = f4 / (180F / (float)Math.PI);
@@ -115,11 +117,11 @@ public class ScavengerModel extends AnimalModel
         this.LeftShin.rotateAngleX = -0.6283185F + (MathHelper.cos(f * 0.6662F + (float)Math.PI) *1.4F * f1);
         this.LeftFoot.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) *1.4F * f1;
 
-        this.Corpus.rotateAngleX = -0.1745329F + MathHelper.sin(f8) * 0.5F;
-        this.Neck.rotateAngleX = -0.1745329F + MathHelper.sin(f8) * 0.5F;
-        this.Head.rotateAngleX =  0.0872665F + MathHelper.sin(f8) * 0.5F;
+        this.Corpus.rotateAngleX = -0.1745329F + MathHelper.sin(1.0F) * 0.5F;
+        this.Neck.rotateAngleX = -0.1745329F + MathHelper.sin(1.0F) * 0.5F;
+        this.Head.rotateAngleX =  0.0872665F + MathHelper.sin(1.0F) * 0.5F;
+
+        super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
     }
-
-
 
 }

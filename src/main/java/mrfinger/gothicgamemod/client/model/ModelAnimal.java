@@ -1,19 +1,16 @@
 package mrfinger.gothicgamemod.client.model;
 
+import mrfinger.gothicgamemod.client.IGGMMinecraft;
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 
 public class AnimalModel extends ModelBase {
-	
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5, float f8) {
-	    super.render(entity, f, f1, f2, f3, f4, f5);
-	    setRotationAngles(f, f1, f2, f3, f4, f5, entity, f8);	    
-	}
-	
-	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity, float f8) {
-	    super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);	    
-	}
+
+
 	
 	public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float distance, float A, float B) {		
 		
@@ -21,8 +18,17 @@ public class AnimalModel extends ModelBase {
 		attachingShape.rotationPointZ = baseShape.rotationPointZ + (float) (distance * Math.sin(A + baseShape.rotateAngleX));
 		
 	}
-	
-	/*public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float differenceY, float differenceZ) {
+
+	@Override
+	public void setRotationAngles(float p_78087_1_, float p_78087_2_, float p_78087_3_, float p_78087_4_, float p_78087_5_, float p_78087_6_, Entity entity)
+	{
+		super.setRotationAngles(p_78087_1_, p_78087_2_, p_78087_3_, p_78087_4_, p_78087_5_, p_78087_6_, entity);
+
+		if (entity instanceof IGGMEntityLivingBase)((IGGMEntityLivingBase) entity).getCurrentAnimation().modifyModel((ModelBase) (Object) this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
+	}
+
+
+/*public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float differenceY, float differenceZ) {
 		
 		float artsDistance = (float) Math.sqrt(differenceY * differenceY + differenceZ * differenceZ);
 		
