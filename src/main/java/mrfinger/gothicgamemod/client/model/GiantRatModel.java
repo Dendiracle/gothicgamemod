@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
-public class GiantRatModel extends AnimalModel {
+public class GiantRatModel extends ModelAnimal {
 	
 	private float tail1X = 1.047198F,
 				  tail2X = 0.6981317F,
@@ -194,13 +194,12 @@ public class GiantRatModel extends AnimalModel {
   }
   
   @Override
-  public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5, float f7)
+  public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
   {
     super.render(entity, f, f1, f2, f3, f4, f5);
-    setRotationAngles(f, f1, f2, f3, f4, f5, entity, f7);
-    /*corpus.render(f5);
+    corpus.render(f5);
     head.render(f5);
-    nose.render(f5);*/
+    nose.render(f5);
     shoulderRight.render(f5);
     handRight.render(f5);
     forearmRight.render(f5);
@@ -220,8 +219,8 @@ public class GiantRatModel extends AnimalModel {
     tail1.render(f5);
     tail2.render(f5);
     tail3.render(f5);
-    //earRight.render(f5);
-    //earLeft.render(f5);
+    earRight.render(f5);
+    earLeft.render(f5);
   }
   
   	private void setRotation(ModelRenderer model, float x, float y, float z) {
@@ -231,7 +230,7 @@ public class GiantRatModel extends AnimalModel {
   	}
   
   	@Override
-  	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity, float f7) {
+  	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity) {
 	  super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
     
 	  float rightLegRotX = (MathHelper.cos(f * 0.6662F) *1.4F * f1);

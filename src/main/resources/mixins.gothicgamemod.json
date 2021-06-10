@@ -42,8 +42,9 @@
 		"network.GGMNetHandlerPlayClient",
 		"client.GGMMinecraft",
 		"client.GGMPlayerControllerMP",
-		"client.model.GGMModelBiped",
-      "client.renderer.entity.GGMRenderManager"
+		"client.renderer.entity.GGMRenderBiped",
+		"client.model.GGMModelFix",
+      	"client.renderer.entity.GGMRenderManager"
 	],
     "server": [
 	]

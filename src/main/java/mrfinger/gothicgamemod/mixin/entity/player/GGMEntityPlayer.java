@@ -2,7 +2,7 @@ package mrfinger.gothicgamemod.mixin.entity.player;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
-import mrfinger.gothicgamemod.battle.hittypes.IHitType;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animations.IAnimation;
@@ -12,7 +12,6 @@ import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
-import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.fractions.Fraction;
@@ -41,7 +40,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ISpecialArmor;
-import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,7 +47,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -236,6 +233,23 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Override
+    public boolean setAnimation(String animationName)
+    {
+        if (animationName.equals(this.equpmentAndFightAnim.getUnlocalizedName()))
+        {
+            if (this.currentAnimation != this.equpmentAndFightAnim)
+            {
+                this.animationToSet = this.equpmentAndFightAnim;
+                this.clearAnimation();
+            }
+
+            return true;
+        }
+
+        return super.setAnimation(animationName);
+    }
+
+    @Override
     public void clearAnimation()
     {
         super.clearAnimation();
@@ -413,28 +427,31 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public short getNewAttackDuration(IHitType hitType) {
+    public short getNewAttackDuration(IAnimationEpisode hitType) {
         return 20;
     }
 
     @Override
-    public IHitType getLastAttackHitTYpe()
+    public IAnimationEpisode getLastAttackHitTYpe()
     {
-        return this.equpmentAndFightAnim.getLastHitType();
+        return this.equpmentAndFightAnim.getEpisode();
     }
 
     @Override
-    public short getLastAttackDuration() {
-        return this.equpmentAndFightAnim.getAttackDuration();
+    public short getLastAttackDuration()
+    {
+        return (short) this.equpmentAndFightAnim.getEpisodeDuration();
     }
 
     @Override
-    public short getAttackCount() {
-        return this.equpmentAndFightAnim.getAtackCount();
+    public short getAttackCount()
+    {
+        return (short) this.equpmentAndFightAnim.getEpisodeCount();
     }
 
     @Override
-    public short getAttackTick() {
+    public short getAttackTick()
+    {
         return this.equpmentAndFightAnim.getAttackTick();
     }
 
@@ -514,9 +531,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public void startAttack(IHitType hitType)
+    public void startAttack(IAnimationEpisode hitType)
     {
-        this.equpmentAndFightAnim.setAnimationHit(hitType, this.getNewAttackDuration(hitType));
+        this.equpmentAndFightAnim.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
     }
 
     @Override

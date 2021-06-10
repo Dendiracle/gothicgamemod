@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.client.render.entity;
 
 import mrfinger.gothicgamemod.GothicMain;
-import mrfinger.gothicgamemod.client.model.AnimalModel;
+import mrfinger.gothicgamemod.client.model.ModelAnimal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
@@ -13,12 +13,12 @@ public class RenderAnimal extends RenderLiving {
 		
 	public final ResourceLocation textureLocation;
 		
-	protected AnimalModel animalModel;		
+	protected ModelAnimal modelAnimal;
 	
-	public RenderAnimal(AnimalModel model, String texture, float shadowSize) {
+	public RenderAnimal(ModelAnimal model, String texture, float shadowSize) {
 		super(model, shadowSize);
 		this.textureLocation = new ResourceLocation(GothicMain.MODID + ":textures/entity/" + texture);
-		this.animalModel = model;
+		this.modelAnimal = model;
 	}
 
 	@Override
@@ -30,14 +30,12 @@ public class RenderAnimal extends RenderLiving {
 	protected void renderModel(EntityLivingBase entity, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_, float p_77036_7_)
     {
 		
-		
-		float f8 = 1.0F;
-		
         this.bindEntityTexture(entity);
+        this.modelAnimal.setRotationAngles(p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_, entity);
 
         if (!entity.isInvisible())
         {
-            this.animalModel.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_, f8);
+            this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_);
         }
         else if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
         {
@@ -47,16 +45,13 @@ public class RenderAnimal extends RenderLiving {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
-            this.animalModel.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_, f8);
+            this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
             GL11.glPopMatrix();
             GL11.glDepthMask(true);
         }
-        else
-        {
-            this.animalModel.setRotationAngles(p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_, entity, f8);
-        }
+
     }
 	
 	

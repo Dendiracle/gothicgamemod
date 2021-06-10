@@ -1,127 +1,273 @@
+
 package mrfinger.gothicgamemod.client.model;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
-public class ScavengerModel extends AnimalModel
+public class ModelScavenger extends ModelAnimal
 {
-    public ModelRenderer RightFoot;
-    public ModelRenderer RightShin;
-    public ModelRenderer RightHip;
-    public ModelRenderer LeftFoot;
-    public ModelRenderer Corpus;
-    public ModelRenderer LeftShin;
-    public ModelRenderer LeftHip;
-    public ModelRenderer Neck;
-    public ModelRenderer Head;
 
-    public ScavengerModel()
+    private boolean withChilds = true;
+
+    GGMModelRenderer corpus;
+    GGMModelRenderer neck0;
+    GGMModelRenderer neck1;
+    GGMModelRenderer head;
+    GGMModelRenderer neb;
+    GGMModelRenderer jaw;
+    GGMModelRenderer hip0Right;
+    GGMModelRenderer hip1Right;
+    GGMModelRenderer shinRight;
+    GGMModelRenderer foot0LateralRight;
+    GGMModelRenderer foot0InnerRight;
+    GGMModelRenderer foot1LateralRight;
+    GGMModelRenderer foot1InnerRight;
+    GGMModelRenderer hip0Left;
+    GGMModelRenderer hip1Left;
+    GGMModelRenderer shinLeft;
+    GGMModelRenderer foot0LateralLeft;
+    GGMModelRenderer foot0InnerLeft;
+    GGMModelRenderer foot1LateralLeft;
+    GGMModelRenderer foot1InnerLeft;
+    GGMModelRenderer tail0;
+    GGMModelRenderer tail1;
+
+
+    //GGMModelRenderer test;
+
+
+
+    public ModelScavenger()
     {
         textureWidth = 64;
         textureHeight = 32;
 
-        RightFoot = new ModelRenderer(this, 12, 22);
-        RightFoot.addBox(-3F, 14F, -7F, 5, 2, 7);
-        RightFoot.setRotationPoint(-3F, 8F, 4F);
-        RightFoot.setTextureSize(64, 32);
-        RightFoot.mirror = true;
-        setRotation(RightFoot, 0F, 0F, 0F);
-        RightShin = new ModelRenderer(this, 48, 12);
-        RightShin.addBox(-2F, 1.2F, 7F, 2, 11, 2);
-        RightShin.setRotationPoint(-3F, 8F, 4F);
-        RightShin.setTextureSize(64, 32);
-        RightShin.mirror = true;
-        setRotation(RightShin, -0.6283185F, 0F, 0F);
-        RightHip = new ModelRenderer(this, 40, 12);
-        RightHip.addBox(-2F, -1F, -1.2F, 2, 10, 2);
-        RightHip.setRotationPoint(-3F, 8F, 4F);
-        RightHip.setTextureSize(64, 32);
-        RightHip.mirror = true;
-        setRotation(RightHip, 0.9424778F, 0F, 0F);
-        LeftFoot = new ModelRenderer(this, 12, 22);
-        LeftFoot.addBox(-2F, 14F, -7F, 5, 2, 7);
-        LeftFoot.setRotationPoint(3F, 8F, 4F);
-        LeftFoot.setTextureSize(64, 32);
-        LeftFoot.mirror = true;
-        setRotation(LeftFoot, 0F, 0F, 0F);
-        Corpus = new ModelRenderer(this, 0, 0);
-        Corpus.addBox(-3F, -6F, -7F, 6, 8, 14);
-        Corpus.setRotationPoint(0F, 8F, 4F);
-        Corpus.setTextureSize(64, 32);
-        Corpus.mirror = true;
-        setRotation(Corpus, -0.1745329F, 0F, 0F);
-        LeftShin = new ModelRenderer(this, 48, 12);
-        LeftShin.addBox(0F, 1.2F, 7F, 2, 11, 2);
-        LeftShin.setRotationPoint(3F, 8F, 4F);
-        LeftShin.setTextureSize(64, 32);
-        LeftShin.mirror = true;
-        setRotation(LeftShin, -0.6283185F, 0F, 0F);
-        LeftHip = new ModelRenderer(this, 40, 12);
-        LeftHip.addBox(0F, -1F, -1.2F, 2, 10, 2);
-        LeftHip.setRotationPoint(3F, 8F, 4F);
-        LeftHip.setTextureSize(64, 32);
-        LeftHip.mirror = true;
-        setRotation(LeftHip, 0.9424778F, 0F, 0F);
-        Neck = new ModelRenderer(this, 0, 22);
-        Neck.addBox(-1F, -1F, -11F, 2, 2, 4);
-        Neck.setRotationPoint(0F, 8F, 4F);
-        Neck.setTextureSize(64, 32);
-        Neck.mirror = true;
-        setRotation(Neck, -0.1745329F, 0F, 0F);
-        Head = new ModelRenderer(this, 40, 0);
-        Head.addBox(-2F, -7.5F, -16F, 4, 4, 8);
-        Head.setRotationPoint(0F, 8F, 4F);
-        Head.setTextureSize(64, 32);
-        Head.mirror = true;
-        setRotation(Head, 0.0872665F, 0F, 0F);
+        /*this.test = new GGMModelRenderer(this, 10, 0);
+        this.test.addQuad(10, 0, 6, 6, -3F, -3F, 0F, 3F, -3F, 0, 3F, 3F, 3F);
+        this.test.setRotationPoint(0F, -2F, 0F);
+        this.test.setTextureSize(6, 6);
+        this.test.mirror = true;*/
+
+        this.corpus = new GGMModelRenderer(this, "corpus");
+        this.corpus.setTextureOffset(0, 0);
+        this.corpus.addBox(-3F, -3.5F, -8F, 6, 6, 10);
+        this.corpus.setRotationPoint(0F, 9.5F, 1F);
+        this.corpus.setTextureSize(64, 32);
+        this.corpus.defaultRotateAngleX = -0.1745329F;
+
+        this.neck0 = new GGMModelRenderer(this, "neck_proximal");
+        this.neck0.setTextureOffset(0, 16);
+        this.neck0.addBox(-1.5F, -1F, -4.6F, 3, 3, 5);
+        this.neck0.setRotationPoint(0F, 8.8F, -7F);
+        this.neck0.setTextureSize(64, 32);
+
+        this.neck1 = new GGMModelRenderer(this, "neck_distal");
+        this.neck1.setTextureOffset(0, 24);
+        this.neck1.addBox(-1.501F, -4F, -1.8F, 3, 5, 3);
+        this.neck1.setRotationPoint(0F, 9.8F, -10F);
+        this.neck1.setTextureSize(64, 32);
+        this.neck1.defaultRotateAngleX = 0.1396263F;
+
+        this.head = new GGMModelRenderer(this, "head");
+        this.head.setTextureOffset(16, 16);
+        this.head.addBox(-2F, -4F, -6.5F, 4, 4, 7);
+        this.head.setRotationPoint(0F, 5.8F, -9.5F);
+        this.head.setTextureSize(64, 32);
+        this.head.defaultRotateAngleX = 0.1396263F;
+
+        this.neb = new GGMModelRenderer(this, "neb");
+        this.neb.setTextureOffset(35, 26);
+        this.neb.addBox(-1.5F, -5.4F, -7.2F, 3, 3, 3);
+        this.neb.setRotationPoint(0F, 5.8F, -9.5F);
+        this.neb.setTextureSize(64, 32);
+        this.neb.defaultRotateAngleX = 0.5201081F;
+
+        this.jaw = new GGMModelRenderer(this, "jaw");
+        this.jaw.setTextureOffset(12, 27);
+        this.jaw.addBox(-1.5F, 0.5F, -4F, 3, 1, 4);
+        this.jaw.setRotationPoint(0F, 5.6F, -12F);
+        this.jaw.setTextureSize(64, 32);
+        this.jaw.defaultRotateAngleX = 0.1396263F;
+
+        this.head.addChild(this.neb);
+        this.head.addChild(this.jaw);
+        this.neck1.addChild(this.head);
+        this.neck0.addChild(this.neck1);
+        this.corpus.addChild(this.neck0);
+
+        hip0Right = new GGMModelRenderer(this, "hip_proximal_right");
+        this.hip0Right.setTextureOffset(32, 0);
+        hip0Right.addBox(-2.2F, -1F, -1.5F, 3, 4, 3);
+        hip0Right.setRotationPoint(-3F, 9.5F, 1F);
+        hip0Right.setTextureSize(64, 32);
+        this.hip0Right.defaultRotateAngleZ = 0.1396263F;
+
+        hip1Right = new GGMModelRenderer(this, "hip_distal_right");
+        this.hip1Right.setTextureOffset(32, 7);
+        hip1Right.addBox(-1F, -1.5F, -0.8F, 2, 2, 5);
+        hip1Right.setRotationPoint(-4.1F, 12F, 0.5F);
+        hip1Right.setTextureSize(64, 32);
+        hip1Right.defaultRotateAngleX = -0.3490659F;
+
+        shinRight = new GGMModelRenderer(this, "shin_right");
+        this.shinRight.setTextureOffset(32, 14);
+        shinRight.addBox(-1.02F, -0.8F, -0.5F, 2, 7, 2);
+        shinRight.setRotationPoint(-4.1F, 12.5F, 4F);
+        shinRight.setTextureSize(64, 32);
+        shinRight.defaultRotateAngleX = -0.4363323F;
+        shinRight.defaultRotateAngleZ = 0.0523599F;
+
+        foot0LateralRight = new GGMModelRenderer(this, "foot_proximal_lateral_right");
+        this.foot0LateralRight.setTextureOffset(46, 0);
+        foot0LateralRight.addBox(-1F, 0F, -1F, 2, 6, 2);
+        foot0LateralRight.setRotationPoint(-4.46F, 18F, 2.2F);
+        foot0LateralRight.setTextureSize(64, 32);
+        setRotation(foot0LateralRight, -0.4886922F, 0.7853982F, -0.2268928F);
+
+        foot0InnerRight = new GGMModelRenderer(this, "foot_proximal_inner_right");
+        this.foot0InnerRight.setTextureOffset(54, 0);
+        foot0InnerRight.addBox(-1F, 0F, -1F, 2, 6, 2);
+        foot0InnerRight.setRotationPoint(-4.34F, 18F, 2.2F);
+        foot0InnerRight.setTextureSize(64, 32);
+        setRotation(foot0InnerRight, -0.3839724F, -0.7853982F, 0.296706F);
+
+        foot1LateralRight = new GGMModelRenderer(this, "foot_distal_lateral_right");
+        this.foot1LateralRight.setTextureOffset(46, 9);
+        foot1LateralRight.addBox(-1.2F, 0F, -4F, 2, 2, 5);
+        foot1LateralRight.setRotationPoint(-5.25F, 22F, 0F);
+        foot1LateralRight.setTextureSize(64, 32);
+        setRotation(foot1LateralRight, 0F, 0.4363323F, 0F);
+
+        foot1InnerRight = new GGMModelRenderer(this, "foot_distal_inner_right");
+        this.foot1InnerRight.setTextureOffset(46, 16);
+        foot1InnerRight.addBox(-0.8F, 0F, -4F, 2, 2, 5);
+        foot1InnerRight.setRotationPoint(-3.9F, 22F, 0F);
+        foot1InnerRight.setTextureSize(64, 32);
+        setRotation(foot1InnerRight, 0F, -0.3490659F, 0F);
+
+        this.foot0LateralRight.addChild(this.foot1LateralRight);
+        this.foot0InnerRight.addChild(this.foot1InnerRight);
+        this.shinRight.addChild(this.foot0InnerRight);
+        this.shinRight.addChild(this.foot0LateralRight);
+        this.hip1Right.addChild(this.shinRight);
+        this.hip0Right.addChild(this.hip1Right);
+        this.corpus.addChild(this.hip0Right);
+
+        hip0Left = new GGMModelRenderer(this, 32, 0);
+        hip0Left.mirror = true;
+        hip0Left.addBox(-0.8F, -1F, -1.5F, 3, 4, 3);
+        hip0Left.setRotationPoint(3F, 9.5F, 1F);
+        hip0Left.setTextureSize(64, 32);
+        setRotation(hip0Left, 0F, 0F, -0.1396263F);
+
+        hip1Left = new GGMModelRenderer(this, 32, 7);
+        hip1Left.mirror = true;
+        hip1Left.addBox(-1F, -1.5F, -0.8F, 2, 2, 5);
+        hip1Left.setRotationPoint(4.1F, 12F, 0.5F);
+        hip1Left.setTextureSize(64, 32);
+        setRotation(hip1Left, -0.3490659F, 0F, 0F);
+
+        shinLeft = new GGMModelRenderer(this, 32, 14);
+        shinLeft.mirror = true;
+        shinLeft.addBox(-1.02F, -0.8F, -0.5F, 2, 7, 2);
+        shinLeft.setRotationPoint(4.1F, 12.5F, 4F);
+        shinLeft.setTextureSize(64, 32);
+        setRotation(shinLeft, -0.4363323F, 0F, -0.0523599F);
+
+        foot0LateralLeft = new GGMModelRenderer(this, 46, 0);
+        foot0LateralLeft.mirror = true;
+        foot0LateralLeft.addBox(-1F, 0F, -1F, 2, 6, 2);
+        foot0LateralLeft.setRotationPoint(4.46F, 18F, 2.2F);
+        foot0LateralLeft.setTextureSize(64, 32);
+        setRotation(foot0LateralLeft, -0.4537856F, -0.7853982F, 0.2268928F);
+
+        foot0InnerLeft = new GGMModelRenderer(this, 54, 0);
+        foot0InnerLeft.mirror = true;
+        foot0InnerLeft.addBox(-1F, 0F, -1F, 2, 6, 2);
+        foot0InnerLeft.setRotationPoint(4.34F, 18F, 2.2F);
+        foot0InnerLeft.setTextureSize(64, 32);
+        setRotation(foot0InnerLeft, -0.3839724F, 0.7853982F, -0.296706F);
+
+        foot1LateralLeft = new GGMModelRenderer(this, 46, 9);
+        foot1LateralLeft.mirror = true;
+        foot1LateralLeft.addBox(-0.8F, 0F, -4F, 2, 2, 5);
+        foot1LateralLeft.setRotationPoint(5.25F, 22F, 0F);
+        foot1LateralLeft.setTextureSize(64, 32);
+        setRotation(foot1LateralLeft, 0F, -0.4363323F, 0F);
+
+        foot1InnerLeft = new GGMModelRenderer(this, 46, 16);
+        foot1InnerLeft.mirror = true;
+        foot1InnerLeft.addBox(-1.2F, 0F, -4F, 2, 2, 5);
+        foot1InnerLeft.setRotationPoint(3.9F, 22F, 0F);
+        foot1InnerLeft.setTextureSize(64, 32);
+        setRotation(foot1InnerLeft, 0F, 0.3490659F, 0F);
+
+        this.foot0LateralLeft.addChild(this.foot1LateralLeft);
+        this.foot0InnerLeft.addChild(this.foot1InnerLeft);
+        this.shinLeft.addChild(this.foot0InnerLeft);
+        this.shinLeft.addChild(this.foot0LateralLeft);
+        this.hip1Left.addChild(this.shinLeft);
+        this.hip0Left.addChild(this.hip1Left);
+        this.corpus.addChild(this.hip0Left);
+
+        tail0 = new GGMModelRenderer(this, 47, 25);
+        tail0.addBox(-2F, -0.5F, -1F, 4, 3, 4);
+        tail0.setRotationPoint(0F, 7F, 3.45F);
+        tail0.setTextureSize(64, 32);
+        tail0.mirror = true;
+        setRotation(tail0, -0.2094395F, 0F, 0F);
+
+        tail1 = new GGMModelRenderer(this, 49, 26);
+        tail1.addBox(-1.5F, -1F, 0F, 3, 2, 3);
+        tail1.setRotationPoint(0F, 8.6F, 6.2F);
+        tail1.setTextureSize(64, 32);
+        tail1.mirror = true;
+        setRotation(tail1, -0.2094395F, 0F, 0F);
+
+        this.tail0.addChild(this.tail1);
+        this.corpus.addChild(this.tail0);
     }
 
-    @Override
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
     {
         super.render(entity, f, f1, f2, f3, f4, f5);
 
-        this.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-
-        RightFoot.render(f5);
-        RightShin.render(f5);
-        RightHip.render(f5);
-        LeftFoot.render(f5);
-        Corpus.render(f5);
-        LeftShin.render(f5);
-        LeftHip.render(f5);
-        Neck.render(f5);
-        Head.render(f5);
+        setRotationAngles(f, f1, f2, f3, f4, f5, entity);
+        this.corpus.renderWithRotation(f5);
+        this.corpus.normalizeAngles();
     }
 
-    private void setRotation(ModelRenderer model, float x, float y, float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
-    }
-
-    @Override
     public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
     {
-        float f6 = (180F / (float)Math.PI);
-        //this.Head.setRotationPoint(0F, (-24F) + 24F * f1, 0F);
-        //this.Head.rotateAngleX = f4 / (180F / (float)Math.PI);
-        //this.Head.rotateAngleY = f3 / (180F / (float)Math.PI);
-        this.RightHip.rotateAngleX = 0.9424778F + (MathHelper.cos(f * 0.6662F) *1.4F * f1);
-        this.RightShin.rotateAngleX = -0.6283185F + (MathHelper.cos(f * 0.6662F) *1.4F * f1);
-        this.RightFoot.rotateAngleX = MathHelper.cos(f * 0.6662F) *1.4F * f1;
-        this.LeftHip.rotateAngleX = 0.9424778F + (MathHelper.cos(f * 0.6662F + (float)Math.PI) *1.4F * f1);
-        this.LeftShin.rotateAngleX = -0.6283185F + (MathHelper.cos(f * 0.6662F + (float)Math.PI) *1.4F * f1);
-        this.LeftFoot.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) *1.4F * f1;
+        float pi = (float)Math.PI;
+        float f6 = (pi / 180F);
 
-        this.Corpus.rotateAngleX = -0.1745329F + MathHelper.sin(1.0F) * 0.5F;
-        this.Neck.rotateAngleX = -0.1745329F + MathHelper.sin(1.0F) * 0.5F;
-        this.Head.rotateAngleX =  0.0872665F + MathHelper.sin(1.0F) * 0.5F;
+        //this.head.rotateAngleY = f3 / (180F / pi);
+        //this.head.rotateAngleX = f4 / (180F / pi);
+
+        float f7 = MathHelper.cos(f * 0.6662F);
+        float f8 = MathHelper.cos(f * 0.6662F + pi);
+
+        this.corpus.rotationPointX = this.corpus.defaultRotationPointX + f7 * 1.5F;
+
+        this.hip0Right.rotateAngleX = this.hip0Right.defaultRotateAngleX + (f7 * 1.4F * f1);
+        this.hip0Right.rotateAngleZ = this.hip0Right.defaultRotateAngleZ + (f7 * f1 * 0.25F);
+        this.hip1Right.rotateAngleX = this.hip1Right.defaultRotateAngleX + (f8 * 1.4F * f1);
+        this.shinRight.rotateAngleX = this.shinRight.defaultRotateAngleX + (f7 * 1.4F * f1);
+        this.foot1LateralRight.rotateAngleX = this.foot1LateralRight.defaultRotateAngleX + (f8 * 1.2F * f1);
+        this.foot1InnerRight.rotateAngleX = this.foot1InnerRight.defaultRotateAngleX + (f8 * 1.2F * f1);
+
+        this.hip0Left.rotateAngleX = this.hip0Left.defaultRotateAngleX + (f8 * 1.4F * f1);
+        this.hip0Left.rotateAngleZ = this.hip0Left.defaultRotateAngleZ + (f7 * f1 * 0.25F);
+        this.hip1Left.rotateAngleX = this.hip1Left.defaultRotateAngleX + (f7 * 1.4F * f1);
+        this.shinLeft.rotateAngleX = this.shinLeft.defaultRotateAngleX + (f8 * 1.4F * f1);
+        this.foot1LateralLeft.rotateAngleX = this.foot1LateralLeft.defaultRotateAngleX + (f7 * 1.2F  * f1);
+        this.foot1InnerLeft.rotateAngleX = this.foot1InnerLeft.defaultRotateAngleX + (f7 * 1.2F * f1);
+
+        //this.hip0Left.rotateAngleX = (MathHelper.cos(f * 0.6662F + pi) * 1.4F * f1);
+
 
         super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
     }
 
-}
+  }

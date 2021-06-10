@@ -23,10 +23,10 @@ public class GGMRenderPlayer extends RenderPlayer
 
     public GGMRenderPlayer()
     {
-        this.mainModel = new ModelPlayer();
+        this.mainModel = new ModelPlayer(0.0F);
         this.modelBipedMain = (ModelBiped) this.mainModel;
-        this.modelArmorChestplate = new ModelPlayer();
-        this.modelArmor = new ModelPlayer();
+        this.modelArmorChestplate = new ModelPlayer(1.0F);
+        this.modelArmor = new ModelPlayer(0.5F);
     }
 
 
@@ -44,8 +44,6 @@ public class GGMRenderPlayer extends RenderPlayer
                 this.modelArmorChestplate.heldItemLeft = this.modelArmor.heldItemLeft = this.modelBipedMain.heldItemLeft = 1;
             }
         }
-
-        ((ModelPlayer) this.mainModel).tickDur = f1;
 
         //this.modelArmorChestplate.setLivingAnimations(playerg,playerg.limbSwing - playerg.limbSwingAmount * (1.0F - f1), playerg.prevLimbSwingAmount + (playerg.limbSwingAmount - playerg.prevLimbSwingAmount) * f1, f1);
         super.doRender(playerg, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, f1);

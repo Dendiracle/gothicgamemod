@@ -5,19 +5,22 @@ import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 
 import java.util.*;
 
-public class PackEntity {
+public class PackEntity
+{
 
+    protected static int nextPackId = 0;
 
     protected IGGMWorld world;
+
+    protected int id;
 
     protected double posX;
     protected double posY;
@@ -32,8 +35,6 @@ public class PackEntity {
 
     protected Set<IEntityHerd> entitiesSet;
 
-    protected Set<IGGMEntityLivingBase> enemiesSet;
-
     protected float aggrLevel;
     protected float aggressiveness;
 
@@ -45,14 +46,36 @@ public class PackEntity {
 
     public PackEntity(IGGMWorld world, PackFraction fraction)
     {
-        System.out.println("Debug in PackEntity init");
         this.world = world;
+        this.id = nextPackId++;
         this.fraction = fraction;
         this.aabb = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
         this.entitiesSet = new HashSet<>();
 
         this.aggressiveness = 0.3F;
+    }
+
+    public PackEntity(IGGMWorld world, NBTTagCompound nbt)
+    {
+        this.world = world;
+
+        this.id = nbt.getInteger("id");
+        this.posX = nbt.getDouble("posx");
+        this.posY =  nbt.getDouble("posy");
+        this.posZ =  nbt.getDouble("posz");
+        this.fraction = (PackFraction) GGMFractions.fractionsMap.get(nbt.getString("fraction"));
+    }
+
+    public IGGMWorld getWorld()
+    {
+        return this.world;
+    }
+
+    public int getId()
+    {
+        return this.id;
+
     }
 
 
@@ -243,17 +266,16 @@ public class PackEntity {
         if (this.aggrLevel <= 0.0F)
         {
             int size = this.entitiesSet.size();
-            int i = size * 10;
+            int i = size * 5;
             int range = MathHelper.floor_float(this.rad - this.fraction.getSimplePackRange() * 0.5F);
             int doubleRange = range * 2;
             int height = (int) (this.height - this.fraction.getSimplePackHeight() * 0.5F);
-            //System.out.println("Debug in PackEntity just living");
-            //System.out.println(" packsize " + size + " rad " + this.rad + " range " + range + " height " + height);
+
             for (IEntityHerd entity : this.entitiesSet)
             {
-                Random random = entity.getRand();
+                Random random = entity.getRNG();
 
-                if (entity.canJustLive() && random.nextInt(i) < size)
+                if (entity.isCanJustWander() && random.nextInt(i) < size)
                 {
                     int x = 0;
                     int y = 0;
@@ -276,13 +298,12 @@ public class PackEntity {
                             blockWeight = blockWeight1;
                         }
                     }
-                    //System.out.println(x + " " + y + " " + z + " blockeweight " + blockWeight);
+
                     if (blockWeight >= 0.0F)
                     {
-                        entity.setPath(this.world.getEntityPathToXYZ((Entity) entity, x, y, z, 10.0F, true, false, false, true));
+                        entity.setPath(x, y, z);
                     }
                 }
-
             }
 
 
@@ -331,6 +352,16 @@ public class PackEntity {
     public double calculatePackRadiusWithout(double currentRadius, double removedSpace)
     {
         return Math.sqrt((currentRadius * currentRadius * Math.PI - removedSpace) / Math.PI);
+    }
+
+
+    public void writePackToNBT(NBTTagCompound nbt)
+    {
+        nbt.setInteger("id", this.id);
+        nbt.setDouble("posx", this.posX);
+        nbt.setDouble("posy", this.posY);
+        nbt.setDouble("posz", this.posZ);
+        nbt.setString("fraction", this.fraction.getUnlocalizedName());
     }
 
 }

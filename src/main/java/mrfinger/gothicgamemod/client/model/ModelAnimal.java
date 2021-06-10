@@ -8,15 +8,13 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
-public class AnimalModel extends ModelBase {
-
-
+public class ModelAnimal extends ModelBase
+{
 	
-	public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float distance, float A, float B) {		
-		
+	public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float distance, float A, float B)
+	{
 		attachingShape.rotationPointY = baseShape.rotationPointY + (float) (distance * Math.sin(B - baseShape.rotateAngleX));
 		attachingShape.rotationPointZ = baseShape.rotationPointZ + (float) (distance * Math.sin(A + baseShape.rotateAngleX));
-		
 	}
 
 	@Override
@@ -25,6 +23,18 @@ public class AnimalModel extends ModelBase {
 		super.setRotationAngles(p_78087_1_, p_78087_2_, p_78087_3_, p_78087_4_, p_78087_5_, p_78087_6_, entity);
 
 		if (entity instanceof IGGMEntityLivingBase)((IGGMEntityLivingBase) entity).getCurrentAnimation().modifyModel((ModelBase) (Object) this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
+	}
+
+
+	protected void setRotation(GGMModelRenderer model, float x, float y, float z)
+	{
+		model.defaultRotateAngleX = x;
+		model.defaultRotateAngleY = y;
+		model.defaultRotateAngleZ = z;
+
+		model.rotateAngleX = x;
+		model.rotateAngleY = y;
+		model.rotateAngleZ = z;
 	}
 
 

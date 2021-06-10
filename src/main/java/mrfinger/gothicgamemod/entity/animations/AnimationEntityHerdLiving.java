@@ -1,41 +1,56 @@
 package mrfinger.gothicgamemod.entity.animations;
 
-import mrfinger.gothicgamemod.battle.hittypes.IAnimationEpisode;
+import mrfinger.gothicgamemod.client.model.IGGMModelBase;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 
-public class AnimationEntityHerd extends AbstractAnimation
+import java.util.Map;
+
+public class AnimationEntityHerdLiving extends AbstractAnimation
 {
 
-    protected IAnimationEpisode currentEpisode;
+    protected IAnimationEpisode episode;
+    protected short episodeDuration;
     protected short episodeCount;
 
-    public AnimationEntityHerd(IEntityHerd entity)
+
+    public AnimationEntityHerdLiving(IEntityHerd entity)
     {
         super(entity);
+    }
+
+    @Override
+    public String getUnlocalizedName()
+    {
+        return "main";
     }
 
 
     @Override
     public void onUpdate()
     {
-        if (this.currentEpisode != null)
+        if (this.episode != null)
         {
             if (this.episodeCount > 0)
-            {
-                this.currentEpisode.onUpdate();
-            }
-            else
-            {
-                this.clearAnimationEpisode();
+            {//System.out.println("Debug in AnimationEntityHerdLiving episodeCount " + episodeCount);
+                --this.episodeCount;
+
+                if (this.episodeCount == 0)
+                {
+                    this.clearAnimationEpisode();
+                }
             }
         }
     }
 
     @Override
-    public boolean tryEndAnimation() {
+    public boolean tryEndAnimation()
+    {
         return false;
     }
 
@@ -45,21 +60,72 @@ public class AnimationEntityHerd extends AbstractAnimation
         this.clearAnimationEpisode();
     }
 
+
     @Override
-    public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, short count)
+    public IAnimationEpisode getEpisode()
+    {
+        return episode;
+    }
+
+    public int getEpisodeDuration()
+    {
+        return episodeDuration;
+    }
+
+    public int getEpisodeCount()
+    {
+        return episodeCount;
+    }
+
+    @Override
+    public boolean setAnimationEpisode(IAnimationEpisode episode, int duration)
     {
         this.clearAnimationEpisode();
+        if (episode != null)
+        {
+            this.episode = episode;
+            this.episodeDuration = (short) duration;
+            this.episodeCount = episodeDuration;
+        }
 
-        this.currentEpisode = animationEpisode;
-        this.episodeCount = count;
+        this.entity.flagForAnimSync();
 
         return true;
     }
 
     @Override
+    public boolean setAnimationEpisode(String episodeName, int duration)
+    {
+        if (episodeName == null)
+        {
+            this.setAnimationEpisode((IAnimationEpisode) null, 0);
+            return true;
+        }
+
+        Map<String, IAnimationEpisode> map = ((IEntityHerd) this.entity).getLivingEpisodesMap();
+
+        if (map != null)
+        {
+            IAnimationEpisode episode = map.get(episodeName);
+            this.setAnimationEpisode(episode, duration);
+
+            return episode != null;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void setEpisodeCount(int count)
+    {
+        this.episodeCount = (short) count;
+    }
+
+    @Override
     public void clearAnimationEpisode()
     {
-
+        this.episode = null;
+        this.episodeCount = 0;
     }
 
     @Override
@@ -99,7 +165,8 @@ public class AnimationEntityHerd extends AbstractAnimation
     }
 
     @Override
-    public boolean denyChangeItem() {
+    public boolean denyChangeItem()
+    {
         return false;
     }
 
@@ -131,5 +198,16 @@ public class AnimationEntityHerd extends AbstractAnimation
     public void onJumped()
     {
 
+    }
+
+
+    @Override
+    public void modifyModel(ModelBase model, float f0, float f1, float tickRate)
+    {
+        if (this.episodeCount > 0)
+        {
+
+            this.episode.updateModel(this.entity, model, ((this.episodeDuration - this.episodeCount) + tickRate) / this.episodeDuration);
+        }
     }
 }

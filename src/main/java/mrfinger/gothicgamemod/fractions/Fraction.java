@@ -20,6 +20,12 @@ public class Fraction {
 	public final Set<Fraction> enemiesSet = new HashSet<>();
 
 
+	public String getUnlocalizedName()
+	{
+		return this.unlocalizedName;
+	}
+
+
 	@Override
 	public int hashCode()
 	{

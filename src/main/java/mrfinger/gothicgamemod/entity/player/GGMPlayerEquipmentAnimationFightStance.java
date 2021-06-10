@@ -32,6 +32,13 @@ public abstract class GGMPlayerEquipmentAnimationFightStance extends AnimationFi
         this.equip = new ItemStack[12];
     }
 
+
+    @Override
+    public boolean setAnimationEpisode(String episodeName, int duration)
+    {
+        return false;
+    }
+
     @Override
     public void onUpdate()
     {

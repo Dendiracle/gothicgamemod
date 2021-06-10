@@ -2,6 +2,7 @@ package mrfinger.gothicgamemod.mixin.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mrfinger.gothicgamemod.client.IGGMMinecraft;
 import mrfinger.gothicgamemod.client.entity.IGGMAbstractClientPlayer;
 import mrfinger.gothicgamemod.client.multiplayer.IGGMPlayerControllerMP;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
@@ -14,6 +15,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Timer;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,20 +28,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SideOnly(Side.CLIENT)
 @Mixin(Minecraft.class)
-public class GGMMinecraft {
+public class GGMMinecraft implements IGGMMinecraft {
 
 
     @Shadow public EntityClientPlayerMP thePlayer;
 
     @Shadow public PlayerControllerMP playerController;
 
+    @Shadow public GameSettings gameSettings;
+
+    @Shadow private Timer timer;
+
+
+    @Override
+    public Timer getTimer()
+    {
+        return this.timer;
+    }
+
 
     /*@ModifyArg(method = "func_147116_af", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;attackEntity(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/entity/Entity;)V"))
     private Entity modifyAttack(Entity entity) {
         return ((IGGMEntityPlayer) this.thePlayer).inFightStance() ? null : entity;
     }*/
-
-    @Shadow public GameSettings gameSettings;
 
     @Redirect(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;changeCurrentItem(I)V"))
     private void fixChangingItem(InventoryPlayer inventoryPlayer, int index)

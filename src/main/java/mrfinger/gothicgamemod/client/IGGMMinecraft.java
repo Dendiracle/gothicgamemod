@@ -1,4 +1,10 @@
 package mrfinger.gothicgamemod.client;
 
-public interface IGGMMinecraft {
+import net.minecraft.util.Timer;
+
+public interface IGGMMinecraft
+{
+
+    Timer getTimer();
+
 }

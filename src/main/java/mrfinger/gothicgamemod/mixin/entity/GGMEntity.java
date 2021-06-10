@@ -105,7 +105,7 @@ public abstract class GGMEntity implements IGGMEntity {
     }
 
     @Override
-    public Random getRand() {
+    public Random getRNG() {
         return this.rand;
     }
 

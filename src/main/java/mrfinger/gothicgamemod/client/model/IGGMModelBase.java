@@ -1,4 +1,13 @@
 package mrfinger.gothicgamemod.client.model;
 
-public interface IGGMModelBase {
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+
+public interface IGGMModelBase
+{
+
+    /*default void updateAnimation(IGGMEntityLivingBase entity, int id, float progress)
+    {
+
+    }*/
+
 }

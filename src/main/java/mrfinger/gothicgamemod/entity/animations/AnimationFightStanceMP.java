@@ -1,8 +1,7 @@
 package mrfinger.gothicgamemod.entity.animations;
 
-import mrfinger.gothicgamemod.battle.hittypes.IHitType;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import net.minecraft.entity.Entity;
@@ -14,7 +13,7 @@ public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStan
 
     protected IGGMEntity[] targets;
 
-    protected IHitType repeatAttackHitType;
+    protected IAnimationEpisode repeatAttackHitType;
 
 
     public AnimationFightStanceMP(IGGMEntityPlayer entity)
@@ -24,14 +23,14 @@ public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStan
 
 
     @Override
-    public boolean setAnimationHit(IHitType hitType, short count)
+    public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, int count)
     {
-        if (super.setAnimationHit(hitType, count))
+        if (super.setAnimationEpisode(animationEpisode, count))
         {
             return true;
         }
 
-        this.repeatAttackHitType = hitType;
+        this.repeatAttackHitType = animationEpisode;
 
         return false;
     }
@@ -52,7 +51,7 @@ public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStan
 
         if (this.count <= 0 && this.repeatAttackHitType != null)
         {
-            this.setAnimationHit(this.repeatAttackHitType, this.entity.getNewAttackDuration(this.repeatAttackHitType));
+            this.setAnimationEpisode(this.repeatAttackHitType, this.entity.getNewAttackDuration(this.repeatAttackHitType));
             this.repeatAttackHitType = null;
         }
     }

@@ -17,16 +17,17 @@ public class CommonProxy {
 	
 	public void registerClientStuff() {}
 		
-	public void preInit(FMLPreInitializationEvent e)
+	public void preInit(FMLPreInitializationEvent event)
 	{
-		GGMBattleSystem.load(e);
-		GGMGui.preInit(e);
-		GGMCapabilities.load(e);
-		GGMFractions.preLoad(e);
+		GGMBattleSystem.load(event);
+		GGMGui.preInit(event);
+		GGMCapabilities.load(event);
+		GGMFractions.preLoad(event);
+		GGMEntityAnimations.preLoad(event);
 		PacketDispatcher.registerClientPackets();
 		PacketDispatcher.registerServerPackets();
 		PacketDispatcher.registerBiPackets();
-		GGMItems.load(e);
+		GGMItems.load(event);
 	}
 	
 		

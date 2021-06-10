@@ -11,6 +11,7 @@ import mrfinger.gothicgamemod.network.client.*;
 import mrfinger.gothicgamemod.network.server.SPacketAfterAttributesUpgraded;
 import mrfinger.gothicgamemod.network.server.SPacketEntityDynamicAttributes;
 import mrfinger.gothicgamemod.network.server.SPacketExpValues;
+import mrfinger.gothicgamemod.network.server.SPacketSyncAnimation;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class PacketDispatcher {
@@ -35,6 +36,7 @@ public class PacketDispatcher {
         servertRegisterMessage(SPacketEntityDynamicAttributes.Handler.class, SPacketEntityDynamicAttributes.class);
         servertRegisterMessage(SPacketExpValues.Handler.class, SPacketExpValues.class);
         servertRegisterMessage(SPacketAfterAttributesUpgraded.Handler.class, SPacketAfterAttributesUpgraded.class);
+        servertRegisterMessage(SPacketSyncAnimation.Handler.class, SPacketSyncAnimation.class);
     }
 
     public static void registerBiPackets()

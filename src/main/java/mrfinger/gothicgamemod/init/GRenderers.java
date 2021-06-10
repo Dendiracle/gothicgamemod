@@ -5,7 +5,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import mrfinger.gothicgamemod.client.model.GiantRatModel;
 import mrfinger.gothicgamemod.client.model.MeatbugModel;
 import mrfinger.gothicgamemod.client.model.NikitaModel;
-import mrfinger.gothicgamemod.client.model.ScavengerModel;
+import mrfinger.gothicgamemod.client.model.ModelScavenger;
 import mrfinger.gothicgamemod.client.render.entity.RenderAnimal;
 import mrfinger.gothicgamemod.client.render.entity.RenderEntity;
 import mrfinger.gothicgamemod.client.render.item.magic.RuneItemRenderer;
@@ -32,7 +32,7 @@ public class GRenderers {
 	}
 
 	private static void registerEntityAnimalRenderer() {		
-		RenderingRegistry.registerEntityRenderingHandler(EntityScavenger.class, new RenderAnimal(new ScavengerModel(), "scavenger.png", 1.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityScavenger.class, new RenderAnimal(new ModelScavenger(), "scavenger.png", 1.0F));
 		RenderingRegistry.registerEntityRenderingHandler(EntityNikita.class, new RenderAnimal(new NikitaModel(), "nikita.png", 1.0F));
 		RenderingRegistry.registerEntityRenderingHandler(EntityGiantRat.class, new RenderAnimal(new GiantRatModel(), "giantrat.png", 0.5F));
 	}

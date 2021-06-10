@@ -1,53 +1,57 @@
 {
-    "scavenger_aggr_anim": {
+    "scavenger_aggr_anim":
+	{
         "category": "hostile",
-        "sounds": [
+        "sounds":
+		[
 			{
 				"name": "mob/scavenger/scavenger_aggr_anim",
 				"stream": false
 			}
 		]
     },
-	"scavenger_living": {
+	"scavenger_living":
+	{
         "category": "hostile",
-        "sounds": [			
+        "sounds":
+		[
 			{
-				"name": "mob/scavenger/scavenger_living",
-				"stream": false
+				"name": "mob/scavenger/sca_living01",
+				"stream": false,
+				"weight": 1.0
+			},					
+			{
+				"name": "mob/scavenger/sca_living02",
+				"stream": false,
+				"weight": 1.0
+			},					
+			{
+				"name": "mob/scavenger/sca_living03",
+				"stream": false,
+				"weight": 1.0
+			},					
+			{
+				"name": "mob/scavenger/sca_living04",
+				"stream": false,
+				"weight": 1.0
 			}
 		]
     },
-	"nikita_living": {
-        "category": "hostile",
-        "sounds": [			
+	"scavenger_attack":
+	{
+		"category": "hostile",
+        "sounds": 
+		[			
 			{
-				"name": "mob/nikita/nikita_living",
-				"stream": false
-			}
-		]
-    },
-	"nikita_aggr_anim": {
-        "category": "hostile",
-        "sounds": [
-			{
-				"name": "mob/nikita/nikita_aggr_anim",
-				"stream": false
-			}
-		]
-    },
-	"nikita_hit": {
-        "category": "hostile",
-        "sounds": [			
-			{
-				"name": "mob/nikita/nikita_hit_1",
+				"name": "mob/scavenger/sca_attack01",
 				"stream": false,
 				"weight": 50.0
 			},
 			{
-				"name": "mob/nikita/nikita_hit_2",
+				"name": "mob/scavenger/sca_attack02",
 				"stream": false,
 				"weight": 50.0
 			}
 		]
-    }	
+	}
 }

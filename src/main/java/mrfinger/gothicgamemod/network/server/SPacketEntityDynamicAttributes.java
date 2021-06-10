@@ -86,10 +86,11 @@ public class SPacketEntityDynamicAttributes implements IMessage {
 
             Entity entity = player.worldObj.getEntityByID(message.id);
 
-            if (entity != null && entity instanceof EntityLivingBase) {
+            if (entity instanceof EntityLivingBase)
+            {
 
-                for (Map.Entry<String, Double> e : message.map.entrySet()) {
-
+                for (Map.Entry<String, Double> e : message.map.entrySet())
+                {
                     IGGMDynamicAttributeInstance dai = (IGGMDynamicAttributeInstance) ((EntityLivingBase) entity).getAttributeMap().getAttributeInstanceByName(e.getKey());
                     dai.setCurrentValue(e.getValue());
                 }

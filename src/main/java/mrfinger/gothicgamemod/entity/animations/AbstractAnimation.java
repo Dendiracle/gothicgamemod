@@ -1,9 +1,11 @@
 package mrfinger.gothicgamemod.entity.animations;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.network.PacketDispatcher;
 
-public abstract class AbstractAnimation implements IAnimation {
-
+public abstract class AbstractAnimation implements IAnimation
+{
 
     protected IGGMEntityLivingBase entity;
 

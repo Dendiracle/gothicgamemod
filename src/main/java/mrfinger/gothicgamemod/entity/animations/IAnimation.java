@@ -2,8 +2,9 @@ package mrfinger.gothicgamemod.entity.animations;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 
 public interface IAnimation {
@@ -12,6 +13,9 @@ public interface IAnimation {
     IGGMEntityLivingBase getEntity();
 
     void setEntity(IGGMEntityLivingBase entity);
+
+
+    String getUnlocalizedName();
 
 
     void onUpdate();
@@ -25,6 +29,22 @@ public interface IAnimation {
     boolean tryEndAnimation();
 
     default void onEndAnimation() {}
+
+
+    IAnimationEpisode getEpisode();
+
+    int getEpisodeDuration();
+
+    int getEpisodeCount();
+
+
+    boolean setAnimationEpisode(IAnimationEpisode animationEpisode,int duration);
+
+    boolean setAnimationEpisode(String episodeName, int duration);
+
+    default void setEpisodeCount(int count) {}
+
+    void clearAnimationEpisode();
 
 
     default boolean denyDropItems()
@@ -73,4 +93,8 @@ public interface IAnimation {
     }
 
     default void onJumped() {}
+
+
+    default void modifyModel(ModelBase model, float f0, float f1, float tickRate) {}
+
 }

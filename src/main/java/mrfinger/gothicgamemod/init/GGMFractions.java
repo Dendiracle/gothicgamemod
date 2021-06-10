@@ -4,7 +4,13 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GGMFractions {
+
+
+    public static final Map<String, Fraction> fractionsMap = new HashMap<>();
 
 
     public static final Fraction neutralFraction = new Fraction("neutral");
@@ -19,6 +25,13 @@ public class GGMFractions {
     public static void preLoad(FMLPreInitializationEvent event)
     {
         loadFractions();
+
+        fractionsMap.put(neutralFraction.getUnlocalizedName(), neutralFraction);
+        fractionsMap.put(neutralPackFraction.getUnlocalizedName(), neutralPackFraction);
+        fractionsMap.put(humans.getUnlocalizedName(), humans);
+        fractionsMap.put(scavengers.getUnlocalizedName(), scavengers);
+        fractionsMap.put(wolves.getUnlocalizedName(), wolves);
+
     }
 
 

@@ -93,7 +93,14 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 		return null;
 	}
 
+	default void setDefaulAnimation(IAnimation defaulAnimation) {}
+
 	default void setAnimation(IAnimation animation) {}
+
+	default boolean setAnimation(String animationName)
+	{
+		return false;
+	}
 
 	/*
 	* Returns true if after this method currentAnimation
@@ -110,6 +117,14 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	}
 
 	default void clearAnimation() {}
+
+
+	default void flagForAnimSync() {}
+
+	default boolean isNeedSyncAnimation()
+	{
+		return false;
+	}
 
 
 	default int getMaxAir()
@@ -202,6 +217,17 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	default int getDisallowSprintTimer()
 	{
 		return 0;
+	}
+
+
+	default boolean isAvoidsWater()
+	{
+		return true;
+	}
+
+	default boolean isCanSwim()
+	{
+		return true;
 	}
 
 

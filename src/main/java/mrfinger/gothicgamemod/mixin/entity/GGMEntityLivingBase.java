@@ -50,6 +50,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected IAnimation animationToSet;
 
     protected boolean needEndAnimation;
+    private boolean needAnimSync;
 
 
 	@Shadow protected float 				lastDamage;
@@ -156,7 +157,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 			this.tryEndAnimation();
 		}
 
-		if (this.currentAnimation != null) this.currentAnimation.onUpdate();
+		this.currentAnimation.onUpdate();
 
     	if (this.disSprintTimer > 0 ) --this.disSprintTimer;
 	}
@@ -214,6 +215,28 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
+	public boolean setAnimation(String animationName)
+	{
+		if (animationName.equals(this.getDefaultAnimation().getUnlocalizedName()))
+		{
+			if (this.currentAnimation != this.getDefaultAnimation())
+			{
+				this.animationToSet = this.getDefaultAnimation();
+				this.clearAnimation();
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void setDefaulAnimation(IAnimation defaulAnimation)
+	{
+		this.defaulAnimation = defaulAnimation;
+	}
+
+	@Override
 	public boolean tryEndAnimation()
 	{
 		if (this.currentAnimation.tryEndAnimation())
@@ -249,6 +272,24 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		this.animationToSet = this.getDefaultAnimation();
 		old.onEndAnimation();
 		this.needEndAnimation = false;
+	}
+
+	@Override
+	public void flagForAnimSync()
+	{
+		this.needAnimSync = true;
+	}
+
+	@Override
+	public boolean isNeedSyncAnimation()
+	{
+		if (this.needAnimSync)
+		{
+			this.needAnimSync = false;
+			return true;
+		}
+
+		return false;
 	}
 
 

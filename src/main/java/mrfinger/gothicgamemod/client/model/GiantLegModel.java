@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
-public class GiantLegModel extends AnimalModel {
+public class GiantLegModel extends ModelAnimal {
 	
 	private float hipsPosY = 0F,
 				  hipsPosZ = 0F,
@@ -35,9 +35,8 @@ public class GiantLegModel extends AnimalModel {
     }
     
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5, float f7) {
+    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
       super.render(entity, f, f1, f2, f3, f4, f5);
-      setRotationAngles(f, f1, f2, f3, f4, f5, entity, f7);
       hip.render(f5);
       shin.render(f5);
     }
@@ -50,7 +49,7 @@ public class GiantLegModel extends AnimalModel {
     }
     
     @Override
-    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity, float f7) {
+    public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity) {
     	super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
       
     	float rightLegRotX = (MathHelper.cos(f * 0.6662F) *1.4F * f1);

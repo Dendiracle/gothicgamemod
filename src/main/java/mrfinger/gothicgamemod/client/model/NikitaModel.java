@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
-public class NikitaModel extends AnimalModel {
+public class NikitaModel extends ModelAnimal {
   
     ModelRenderer LL;
     ModelRenderer RL;

@@ -2,8 +2,7 @@ package mrfinger.gothicgamemod.mixin.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mrfinger.gothicgamemod.battle.hittypes.HittypeSplash;
-import mrfinger.gothicgamemod.battle.hittypes.IHitType;
+import mrfinger.gothicgamemod.entity.animations.episodes.HittypeSplash;
 import mrfinger.gothicgamemod.client.multiplayer.IGGMPlayerControllerMP;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.network.PacketDispatcher;

@@ -7,6 +7,7 @@ import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.server.SPacketEntityDynamicAttributes;
 import mrfinger.gothicgamemod.network.server.SPacketExpValues;
+import mrfinger.gothicgamemod.network.server.SPacketSyncAnimation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTrackerEntry;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,8 +36,8 @@ public abstract class GGMEntityTrackerEntry {
     }
 
     @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "INVOKE", target = "Ljava/util/Set;clear()V", remap = false))
-    private void updateDynamicProperties(CallbackInfo ci) {
-
+    private void updateDynamicProperties(CallbackInfo ci)
+    {
         IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.myEntity;
 
         Collection<IGGMDynamicAttributeInstance> dpiColl = ((IGGMBaseAttributeMap) entity.getAttributeMap()).getToUpdateSet();
@@ -68,6 +69,31 @@ public abstract class GGMEntityTrackerEntry {
                 PacketDispatcher.sendTo(new SPacketExpValues(entity), (IGGMEntityPlayerMP) o);
             }
         }
+    }
+
+    @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;getAttributeMap()Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;"))
+    private void onSendLivingEntityMetadata(CallbackInfo ci)
+    {
+        IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.myEntity;
+
+        if (entity.isNeedSyncAnimation())
+        {
+            String episodeName = entity.getCurrentAnimation().getEpisode() != null ? entity.getCurrentAnimation().getEpisode().getUnlocalizedName() : null;
+
+            if (entity instanceof IGGMEntityPlayerMP)
+            {
+                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getCurrentAnimation().getUnlocalizedName(), episodeName, entity.getCurrentAnimation().getEpisodeCount());
+                PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) this.myEntity);
+            }
+
+            for (Object o : this.trackingPlayers)
+            {
+                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getCurrentAnimation().getUnlocalizedName(), episodeName, entity.getCurrentAnimation().getEpisodeCount());
+                PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) o);
+            }
+
+        }
+
     }
 
     /*@Inject(method = "tryStartWachingThis", at = @At(value = "RETURN"))// "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;getWatchedAttributes()Ljava/util/Collection;"))

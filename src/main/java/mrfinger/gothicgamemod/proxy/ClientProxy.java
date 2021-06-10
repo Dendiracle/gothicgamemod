@@ -24,9 +24,9 @@ public class ClientProxy extends CommonProxy{
 	}
 			
 	@Override
-    public void preInit(FMLPreInitializationEvent e) {
-		super.preInit(e);
-		GGMGui.preInitClient(e);
+    public void preInit(FMLPreInitializationEvent event) {
+		super.preInit(event);
+		GGMGui.preInitClient(event);
 		GGMCapabilities.loadClient();
 	}
 	

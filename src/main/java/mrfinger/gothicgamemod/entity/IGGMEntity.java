@@ -76,7 +76,7 @@ public interface IGGMEntity {
     boolean canEntityBeSeen(Entity entity);
 
 
-    default Random getRand()
+    default Random getRNG()
     {
         return null;
     }
@@ -97,5 +97,6 @@ public interface IGGMEntity {
     {
         return false;
     }
+
 
 }

@@ -2,6 +2,7 @@ package mrfinger.gothicgamemod.entity.animations;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import net.minecraft.item.ItemStack;
 
 public class AnimationEntityLiving extends AbstractAnimation {
@@ -19,7 +20,13 @@ public class AnimationEntityLiving extends AbstractAnimation {
 
 
     @Override
-    public void onUpdate() {
+    public String getUnlocalizedName() {
+        return "main";
+    }
+
+    @Override
+    public void onUpdate()
+    {
 
     }
 
@@ -38,6 +45,39 @@ public class AnimationEntityLiving extends AbstractAnimation {
     @Override
     public void onEndAnimation()
     {
+    }
+
+    @Override
+    public IAnimationEpisode getEpisode()
+    {
+        return null;
+    }
+
+    @Override
+    public int getEpisodeDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getEpisodeCount() {
+        return 0;
+    }
+
+    @Override
+    public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, int duration)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean setAnimationEpisode(String episodeName, int duration)
+    {
+        return false;
+    }
+
+    @Override
+    public void clearAnimationEpisode() {
+
     }
 
 

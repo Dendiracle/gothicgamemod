@@ -41,7 +41,6 @@ public class AnimationFightStanceClient extends GGMPlayerEquipmentAnimationFight
             float[] angles;
             int size = 0;
             boolean flag = this.attackSeries % 2 == 0;
-            ++this.attackSeries;
             EntityLivingBase[] hArray;
 
             {

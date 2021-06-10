@@ -1,6 +1,6 @@
 package mrfinger.gothicgamemod.entity.animations;
 
-import mrfinger.gothicgamemod.battle.hittypes.IHitType;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
@@ -10,7 +10,7 @@ public abstract class AnimationFightStance implements IAnimationFightStance
 
     protected IGGMEntityWithAttackAnim entity;
 
-    protected IHitType hitType;
+    protected IAnimationEpisode hitType;
     protected short attackDuration;
 
     protected short count;
@@ -36,6 +36,13 @@ public abstract class AnimationFightStance implements IAnimationFightStance
     @Override
     public void setEntity(IGGMEntityLivingBase entity) {
         this.entity = (IGGMEntityWithAttackAnim) entity;
+    }
+
+
+    @Override
+    public String getUnlocalizedName()
+    {
+        return "fight";
     }
 
 
@@ -73,18 +80,18 @@ public abstract class AnimationFightStance implements IAnimationFightStance
 
 
     @Override
-    public IHitType getLastHitType() {
+    public IAnimationEpisode getEpisode() {
         return this.hitType;
     }
 
     @Override
-    public short getAttackDuration()
+    public int getEpisodeDuration()
     {
         return this.attackDuration;
     }
 
     @Override
-    public short getAtackCount()
+    public int getEpisodeCount()
     {
         return this.count;
     }
@@ -103,14 +110,15 @@ public abstract class AnimationFightStance implements IAnimationFightStance
 
 
     @Override
-    public boolean setAnimationHit(IHitType hitType, short count)
+    public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, int count)
     {
         if (this.allowHit())
         {
-            this.hitType = hitType;
-            this.attackDuration = count;
-            this.count = count;
-            this.attackTick = (short) (count * hitType.getAttackTickHitMultiplier());
+            this.hitType = animationEpisode;
+            this.attackDuration = (short) count;
+            this.count = (short) count;
+            this.attackTick = (short) (count * animationEpisode.getCulminationTickMultiplier());
+            ++this.attackSeries;
             return true;
         }
 
@@ -123,7 +131,7 @@ public abstract class AnimationFightStance implements IAnimationFightStance
     }
 
     @Override
-    public void clearAnimationHit()
+    public void clearAnimationEpisode()
     {
         this.count = -20;
         this.attackTick = -20;
@@ -144,7 +152,7 @@ public abstract class AnimationFightStance implements IAnimationFightStance
     @Override
     public void onEndAnimation()
     {
-        this.clearAnimationHit();
+        this.clearAnimationEpisode();
     }
 
 }
