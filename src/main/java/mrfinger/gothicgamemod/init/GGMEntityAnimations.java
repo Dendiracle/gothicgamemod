@@ -17,22 +17,7 @@ public class GGMEntityAnimations
         {
             ModelScavenger mdl = (ModelScavenger) model;
 
-            while (progress >= 0.2F)
-            {
-                progress -= 0.2F;
-            }
-
-            if (progress >= 0.1F)
-            {
-                progress = 0.2F - progress;
-            }
-
-            //mdl.Corpus.rotateAngleX = progress * 18.0F;
-            //mdl.Neck.rotateAngleX = progress * 18.0F;
-            //mdl.Head.rotateAngleX = progress * 18.0F;
-
-            //mdl.Neck.offsetY = mdl.Neck.rotationPointY;
-            //mdl.Neck.offsetX = mdl.Neck.rotationPointX;
+            mdl.updateAnimationEat(entity, this, progress);
         }
     };
 

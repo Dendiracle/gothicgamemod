@@ -47,6 +47,12 @@ public interface IAnimation {
     void clearAnimationEpisode();
 
 
+    default boolean denyMovement()
+    {
+        return true;
+    }
+
+
     default boolean denyDropItems()
     {
         return true;

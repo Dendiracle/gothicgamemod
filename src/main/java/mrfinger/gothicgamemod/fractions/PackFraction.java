@@ -6,7 +6,6 @@ import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 public class PackFraction extends Fraction
 {
 
-
     protected final float simplePackRange;
 
     protected final float spaceForEntity;
@@ -50,5 +49,10 @@ public class PackFraction extends Fraction
         return new PackEntity(world, this);
     }
 
+
+    public int getStandartRevengeDuration()
+    {
+        return 300;
+    }
 
 }

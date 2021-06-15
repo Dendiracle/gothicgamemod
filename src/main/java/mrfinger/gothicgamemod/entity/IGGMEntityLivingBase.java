@@ -204,6 +204,12 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	}
 
 
+	default double getWanderSpeedModofier()
+	{
+		return 0.5D;
+	}
+
+
 	default boolean isCanSprint() {
 		return this.getDisallowSprintTimer() <= 0;
 	}
@@ -212,11 +218,17 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	void setSprinting(boolean sprinting);
 
-	default void setDisallowSprintTimer(int timer) {}
+	default void setDisallowSprintTimer(short timer) {}
 
 	default int getDisallowSprintTimer()
 	{
 		return 0;
+	}
+
+
+	default float waterMovementModifier()
+	{
+		return 0.800000011920929F;
 	}
 
 
@@ -229,6 +241,9 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	{
 		return true;
 	}
+
+
+	EntityLivingBase getAITarget();
 
 
 	default void justAttack(Entity entity, float distance) {}

@@ -1,15 +1,15 @@
-package mrfinger.gothicgamemod.entity.packentities;
+package mrfinger.gothicgamemod.entity;
 
 import mrfinger.gothicgamemod.GothicMain;
-import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.ai.GGMPathNavigate;
 import mrfinger.gothicgamemod.entity.animations.AnimationEntityHerdLiving;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
+import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
@@ -19,8 +19,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Map;
-
-public abstract class EntityHerd extends EntityLiving implements IEntityHerd
+/*
+public abstract class EntityLivingBaseHerd extends EntityLivingBase implements IEntityHerd
 {
 
     protected PackEntity pack;
@@ -29,13 +29,12 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 
     protected int chaseCount;
 
+    protected PathEntity pathToEntity;
 
-    public EntityHerd(World world)
+
+    public EntityLivingBaseHerd(World world)
     {
         super(world);
-
-        this.navigator = new GGMPathNavigate(this, world);
-        this.getNavigator().setAvoidsWater(this.isAvoidsWater());
 
         this.setDefaulAnimation(new AnimationEntityHerdLiving(this));
         this.setAnimation(this.getDefaultAnimation());
@@ -91,18 +90,104 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         return 1.0F;
     }
 
-
     @Override
-    protected boolean isAIEnabled()
+    public void onLivingUpdate()
     {
-        return true;
+        if (this.jumpTicks > 0)
+        {
+            --this.jumpTicks;
+        }
+
+        if (this.newPosRotationIncrements > 0)
+        {
+            double d0 = this.posX + (this.newPosX - this.posX) / (double)this.newPosRotationIncrements;
+            double d1 = this.posY + (this.newPosY - this.posY) / (double)this.newPosRotationIncrements;
+            double d2 = this.posZ + (this.newPosZ - this.posZ) / (double)this.newPosRotationIncrements;
+            double d3 = MathHelper.wrapAngleTo180_double(this.newRotationYaw - (double)this.rotationYaw);
+            this.rotationYaw = (float)((double)this.rotationYaw + d3 / (double)this.newPosRotationIncrements);
+            this.rotationPitch = (float)((double)this.rotationPitch + (this.newRotationPitch - (double)this.rotationPitch) / (double)this.newPosRotationIncrements);
+            --this.newPosRotationIncrements;
+            this.setPosition(d0, d1, d2);
+            this.setRotation(this.rotationYaw, this.rotationPitch);
+        }
+        else if (this.worldObj.isRemote)
+        {
+            this.motionX *= 0.98D;
+            this.motionY *= 0.98D;
+            this.motionZ *= 0.98D;
+        }
+
+        if (Math.abs(this.motionX) < 0.005D)
+        {
+            this.motionX = 0.0D;
+        }
+
+        if (Math.abs(this.motionY) < 0.005D)
+        {
+            this.motionY = 0.0D;
+        }
+
+        if (Math.abs(this.motionZ) < 0.005D)
+        {
+            this.motionZ = 0.0D;
+        }
+
+        this.worldObj.theProfiler.startSection("ai");
+
+        if (this.isMovementBlocked())
+        {
+            this.isJumping = false;
+            this.moveStrafing = 0.0F;
+            this.moveForward = 0.0F;
+            this.randomYawVelocity = 0.0F;
+        }
+        else if (!this.worldObj.isRemote)
+        {
+            this.worldObj.theProfiler.startSection("newAi");
+            this.updateAITasks();
+            this.worldObj.theProfiler.endSection();
+        }
+
+        this.worldObj.theProfiler.endSection();
+        this.worldObj.theProfiler.startSection("jump");
+
+        if (this.isJumping)
+        {
+            if (!this.isInWater() && !this.handleLavaMovement())
+            {
+                if (this.onGround && this.jumpTicks == 0)
+                {
+                    this.jump();
+                    this.jumpTicks = 10;
+                }
+            }
+            else
+            {
+                this.motionY += 0.03999999910593033D;
+            }
+        }
+        else
+        {
+            this.jumpTicks = 0;
+        }
+
+        this.worldObj.theProfiler.endSection();
+        this.worldObj.theProfiler.startSection("travel");
+        this.moveStrafing *= 0.98F;
+        this.moveForward *= 0.98F;
+        this.randomYawVelocity *= 0.9F;
+        this.moveEntityWithHeading(this.moveStrafing, this.moveForward);
+        this.worldObj.theProfiler.endSection();
+        this.worldObj.theProfiler.startSection("push");
+
+        if (!this.worldObj.isRemote)
+        {
+            this.collideWithNearbyEntities();
+        }
+
+        this.worldObj.theProfiler.endSection();
     }
 
-    @Override
-    protected void updateAITasks()
-    {
-        super.updateAITasks();
-    }
 
     @Override
     public int getDefaultChaseDuration()
@@ -110,9 +195,9 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         return 100;
     }
 
-
     @Override
-    public IGGMEntity getEntityToAttack() {
+    public IGGMEntity getEntityToAttack()
+    {
         return this.entityToAttack;
     }
 
@@ -140,22 +225,15 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         else this.chaseCount = 0;
     }
 
-
     @Override
-    public void onEntityUpdate()
+    protected void updateEntityActionState()
     {
+        this.worldObj.theProfiler.startSection("ai");
+
         if (this.pack == null)
         {
             this.findNewPack();
         }
-
-        super.onEntityUpdate();
-    }
-
-    /*@Override
-    protected void updateEntityActionState()
-    {
-        this.worldObj.theProfiler.startSection("ai");
 
         if (this.entityToAttack != null)
         {
@@ -212,7 +290,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
                     vec3 = null;
                     this.pathToEntity = null;
 
-                    if (this.isCanJustWander())
+                    if (this.entityToAttack == null && this.getCurrentAnimation().getEpisode() == null)
                     {
                         IAnimationEpisode episode = this.getRandomJustLivingEpisode();
                         this.getCurrentAnimation().setAnimationEpisode(episode, episode.getStandartDuration());
@@ -255,7 +333,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 
             if (this.entityToAttack != null)
             {
-                this.faceEntity((Entity) this.entityToAttack, 30.0F, 30.0F);
+               this.faceEntity((Entity) this.entityToAttack, 30.0F, 30.0F);
             }
 
             if (this.isCollidedHorizontally && this.pathToEntity != null || (this.rand.nextFloat() < 0.8F && (flag || flag1)))
@@ -270,7 +348,48 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
             super.updateEntityActionState();
         }
         this.rotationYaw = 0.0F;
-    }*/
+    }
+
+
+    public void faceEntity(Entity p_70625_1_, float p_70625_2_, float p_70625_3_)
+    {
+        double d0 = p_70625_1_.posX - this.posX;
+        double d2 = p_70625_1_.posZ - this.posZ;
+        double d1;
+
+        if (p_70625_1_ instanceof EntityLivingBase)
+        {
+            EntityLivingBase entitylivingbase = (EntityLivingBase)p_70625_1_;
+            d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.getEyeHeight());
+        }
+        else
+        {
+            d1 = (p_70625_1_.boundingBox.minY + p_70625_1_.boundingBox.maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
+        }
+
+        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d2 * d2);
+        float f2 = (float)(Math.atan2(d2, d0) * 57.2957795131D) - 90.0F;
+        float f3 = (float)(-(Math.atan2(d1, d3) * 57.2957795131D));
+        this.rotationPitch = this.updateRotation(this.rotationPitch, f3, p_70625_3_);
+        this.rotationYaw = this.updateRotation(this.rotationYaw, f2, p_70625_2_);
+    }
+
+    private float updateRotation(float p_70663_1_, float p_70663_2_, float p_70663_3_)
+    {
+        float f3 = MathHelper.wrapAngleTo180_float(p_70663_2_ - p_70663_1_);
+
+        if (f3 > p_70663_3_)
+        {
+            f3 = p_70663_3_;
+        }
+
+        if (f3 < -p_70663_3_)
+        {
+            f3 = -p_70663_3_;
+        }
+
+        return p_70663_1_ + f3;
+    }
 
 
     @Override
@@ -278,7 +397,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     {
         this.entityToAttack = null;
         this.chaseCount = 0;
-        this.getNavigator().clearPathEntity();
+        this.pathToEntity = null;
 
         if (this.pack == null)
         {
@@ -290,13 +409,19 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     @Override
     public void setPath(PathEntity path)
     {
-        this.getNavigator().setPath(path, 1.0D);
+        this.pathToEntity = path;
     }
 
     @Override
     public void setPath(int x, int y, int z)
     {
-        this.getNavigator().tryMoveToXYZ(x, y, z, 1.0D);
+        this.pathToEntity = this.worldObj.getEntityPathToXYZ(this, x, y, z, (float) this.getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue(), true, false, this.isAvoidsWater(), this.isCanSwim());
+    }
+
+    @Override
+    public void updatePathFindingToEntityToAttack()
+    {
+        this.pathToEntity = this.worldObj.getPathEntityToEntity(this, (Entity) this.entityToAttack, (float) this.getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue(), true, false, this.isAvoidsWater(), this.isCanSwim());
     }
 
 
@@ -323,7 +448,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     @Override
     public boolean isCanJustWander()
     {
-        return this.getNavigator().noPath() && this.getCurrentAnimation().getEpisode() == null;
+        return this.pathToEntity == null && this.getCurrentAnimation().getEpisode() == null;
     }
 
     @Override
@@ -345,38 +470,26 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         return null;
     }
 
-    @Override
-    public void onNewAIFinishedPath()
-    {
-        if (this.getCurrentAnimation() == this.getDefaultAnimation() && this.getCurrentAnimation().getEpisode() == null)
-        {
-            IAnimationEpisode episode = this.getRandomJustLivingEpisode();
-            this.getCurrentAnimation().setAnimationEpisode(episode, episode.getStandartDuration());
-        }
-    }
 
-    @Override
     protected String getLivingSound() {
         return GothicMain.MODID + ":scavenger_living";
     }
 
 
     @Override
-    public boolean allowLeashing()
-    {
-        return !this.getLeashed();
-    }
-
-    @Override
     public void writeEntityToNBT(NBTTagCompound nbt)
     {
         super.writeEntityToNBT(nbt);
+
+
     }
 
     @Override
     public void readEntityFromNBT(NBTTagCompound nbt)
     {
         super.readEntityFromNBT(nbt);
+
     }
 
 }
+*/

@@ -7,6 +7,7 @@ import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -34,6 +35,7 @@ public class PackEntity
     protected PackFraction fraction;
 
     protected Set<IEntityHerd> entitiesSet;
+    protected Map<IGGMEntity, EnemyEntry> enemiesMap;
 
     protected float aggrLevel;
     protected float aggressiveness;
@@ -52,6 +54,7 @@ public class PackEntity
         this.aabb = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
         this.entitiesSet = new HashSet<>();
+        this.enemiesMap = new HashMap<>();
 
         this.aggressiveness = 0.3F;
     }
@@ -75,7 +78,6 @@ public class PackEntity
     public int getId()
     {
         return this.id;
-
     }
 
 
@@ -111,6 +113,17 @@ public class PackEntity
     }
 
 
+    public void addEnemy(IGGMEntity entity)
+    {
+        this.addEnemy(entity, this.fraction.getStandartRevengeDuration());
+    }
+
+    public void addEnemy(IGGMEntity entity, int count)
+    {
+        this.enemiesMap.put(entity, new EnemyEntry(entity, count));
+    }
+
+
     public float getRadius()
     {
         return rad;
@@ -118,7 +131,7 @@ public class PackEntity
 
     public float getMaxRangeToMembers()
     {
-        return this.getRadius() * 4.0F;
+        return this.getRadius() + 128.0F;
     }
 
     public void setSize(float rad, float height)
@@ -141,80 +154,66 @@ public class PackEntity
 
     public void onHalfSecUpdate()
     {
-        List<IGGMEntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.aabb);
+        this.updateEnemiesMap();
 
-        if (list != null)
+        List<IGGMEntity> entitiesToAttackList = new ArrayList<>();
+        float squareRad = this.rad * this.rad;
+
+        for (IGGMEntity enemy : this.enemiesMap.keySet())
         {
-            list.removeAll(this.entitiesSet);
-
-            if (list.isEmpty())
+            if (this.getDistanceSQToEntity(enemy) < squareRad)
             {
-                this.aggrLevel = 0.0F;
+                entitiesToAttackList.add(enemy);
+                this.aggrLevel = 1.0F;
             }
-            else if (this.aggrLevel < 1.0F)
+        }
+
+
+        {
+            List<IGGMEntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.aabb);
+
+            if (list != null)
             {
-                int countOfNotEnemies = 0;
+                list.removeAll(this.entitiesSet);
+
                 for (IGGMEntityLivingBase annoyer : list)
                 {
-                    if (!annoyer.inCreative() && this.fraction.enemiesSet.contains(annoyer.getFraction()))
+                    if (this.fraction.enemiesSet.contains(annoyer.getFraction()) && !annoyer.inCreative())
                     {
                         float squareDist = (float) this.getDistanceSQToEntity(annoyer);
-                        float squareRad = this.rad * this.rad;
 
                         if (squareDist < squareRad)
                         {
-                            for (IEntityHerd entity : this.entitiesSet)
+                            for (IEntityHerd packMember : this.entitiesSet)
                             {
-                                if (entity.canEntityBeSeen((Entity) annoyer))
+                                if (packMember.canEntityBeSeen((Entity) annoyer))
                                 {
-                                    this.aggrLevel += this.aggressiveness * ((squareRad - squareDist) / squareRad);
+                                    if (this.aggrLevel < 1.0F)
+                                    {
+                                        this.aggrLevel += this.aggressiveness * ((squareRad - squareDist) / squareRad);
+                                    }
+
+                                    entitiesToAttackList.add(annoyer);
                                     break;
                                 }
-                                else
-                                {
-                                    ++countOfNotEnemies;
-
-                                    if (countOfNotEnemies == list.size())
-                                    {
-                                        this.aggrLevel = 0.0F;
-                                    }
-                                }
                             }
-                        }
-                        else
-                        {
-                            ++countOfNotEnemies;
-
-                            if (countOfNotEnemies == list.size())
-                            {
-                                this.aggrLevel = 0.0F;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ++countOfNotEnemies;
-
-                        if (countOfNotEnemies == list.size())
-                        {
-                            this.aggrLevel = 0.0F;
                         }
                     }
                 }
             }
         }
-        else
-        {
-            this.aggrLevel = 0.0F;
-        }
 
-        if (this.aggrLevel >= 1.0F)
+        if (entitiesToAttackList.isEmpty())
+        {
+            this.aggrLevel -= this.aggressiveness;
+        }
+        else if (this.aggrLevel >= 1.0F)
         {
             this.aggrLevel = 1.0F;
 
-            if (list.size() == 1)
+            if (entitiesToAttackList.size() == 1)
             {
-                IGGMEntityLivingBase entityToAttack = list.get(0);
+                IGGMEntity entityToAttack = entitiesToAttackList.get(0);
 
                 for (IEntityHerd entity : this.entitiesSet)
                 {
@@ -226,11 +225,11 @@ public class PackEntity
                 for (IEntityHerd entity : this.entitiesSet)
                 {
                     int index = 0;
-                    float minDistance = entity.getDistanceToEntity((Entity) list.get(0));
+                    float minDistance = entity.getDistanceToEntity((Entity) entitiesToAttackList.get(0));
 
-                    for (int i = 1; i < list.size(); ++i)
+                    for (int i = 1; i < entitiesToAttackList.size(); ++i)
                     {
-                        float distance = entity.getDistanceToEntity((Entity) list.get(i));
+                        float distance = entity.getDistanceToEntity((Entity) entitiesToAttackList.get(i));
 
                         if (distance < minDistance)
                         {
@@ -239,17 +238,60 @@ public class PackEntity
                         }
                     }
 
-                    entity.setEntityToAttack(list.get(index), this.getChaseDuration(entity));
+                    entity.setEntityToAttack(entitiesToAttackList.get(index), this.getChaseDuration(entity));
                 }
             }
         }
 
+
+        if (this.isJustLiving())
+        {
+            this.updateAwaykers();
+            this.updateLiving();
+        }
+    }
+
+    protected void updateEnemiesMap()
+    {
+        List<IGGMEntity> toRemove = new ArrayList<>();
+
+        for (Map.Entry<IGGMEntity, EnemyEntry> e : this.enemiesMap.entrySet())
+        {
+            e.getValue().updateEntry();
+
+            if (e.getValue().needRemoveEntry())
+            {
+                toRemove.add(e.getKey());
+            }
+        }
+
+        for (IGGMEntity entity : toRemove)
+        {
+            this.enemiesMap.remove(entity);
+        }
+    }
+
+
+    protected boolean isJustLiving()
+    {
+        return this.aggrLevel <= 0.0F;
+    }
+
+
+    protected void updateAwaykers()
+    {
         float squareMaxRangeToMembers = this.getMaxRangeToMembers();
         squareMaxRangeToMembers *= squareMaxRangeToMembers;
 
         List<IEntityHerd> awaykers = new LinkedList();
         for (IEntityHerd entity : this.entitiesSet)
         {
+            if (!entity.isEntityAlive())
+            {
+                awaykers.add(entity);
+                continue;
+            }
+
             double squareDistance = this.getDistanceSQToEntity(entity);
 
             if (squareDistance > squareMaxRangeToMembers)
@@ -262,53 +304,52 @@ public class PackEntity
         {
             this.removeEntityFromPack(awayker);
         }
+    }
 
-        if (this.aggrLevel <= 0.0F)
+    protected void updateLiving()
+    {
+        int size = this.entitiesSet.size();
+        int i = size * 10;
+        int range = MathHelper.floor_float(this.rad - this.fraction.getSimplePackRange() * 0.5F);
+        int doubleRange = range * 2;
+        int height = (int) (this.height - this.fraction.getSimplePackHeight() * 0.5F);
+
+        for (IEntityHerd entity : this.entitiesSet)
         {
-            int size = this.entitiesSet.size();
-            int i = size * 5;
-            int range = MathHelper.floor_float(this.rad - this.fraction.getSimplePackRange() * 0.5F);
-            int doubleRange = range * 2;
-            int height = (int) (this.height - this.fraction.getSimplePackHeight() * 0.5F);
+            Random random = entity.getRNG();
 
-            for (IEntityHerd entity : this.entitiesSet)
+            if (entity.isCanJustWander() && random.nextInt(i) < size)
             {
-                Random random = entity.getRNG();
+                //System.out.println("Debug in PackEntity procked living for: " + entity);
+                int x = 0;
+                int y = 0;
+                int z = 0;
+                float blockWeight = -0.1F;
 
-                if (entity.isCanJustWander() && random.nextInt(i) < size)
+                for (int l = 0; l < 5; ++l)
                 {
-                    int x = 0;
-                    int y = 0;
-                    int z = 0;
-                    float blockWeight = -0.1F;
+                    int x1 = (int) this.posX + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
+                    int y1 = (int) this.posY + random.nextInt(height);
+                    int z1 = (int) this.posZ + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
 
-                    for (int l = 0; l < 5; ++l)
+                    float blockWeight1 = entity.getBlockPathWeight(x1, y1, z1);
+
+                    if (blockWeight1 > blockWeight)
                     {
-                        int x1 = (int) this.posX + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
-                        int y1 = (int) this.posY + random.nextInt(height);
-                        int z1 = (int) this.posZ + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
-
-                        float blockWeight1 = entity.getBlockPathWeight(x1, y1, z1);
-
-                        if (blockWeight1 > blockWeight)
-                        {
-                            x = x1;
-                            y = y1;
-                            z = z1;
-                            blockWeight = blockWeight1;
-                        }
-                    }
-
-                    if (blockWeight >= 0.0F)
-                    {
-                        entity.setPath(x, y, z);
+                        x = x1;
+                        y = y1;
+                        z = z1;
+                        blockWeight = blockWeight1;
                     }
                 }
+
+                if (blockWeight >= 0.0F)
+                {
+                    //System.out.println("Coords " + x + " " + y + " " +z +" " + entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getBaseValue() + " " + entity.getWanderSpeedModofier());
+                    entity.getNavigator().tryMoveToXYZ(x, y, z, entity.getWanderSpeedModofier());
+                }
             }
-
-
         }
-
     }
 
 
@@ -362,6 +403,37 @@ public class PackEntity
         nbt.setDouble("posy", this.posY);
         nbt.setDouble("posz", this.posZ);
         nbt.setString("fraction", this.fraction.getUnlocalizedName());
+    }
+
+
+    protected static class EnemyEntry
+    {
+
+        public final IGGMEntity enemy;
+        private int count;
+
+
+        public EnemyEntry(IGGMEntity enemy)
+        {
+            this(enemy, -1);
+        }
+
+        public EnemyEntry(IGGMEntity enemy, int duration)
+        {
+            this.enemy = enemy;
+            this.count = duration;
+        }
+
+
+        public void updateEntry()
+        {
+            --this.count;
+        }
+
+        public boolean needRemoveEntry()
+        {
+            return this.count == 0 || !this.enemy.isEntityAlive();
+        }
     }
 
 }

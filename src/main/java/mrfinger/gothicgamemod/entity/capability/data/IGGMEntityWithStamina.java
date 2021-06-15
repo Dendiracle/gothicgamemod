@@ -34,7 +34,7 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
         double dd = stamina.getCurrentValue();
         if (dd < d) {
             this.setSprinting(false);
-            this.setDisallowSprintTimer(60);
+            this.setDisallowSprintTimer((short) 60);
         }
         else if (!thisEntity().worldObj.isRemote) {
             stamina.changeCurrentValue(-d);

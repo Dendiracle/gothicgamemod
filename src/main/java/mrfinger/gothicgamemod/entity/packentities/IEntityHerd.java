@@ -46,8 +46,6 @@ public interface IEntityHerd extends IGGMEntityLiving {
 
     void setPath(int x, int y, int z);
 
-    void updatePathFindingToEntityToAttack();
-
 
     float getBlockPathWeight(int x, int y, int z);
 

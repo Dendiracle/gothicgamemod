@@ -82,6 +82,12 @@ public class AnimationEntityLiving extends AbstractAnimation {
 
 
     @Override
+    public boolean denyMovement()
+    {
+        return false;
+    }
+
+    @Override
     public boolean denyDropItems()
     {
         return false;

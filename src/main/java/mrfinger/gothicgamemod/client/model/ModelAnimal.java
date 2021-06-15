@@ -2,13 +2,14 @@ package mrfinger.gothicgamemod.client.model;
 
 import mrfinger.gothicgamemod.client.IGGMMinecraft;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
-public class ModelAnimal extends ModelBase
+public abstract class ModelAnimal extends ModelBase
 {
 	
 	public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float distance, float A, float B)
@@ -36,6 +37,9 @@ public class ModelAnimal extends ModelBase
 		model.rotateAngleY = y;
 		model.rotateAngleZ = z;
 	}
+
+
+	public void updateAnimationEat(IGGMEntityLivingBase entity, IAnimationEpisode animationEpisode, float progress) {}
 
 
 /*public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float differenceY, float differenceZ) {

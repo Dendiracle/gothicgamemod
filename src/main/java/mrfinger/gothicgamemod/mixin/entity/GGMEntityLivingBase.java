@@ -35,7 +35,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     private int 							lvl;
     private boolean							needExpUpdate;
 
-	private int 							disSprintTimer;
+	private short 							disSprintTimer;
 
     @Shadow private BaseAttributeMap 		attributeMap;
 
@@ -144,7 +144,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 
-	@Inject(method = "onLivingUpdate", at = @At("HEAD"))
+	@Inject(method = "onEntityUpdate", at = @At("HEAD"))
 	private void onOnLivingUpdate(CallbackInfo ci)
 	{
 		for (IGGMEffectInstance effect : this.tickingEffectsMap.values())
@@ -224,6 +224,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 				this.animationToSet = this.getDefaultAnimation();
 				this.clearAnimation();
 			}
+
 			return true;
 		}
 
@@ -357,6 +358,14 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		}
 	}
 
+
+	@Inject(method = "damageEntity", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/EntityLivingBase;applyPotionDamageCalculations(Lnet/minecraft/util/DamageSource;F)F"))
+	private void onDamageCalculated(DamageSource damageSource, float damage, CallbackInfo ci)
+	{
+		this.getCurrentAnimation().onTakingDamage((IGGMDamageSource) damageSource, damage);
+	}
+
+
 	@Inject(method = "onDeath", at = @At(value = "JUMP", ordinal = 1))
 	private void onDeathOfEntity(DamageSource damageSource, CallbackInfo ci)
 	{
@@ -368,8 +377,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 
 	@Inject(method = "applyArmorCalculations", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/EntityLivingBase;damageArmor(F)V"), cancellable = true)
-	private void onApplyArmorCalculations(DamageSource ds, float damage, CallbackInfoReturnable<Float> cir) {
-
+	private void onApplyArmorCalculations(DamageSource ds, float damage, CallbackInfoReturnable<Float> cir)
+	{
     	IGGMDamageSource gds = (IGGMDamageSource) ds;
 
     	if (gds.isSettedValues()) {
@@ -423,7 +432,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 
 	@Override
-	public void setDisallowSprintTimer(int timer) {
+	public void setDisallowSprintTimer(short timer)
+	{
 		this.disSprintTimer = timer;
 		if (this.isSprinting() && timer > 0) {
 			this.setSprinting(false);
@@ -436,10 +446,39 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@ModifyVariable(method = "setSprinting", at = @At(value = "HEAD", ordinal = 0))//"INVOKE", target = "Lnet/minecraft/entity/Entity;setSprinting(Z)V"))
-	private boolean modifySprinting(boolean b) {
-
+	private boolean modifySprinting(boolean b)
+	{
 		return b && this.isCanSprint();
 	}
+
+
+	@Redirect(method = "moveEntityWithHeading", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionX:D", ordinal = 1))
+	private double fixMotionXInWater(EntityLivingBase entity)
+	{
+
+		return entity.motionX *= this.waterMovementModifier();
+	}
+
+	@Redirect(method = "moveEntityWithHeading", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionY:D", ordinal = 1))
+	private double fixMotionYInWater(EntityLivingBase entity)
+	{
+
+		return entity.motionY *= this.waterMovementModifier();
+	}
+
+	@Redirect(method = "moveEntityWithHeading", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionZ:D", ordinal = 1))
+	private double fixMotionZInWater(EntityLivingBase entity)
+	{
+		return entity.motionZ *= this.waterMovementModifier();
+	}
+
+
+	@Inject(method = "isMovementBlocked", at = @At("HEAD"), cancellable = true)
+	private void fixIsMovementBlocked(CallbackInfoReturnable<Boolean> cir)
+	{
+		cir.setReturnValue(this.currentAnimation.denyMovement() || this.getHealth() <= 0.0F);
+	}
+
 
 	/*@Inject(method = "setSprinting", at = @At("RETURN"))//value = "JUMP", ordinal = 1), cancellable = true)
 	private void fixSprinting(boolean b, CallbackInfo ci) {
@@ -464,7 +503,9 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
     @Shadow public int attackTime;
 
-    @Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
+	@Shadow public abstract float getHealth();
+
+	@Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
 	private void onKnockback(Entity knockbacker, float power, double x, double y, CallbackInfo ci) {
 
 

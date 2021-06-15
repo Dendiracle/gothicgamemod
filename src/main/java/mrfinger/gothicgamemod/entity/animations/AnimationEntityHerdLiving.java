@@ -37,7 +37,7 @@ public class AnimationEntityHerdLiving extends AbstractAnimation
         if (this.episode != null)
         {
             if (this.episodeCount > 0)
-            {//System.out.println("Debug in AnimationEntityHerdLiving episodeCount " + episodeCount);
+            {
                 --this.episodeCount;
 
                 if (this.episodeCount == 0)
@@ -101,15 +101,17 @@ public class AnimationEntityHerdLiving extends AbstractAnimation
             this.setAnimationEpisode((IAnimationEpisode) null, 0);
             return true;
         }
-
-        Map<String, IAnimationEpisode> map = ((IEntityHerd) this.entity).getLivingEpisodesMap();
-
-        if (map != null)
+        else
         {
-            IAnimationEpisode episode = map.get(episodeName);
-            this.setAnimationEpisode(episode, duration);
+            Map<String, IAnimationEpisode> map = ((IEntityHerd) this.entity).getLivingEpisodesMap();
 
-            return episode != null;
+            if (map != null)
+            {
+                IAnimationEpisode episode = map.get(episodeName);
+                this.setAnimationEpisode(episode, duration);
+
+                return episode != null;
+            }
         }
 
         return false;
@@ -126,6 +128,14 @@ public class AnimationEntityHerdLiving extends AbstractAnimation
     {
         this.episode = null;
         this.episodeCount = 0;
+        this.entity.flagForAnimSync();
+    }
+
+
+    @Override
+    public boolean denyMovement()
+    {
+        return this.episode != null;
     }
 
     @Override
@@ -173,7 +183,10 @@ public class AnimationEntityHerdLiving extends AbstractAnimation
     @Override
     public void onTakingDamage(IGGMDamageSource damageSource, float damage)
     {
-
+        if (this.episode != null && damage > 0.0F)
+        {
+            this.clearAnimationEpisode();
+        }
     }
 
     @Override

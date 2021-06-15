@@ -7,6 +7,8 @@ import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAILeapAtTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -23,6 +25,9 @@ public class EntityScavenger extends EntityHerd
 	public EntityScavenger(World world)
 	{
 		super(world);
+
+		this.tasks.addTask(1, new EntityAISwimming(this));
+		this.tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
 	}
 
 
@@ -38,15 +43,15 @@ public class EntityScavenger extends EntityHerd
 	{
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
+		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
 		this.setSize(0.5F, 1.2F);
 	}
 
 
 	@Override
-	public void onUpdate()
+	public double getWanderSpeedModofier()
 	{
-		super.onUpdate();
+		return 0.5D;
 	}
 
 	@Override

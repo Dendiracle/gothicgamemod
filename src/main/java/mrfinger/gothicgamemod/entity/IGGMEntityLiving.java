@@ -1,7 +1,22 @@
 package mrfinger.gothicgamemod.entity;
 
-public interface IGGMEntityLiving extends IGGMEntityLivingBase {
+import net.minecraft.entity.ai.EntityJumpHelper;
+import net.minecraft.entity.ai.EntityLookHelper;
+import net.minecraft.entity.ai.EntityMoveHelper;
+import net.minecraft.pathfinding.PathNavigate;
+
+public interface IGGMEntityLiving extends IGGMEntityLivingBase
+{
+
+    EntityLookHelper getLookHelper();
+
+    EntityMoveHelper getMoveHelper();
+
+    EntityJumpHelper getJumpHelper();
+
+    PathNavigate getNavigator();
 
 
+    default void onNewAIFinishedPath() {}
 
 }

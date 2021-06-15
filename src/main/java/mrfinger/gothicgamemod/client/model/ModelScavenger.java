@@ -1,13 +1,15 @@
 
 package mrfinger.gothicgamemod.client.model;
 
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
+import java.util.Random;
+
 public class ModelScavenger extends ModelAnimal
 {
-
-    private boolean withChilds = true;
 
     GGMModelRenderer corpus;
     GGMModelRenderer neck0;
@@ -242,23 +244,23 @@ public class ModelScavenger extends ModelAnimal
         float pi = (float)Math.PI;
         float f6 = (pi / 180F);
 
-        //this.head.rotateAngleY = f3 / (180F / pi);
-        //this.head.rotateAngleX = f4 / (180F / pi);
+        this.head.rotateAngleY = f3 / (180F / pi);
+        this.head.rotateAngleX = f4 / (180F / pi);
 
         float f7 = MathHelper.cos(f * 0.6662F);
         float f8 = MathHelper.cos(f * 0.6662F + pi);
 
-        this.corpus.rotationPointX = this.corpus.defaultRotationPointX + f7 * 1.5F;
+        this.corpus.rotationPointX = this.corpus.defaultRotationPointX + f7;
 
         this.hip0Right.rotateAngleX = this.hip0Right.defaultRotateAngleX + (f7 * 1.4F * f1);
-        this.hip0Right.rotateAngleZ = this.hip0Right.defaultRotateAngleZ + (f7 * f1 * 0.25F);
+        this.hip0Right.rotateAngleZ = this.hip0Right.defaultRotateAngleZ + (f7 * f1 * 0.2F);
         this.hip1Right.rotateAngleX = this.hip1Right.defaultRotateAngleX + (f8 * 1.4F * f1);
         this.shinRight.rotateAngleX = this.shinRight.defaultRotateAngleX + (f7 * 1.4F * f1);
         this.foot1LateralRight.rotateAngleX = this.foot1LateralRight.defaultRotateAngleX + (f8 * 1.2F * f1);
         this.foot1InnerRight.rotateAngleX = this.foot1InnerRight.defaultRotateAngleX + (f8 * 1.2F * f1);
 
         this.hip0Left.rotateAngleX = this.hip0Left.defaultRotateAngleX + (f8 * 1.4F * f1);
-        this.hip0Left.rotateAngleZ = this.hip0Left.defaultRotateAngleZ + (f7 * f1 * 0.25F);
+        this.hip0Left.rotateAngleZ = this.hip0Left.defaultRotateAngleZ + (f7 * f1 * 0.2F);
         this.hip1Left.rotateAngleX = this.hip1Left.defaultRotateAngleX + (f7 * 1.4F * f1);
         this.shinLeft.rotateAngleX = this.shinLeft.defaultRotateAngleX + (f8 * 1.4F * f1);
         this.foot1LateralLeft.rotateAngleX = this.foot1LateralLeft.defaultRotateAngleX + (f7 * 1.2F  * f1);
@@ -270,4 +272,71 @@ public class ModelScavenger extends ModelAnimal
         super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
     }
 
-  }
+
+    @Override
+    public void updateAnimationEat(IGGMEntityLivingBase entity, IAnimationEpisode animationEpisode, float progress)
+    {
+        super.updateAnimationEat(entity, animationEpisode, progress);
+
+        this.head.rotateAngleX = this.head.defaultRotateAngleX;
+        this.head.rotateAngleY = this.head.defaultRotateAngleY;
+
+        if (progress < 0.3F)
+        {
+            progress %= 0.1F;
+            progress *= 10F;
+
+            this.updateAnimationPecking(progress);
+        }
+        else
+        {
+            this.updateAnimationSwallowing((progress - 0.3F) * 1.42857142857F);
+
+        }
+    }
+
+
+    public void updateAnimationPecking(float progress)
+    {
+        if (progress > 0.5F) progress = 1F - progress;
+        progress *= 1.5F;
+
+        this.corpus.rotateAngleX = this.corpus.defaultRotateAngleX + progress;
+        this.hip0Right.rotateAngleX = this.hip0Left.defaultRotateAngleX - progress;
+        this.hip0Left.rotateAngleX = this.hip0Left.defaultRotateAngleX - progress;
+        this.neck1.rotateAngleX = this.neck1.defaultRotateAngleX + progress * 2.0F;
+        this.head.rotateAngleX = this.head.defaultRotateAngleX - progress * 1.5F;
+    }
+
+    public void updateAnimationSwallowing(float progress)
+    {
+        if (progress < 0.1F)
+        {
+            progress *= 5F;
+        }
+        else if (progress > 0.9F)
+        {
+            progress = (1.0F - progress) * 5F;
+        }
+        else
+        {
+            progress -= 0.1F;
+            float f0 = progress % 0.1F;
+            if (f0 > 0.05F) f0 = 0.1F - f0;
+            f0 *= 5F;
+            if (progress % 0.2F >= 0.1F) f0 = -f0;
+
+            //this.corpus.rotateAngleY = this.corpus.defaultRotateAngleX + f0;
+            //this.hip0Right.rotateAngleY = this.hip0Right.defaultRotateAngleY - f0;
+            //this.hip0Left.rotateAngleY = this.hip0Left.defaultRotateAngleY - f0;
+            this.neck0.rotateAngleY = this.neck0.defaultRotateAngleY + f0;
+            progress = 0.5F;
+        }
+
+        this.corpus.rotateAngleX = this.corpus.defaultRotateAngleX - progress;
+        this.hip0Right.rotateAngleX = this.hip0Left.defaultRotateAngleX + progress;
+        this.hip0Left.rotateAngleX = this.hip0Left.defaultRotateAngleX + progress;
+        this.neck1.rotateAngleX = this.neck1.defaultRotateAngleX + progress;
+        this.head.rotateAngleX = this.head.defaultRotateAngleX - progress;
+    }
+}
