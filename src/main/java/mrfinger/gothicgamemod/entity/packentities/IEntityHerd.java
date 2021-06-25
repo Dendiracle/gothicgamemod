@@ -5,12 +5,13 @@ import mrfinger.gothicgamemod.entity.IGGMEntityLiving;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.pathfinding.PathEntity;
 
 import java.util.Map;
 
-public interface IEntityHerd extends IGGMEntityLiving {
-
+public interface IEntityHerd extends IGGMEntityLiving
+{
 
     PackFraction getFraction();
 
@@ -31,22 +32,6 @@ public interface IEntityHerd extends IGGMEntityLiving {
     int getDefaultChaseDuration();
 
 
-    IGGMEntity getEntityToAttack();
-
-
-    void setEntityToAttack(IGGMEntity entity);
-
-    void setEntityToAttack(IGGMEntity entity, int chaseDuration);
-
-
-    void nullifyEntityToAttack();
-
-
-    void setPath(PathEntity path);
-
-    void setPath(int x, int y, int z);
-
-
     float getBlockPathWeight(int x, int y, int z);
 
 
@@ -54,6 +39,6 @@ public interface IEntityHerd extends IGGMEntityLiving {
 
     IAnimationEpisode getRandomJustLivingEpisode();
 
-    Map<String, IAnimationEpisode> getLivingEpisodesMap();
+    Map<String, IAnimationEpisode> getAnimationEpisodesMap();
 
 }

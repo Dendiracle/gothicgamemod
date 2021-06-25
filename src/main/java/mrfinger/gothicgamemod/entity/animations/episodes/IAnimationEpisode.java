@@ -15,6 +15,12 @@ public interface IAnimationEpisode
 
     float getCulminationTickMultiplier();
 
+
+    default void onUpdate(IGGMEntityLivingBase entity, int duration, int count) {}
+
+    default void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte series) {}
+
+
     @SideOnly(Side.CLIENT)
     void updateModel(IGGMEntityLivingBase entity, ModelBase model, float progress);
 

@@ -4,6 +4,8 @@ import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.entity.EntityLivingBase;
 
 public abstract class AnimationFightStance implements IAnimationFightStance
 {
@@ -17,6 +19,10 @@ public abstract class AnimationFightStance implements IAnimationFightStance
     protected short attackTick;
 
     protected byte attackSeries;
+
+    protected boolean isNeedControlMove;
+    protected float moveForward;
+    protected float moveStrafe;
 
 
     public AnimationFightStance(IGGMEntityWithAttackAnim entity)
@@ -47,6 +53,18 @@ public abstract class AnimationFightStance implements IAnimationFightStance
 
 
     @Override
+    public byte getAttackSeries()
+    {
+        return attackSeries;
+    }
+
+    @Override
+    public boolean denyMovement()
+    {
+        return false;
+    }
+
+    @Override
     public boolean denyChangeItem()
     {
         return this.count >= 0 || this.isUsingItem();
@@ -65,7 +83,7 @@ public abstract class AnimationFightStance implements IAnimationFightStance
     }
 
     @Override
-    public void onUpdate()
+    public void updateAnimation()
     {
         if (this.count > -20)
         {
@@ -96,18 +114,6 @@ public abstract class AnimationFightStance implements IAnimationFightStance
         return this.count;
     }
 
-    @Override
-    public short getAttackTick()
-    {
-        return this.attackTick;
-    }
-
-    @Override
-    public byte getAttackSeries()
-    {
-        return this.attackSeries;
-    }
-
 
     @Override
     public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, int count)
@@ -119,6 +125,7 @@ public abstract class AnimationFightStance implements IAnimationFightStance
             this.count = (short) count;
             this.attackTick = (short) (count * animationEpisode.getCulminationTickMultiplier());
             ++this.attackSeries;
+            this.entity.flagForAnimSync();
             return true;
         }
 
@@ -143,6 +150,27 @@ public abstract class AnimationFightStance implements IAnimationFightStance
 
 
     @Override
+    public void setMoveControl(float forward, float strafe)
+    {
+        this.isNeedControlMove = true;
+        this.moveForward = forward;
+        this.moveStrafe = strafe;
+    }
+
+    @Override
+    public void controlMove()
+    {
+        if (this.isNeedControlMove)
+        {
+            ((EntityLivingBase) this.entity).moveForward = this.moveForward;
+            this.entity.setAIMoveSpeed(this.moveForward);
+            ((EntityLivingBase) this.entity).moveStrafing = this.moveStrafe;
+            this.isNeedControlMove = false;
+        }
+    }
+
+
+    @Override
     public boolean tryEndAnimation()
     {
         return this.count < 0;
@@ -153,6 +181,23 @@ public abstract class AnimationFightStance implements IAnimationFightStance
     public void onEndAnimation()
     {
         this.clearAnimationEpisode();
+    }
+
+
+    @Override
+    public void modifyModel(ModelBase model, float f0, float f1, float tickRate)
+    {
+        if (this.count > -20)
+        {
+            short count = this.count > 0 ? this.count : 0;
+            this.hitType.updateModel(this.entity, model, ((this.attackDuration - count) + tickRate) / this.attackDuration);
+        }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AnimationFightStance:" + this.getUnlocalizedName();
     }
 
 }

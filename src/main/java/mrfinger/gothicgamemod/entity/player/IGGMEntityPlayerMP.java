@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.entity.player;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import net.minecraft.entity.Entity;
+import mrfinger.gothicgamemod.entity.animations.AnimationPlayerFightStanceMP;
 import net.minecraft.inventory.Container;
 
 public interface IGGMEntityPlayerMP extends IGGMEntityPlayer {
@@ -11,6 +11,9 @@ public interface IGGMEntityPlayerMP extends IGGMEntityPlayer {
 
     void sendContainerToPlayer(Container container);
 
+
+    @Override
+    AnimationPlayerFightStanceMP getGGMEquipment();
 
     void setFightAnimationTargets(IGGMEntity[] entities);
 

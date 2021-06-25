@@ -15,14 +15,12 @@ public interface IGGMEntityWithAttackAnim extends IGGMEntityLivingBase {
 
     short getAttackCount();
 
-    short getAttackTick();
-
-    byte getAttackSeries();
-
 
     IGGMEntity getEntityToAttack();
 
 
-    void startAttack(IAnimationEpisode hitType);
+    boolean startAttack(IAnimationEpisode hitType);
+
+    float getMeleeAttackDistance();
 
 }

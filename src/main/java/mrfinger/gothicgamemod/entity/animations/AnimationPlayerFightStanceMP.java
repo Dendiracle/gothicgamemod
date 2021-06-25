@@ -4,11 +4,13 @@ import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
+import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Collection;
 
-public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStance
+public class AnimationPlayerFightStanceMP extends GGMPlayerEquipmentAnimationFightStance
 {
 
     protected IGGMEntity[] targets;
@@ -16,7 +18,7 @@ public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStan
     protected IAnimationEpisode repeatAttackHitType;
 
 
-    public AnimationFightStanceMP(IGGMEntityPlayer entity)
+    public AnimationPlayerFightStanceMP(IGGMEntityPlayerMP entity)
     {
         super(entity);
     }
@@ -43,7 +45,7 @@ public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStan
         {
             for (IGGMEntity target : this.targets)
             {
-                this.entity.attackEntityAsMob((Entity) target);
+                if (target != null && target.isEntityAlive()) ((EntityPlayer) this.entity).attackTargetEntityWithCurrentItem((Entity) target);
             }
 
             this.targets = null;
@@ -57,19 +59,16 @@ public class AnimationFightStanceMP extends GGMPlayerEquipmentAnimationFightStan
     }
 
 
-    @Override
     public IGGMEntity[] getTargets()
     {
         return targets;
     }
 
-    @Override
     public void setTargets(IGGMEntity[] targets)
     {
         if (this.count >= 0) this.targets = targets;
     }
 
-    @Override
     public void setTargets(Collection<IGGMEntity> entities)
     {
         this.setTargets((IGGMEntity[]) entities.toArray());

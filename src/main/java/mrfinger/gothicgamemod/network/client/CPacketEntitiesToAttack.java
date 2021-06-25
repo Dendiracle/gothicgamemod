@@ -57,18 +57,21 @@ public class CPacketEntitiesToAttack implements IMessage {
         @Override
         public IMessage handleServerMessage(EntityPlayer player, CPacketEntitiesToAttack message, MessageContext ctx) {
 
-            Entity[] entityArray = new Entity[message.idArray.length];
+            if (message.idArray != null)
+            {
+                Entity[] entityArray = new Entity[message.idArray.length];
 
+                for (int i = 0; i < message.idArray.length; ++i) {
 
-            for (int i = 0; i < message.idArray.length; ++i) {
+                    Entity entity = player.worldObj.getEntityByID(message.idArray[i]);
 
-                Entity entity = player.worldObj.getEntityByID(message.idArray[i]);
+                    entityArray[i] = entity;
 
-                entityArray[i] = entity;
+                }
+
+                ((IGGMEntityPlayerMP) player).setFightAnimationTargets((IGGMEntity[]) entityArray);
 
             }
-
-            ((IGGMEntityPlayerMP) player).setFightAnimationTargets((IGGMEntity[]) entityArray);
 
             return null;
         }

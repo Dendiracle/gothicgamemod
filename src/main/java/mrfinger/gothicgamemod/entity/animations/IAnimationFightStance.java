@@ -8,16 +8,7 @@ import java.util.Collection;
 public interface IAnimationFightStance extends IAnimation
 {
 
-    short getAttackTick();
-
     byte getAttackSeries();
-
-
-    IGGMEntity[] getTargets();
-
-    void setTargets(IGGMEntity[] entities);
-
-    void setTargets(Collection<IGGMEntity> entities);
 
 
     boolean isUsingItem();

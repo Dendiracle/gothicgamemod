@@ -6,7 +6,7 @@ public abstract class AbstractAnimationEpisode implements IAnimationEpisode
     protected final String unlocalizedName;
     protected final int standartDuration;
 
-    protected AbstractAnimationEpisode(String unlocalizedName, int standartDuration)
+    public AbstractAnimationEpisode(String unlocalizedName, int standartDuration)
     {
         this.unlocalizedName = unlocalizedName;
         this.standartDuration = standartDuration;
@@ -35,6 +35,6 @@ public abstract class AbstractAnimationEpisode implements IAnimationEpisode
     @Override
     public String toString()
     {
-        return "AnimationEpisode " + this.unlocalizedName;
+        return "AnimationEpisode:" + this.unlocalizedName;
     }
 }

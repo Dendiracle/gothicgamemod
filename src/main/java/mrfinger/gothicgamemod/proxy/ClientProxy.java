@@ -10,7 +10,7 @@ import mrfinger.gothicgamemod.event.EventHandlerClient;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMGui;
 import mrfinger.gothicgamemod.init.GGMKeyBindings;
-import mrfinger.gothicgamemod.init.GRenderers;
+import mrfinger.gothicgamemod.init.GGMRenderers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -33,7 +33,7 @@ public class ClientProxy extends CommonProxy{
 	@Override
     public void init(FMLInitializationEvent e) {
 		super.init(e);
-		GRenderers.load(e);
+		GGMRenderers.load(e);
 	}
 	
 	@Override

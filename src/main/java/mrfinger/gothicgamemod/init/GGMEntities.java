@@ -9,15 +9,10 @@ import mrfinger.gothicgamemod.entity.effects.EntityFireBolt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 
-public class GEntities {	
+public class GGMEntities {
 	
 
 	public static int EXPModifier = 10;
-	
-	
-	
-	
-	
 	
 	
 	public static void load(FMLInitializationEvent e) {
@@ -66,9 +61,7 @@ public class GEntities {
 
 	  EntityRegistry.registerGlobalEntityID(entityClass, name, entityID);
 	  EntityRegistry.registerModEntity(entityClass, name, entityID, GothicMain.instance, 64, 1, true);	 
-	}	
-	
-	
+	}
 	
 
 }

@@ -2,12 +2,13 @@ package mrfinger.gothicgamemod.entity;
 
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 
 import java.util.Random;
 
-public interface IGGMEntity {
-
+public interface IGGMEntity
+{
 
     int getEntityId();
 
@@ -64,6 +65,9 @@ public interface IGGMEntity {
     }
 
 
+    void setLocationAndAngles(double p_70012_1_, double p_70012_3_, double p_70012_5_, float p_70012_7_, float p_70012_8_);
+
+
     float getDistanceToEntity(Entity entity);
 
     double getDistanceSq(double x, double y, double z);
@@ -98,5 +102,9 @@ public interface IGGMEntity {
         return false;
     }
 
+
+    void writeToNBT(NBTTagCompound nbt);
+
+    void readFromNBT(NBTTagCompound nbt);
 
 }

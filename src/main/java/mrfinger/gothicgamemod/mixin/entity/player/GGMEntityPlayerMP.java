@@ -1,10 +1,10 @@
 package mrfinger.gothicgamemod.mixin.entity.player;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.animations.AnimationFightStanceMP;
+import mrfinger.gothicgamemod.entity.animations.AnimationPlayerFightStanceMP;
 import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
-import net.minecraft.entity.Entity;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -25,7 +25,7 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci)
     {
-        this.equpmentAndFightAnim = new AnimationFightStanceMP(this);
+        this.equpmentAndFightAnim = new AnimationPlayerFightStanceMP(this);
         this.ggmContainerEquipment = new GGMContainerPlayer(this);
     }
 
@@ -44,9 +44,15 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
 
 
     @Override
+    public AnimationPlayerFightStanceMP getGGMEquipment()
+    {
+        return (AnimationPlayerFightStanceMP) super.getGGMEquipment();
+    }
+
+    @Override
     public void setFightAnimationTargets(IGGMEntity[] entities)
     {
-        this.equpmentAndFightAnim.setTargets(entities);
+        this.getGGMEquipment().setTargets(entities);
     }
 
 /*

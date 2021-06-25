@@ -244,8 +244,8 @@ public class ModelScavenger extends ModelAnimal
         float pi = (float)Math.PI;
         float f6 = (pi / 180F);
 
-        this.head.rotateAngleY = f3 / (180F / pi);
-        this.head.rotateAngleX = f4 / (180F / pi);
+        this.head.rotateAngleY = f3 * f6;
+        this.head.rotateAngleX = f4 * f6;
 
         float f7 = MathHelper.cos(f * 0.6662F);
         float f8 = MathHelper.cos(f * 0.6662F + pi);
@@ -278,9 +278,6 @@ public class ModelScavenger extends ModelAnimal
     {
         super.updateAnimationEat(entity, animationEpisode, progress);
 
-        this.head.rotateAngleX = this.head.defaultRotateAngleX;
-        this.head.rotateAngleY = this.head.defaultRotateAngleY;
-
         if (progress < 0.3F)
         {
             progress %= 0.1F;
@@ -298,6 +295,9 @@ public class ModelScavenger extends ModelAnimal
 
     public void updateAnimationPecking(float progress)
     {
+        this.head.rotateAngleX = this.head.defaultRotateAngleX;
+        this.head.rotateAngleY = this.head.defaultRotateAngleY;
+
         if (progress > 0.5F) progress = 1F - progress;
         progress *= 1.5F;
 
@@ -310,6 +310,9 @@ public class ModelScavenger extends ModelAnimal
 
     public void updateAnimationSwallowing(float progress)
     {
+        this.head.rotateAngleX = this.head.defaultRotateAngleX;
+        this.head.rotateAngleY = this.head.defaultRotateAngleY;
+
         if (progress < 0.1F)
         {
             progress *= 5F;
@@ -338,5 +341,54 @@ public class ModelScavenger extends ModelAnimal
         this.hip0Left.rotateAngleX = this.hip0Left.defaultRotateAngleX + progress;
         this.neck1.rotateAngleX = this.neck1.defaultRotateAngleX + progress;
         this.head.rotateAngleX = this.head.defaultRotateAngleX - progress;
+    }
+
+    public void updateAnimationSitting(float progress)
+    {
+        if (progress < 0.05F)
+        {
+            progress = 20F * progress;
+        }
+        else if (progress < 0.95F)
+        {
+            progress = 1.0F;
+        }
+        else
+        {
+            progress = (1F - progress) * 20F;
+        }
+
+        this.corpus.rotateAngleX = this.corpus.defaultRotateAngleX + progress * 0.2F;//0.17453292519F;
+        this.corpus.rotationPointY = this.corpus.defaultRotationPointY + progress * 10F;
+        this.hip0Right.rotateAngleX = this.hip0Right.defaultRotateAngleX + 1.1F * progress;
+        this.hip0Left.rotateAngleX = this.hip0Left.defaultRotateAngleX + 1.1F * progress;
+        this.hip1Right.rotateAngleX = this.hip1Right.defaultRotateAngleX - 1.2F * progress;
+        this.hip1Left.rotateAngleX = this.hip1Left.defaultRotateAngleX - 1.2F * progress;
+        this.shinRight.rotateAngleX = this.shinRight.defaultRotateAngleX - 1.2F * progress;
+        this.shinLeft.rotateAngleX = this.shinLeft.defaultRotateAngleX - 1.2F * progress;
+        this.foot1LateralRight.rotateAngleX = this.foot1LateralRight.defaultRotateAngleX + 0.6F * progress;
+        this.foot1InnerRight.rotateAngleX = this.foot1InnerRight.defaultRotateAngleX + 0.6F * progress;
+        this.foot1LateralLeft.rotateAngleX = this.foot1LateralLeft.defaultRotateAngleX + 0.6F * progress;
+        this.foot1InnerLeft.rotateAngleX = this.foot1InnerLeft.defaultRotateAngleX + 0.6F * progress;
+
+    }
+
+
+    public void updateAnimationHit(float progress)
+    {
+        this.head.rotateAngleX = this.head.defaultRotateAngleX;
+        this.head.rotateAngleY = this.head.defaultRotateAngleY;
+
+        if (progress >= 0.5F)
+        {
+            float f0 = (progress - 0.5F) * 2F;
+            progress = 0.5F - f0;
+        }
+
+        this.corpus.rotateAngleX = this.corpus.defaultRotateAngleX - progress * 2F;
+        this.hip0Right.rotateAngleX += progress;
+        this.hip0Left.rotateAngleX += progress;
+        this.neck0.rotateAngleX = this.neck0.defaultRotateAngleX - progress;
+        this.neck1.rotateAngleX = this.neck1.defaultRotateAngleX + progress;
     }
 }

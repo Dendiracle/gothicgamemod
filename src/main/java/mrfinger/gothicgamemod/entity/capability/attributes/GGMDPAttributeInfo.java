@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.entity.capability.attributes;
 
-public class GGMDPAttributeInfo extends GGMIncreasableAttributeInfo {
-
+public class GGMDPAttributeInfo extends GGMIncreasableAttributeInfo
+{
 
     protected final float   defaultNaturalRegenValue;
 
@@ -24,24 +24,33 @@ public class GGMDPAttributeInfo extends GGMIncreasableAttributeInfo {
         this.maxNaturalRegenIncreasesNeedLP = maxNaturalRegenIncreasesNeedLP;
     }
 
+    public GGMDPAttributeInfo(float defaultValue, float defaultNaturalRegenValue) {
+        this(defaultValue, defaultValue, 0.0F, 0.0F, (byte) 0, defaultNaturalRegenValue, defaultNaturalRegenValue, 0.0F, 0.0F, (byte) 0);
+    }
 
-    public float getDefaultNaturalRegenValue() {
+
+    public float getDefaultNaturalRegenValue()
+    {
         return defaultNaturalRegenValue;
     }
 
-    public float getMaxNaturalRegenValue() {
+    public float getMaxNaturalRegenValue()
+    {
         return maxNaturalRegenValue;
     }
 
-    public float getNaturalRegenIncreasingValue() {
+    public float getNaturalRegenIncreasingValue()
+    {
         return naturalRegenIncreasingValue;
     }
 
-    public float getValueAfterNaturalRegenIncreasingValueDecreases() {
+    public float getValueAfterNaturalRegenIncreasingValueDecreases()
+    {
         return valueAfterNaturalRegenIncreasingValueDecreases;
     }
 
-    public byte getMaxNaturalRegenIncreasesNeedLP() {
+    public byte getMaxNaturalRegenIncreasesNeedLP()
+    {
         return maxNaturalRegenIncreasesNeedLP;
     }
 

@@ -28,12 +28,14 @@ public class CommonProxy {
 		PacketDispatcher.registerServerPackets();
 		PacketDispatcher.registerBiPackets();
 		GGMItems.load(event);
+		GGMBlocks.preLoad(event);
+		GGMTileEntities.preLoad(event);
 	}
 	
 		
 	public void init(FMLInitializationEvent e)
 	{
-		GEntities.load(e);
+		GGMEntities.load(e);
 		GGMEvents.load(e);
 	}
 	

@@ -7,7 +7,6 @@ import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -154,6 +153,8 @@ public class PackEntity
 
     public void onHalfSecUpdate()
     {
+        this.checkDeads();
+
         this.updateEnemiesMap();
 
         List<IGGMEntity> entitiesToAttackList = new ArrayList<>();
@@ -178,6 +179,7 @@ public class PackEntity
 
                 for (IGGMEntityLivingBase annoyer : list)
                 {
+
                     if (this.fraction.enemiesSet.contains(annoyer.getFraction()) && !annoyer.inCreative())
                     {
                         float squareDist = (float) this.getDistanceSQToEntity(annoyer);
@@ -205,7 +207,11 @@ public class PackEntity
 
         if (entitiesToAttackList.isEmpty())
         {
-            this.aggrLevel -= this.aggressiveness;
+            if (this.aggrLevel > 0F)
+            {
+                this.aggrLevel -= this.aggressiveness;
+                if (this.aggrLevel < 0F) this.aggrLevel = 0F;
+            }
         }
         else if (this.aggrLevel >= 1.0F)
         {
@@ -217,7 +223,7 @@ public class PackEntity
 
                 for (IEntityHerd entity : this.entitiesSet)
                 {
-                    entity.setEntityToAttack(entityToAttack, this.getChaseDuration(entity));
+                    entity.setAttackTarget((EntityLivingBase) entityToAttack);
                 }
             }
             else
@@ -238,7 +244,7 @@ public class PackEntity
                         }
                     }
 
-                    entity.setEntityToAttack(entitiesToAttackList.get(index), this.getChaseDuration(entity));
+                    entity.setAttackTarget((EntityLivingBase) entitiesToAttackList.get(index));
                 }
             }
         }
@@ -249,6 +255,24 @@ public class PackEntity
             this.updateAwaykers();
             this.updateLiving();
         }
+    }
+
+    protected void checkDeads()
+    {
+        /*List<IEntityHerd> toRemove = new ArrayList();
+
+        for (IEntityHerd entity : this.entitiesSet)
+        {
+            if (!entity.isEntityAlive())
+            {
+                toRemove.add(entity);
+            }
+        }
+
+        for (IEntityHerd entity: toRemove)
+        {
+            this.removeEntityFromPack(entity);
+        }*/
     }
 
     protected void updateEnemiesMap()
@@ -310,17 +334,16 @@ public class PackEntity
     {
         int size = this.entitiesSet.size();
         int i = size * 10;
-        int range = MathHelper.floor_float(this.rad - this.fraction.getSimplePackRange() * 0.5F);
-        int doubleRange = range * 2;
+        float range = this.rad - this.fraction.getSimplePackRange() * 0.5F;
+        float rangeSQ = range * range;
+        int doubleRange = MathHelper.floor_float(range * 2);
         int height = (int) (this.height - this.fraction.getSimplePackHeight() * 0.5F);
 
         for (IEntityHerd entity : this.entitiesSet)
         {
             Random random = entity.getRNG();
-
-            if (entity.isCanJustWander() && random.nextInt(i) < size)
+            if (entity.isCanJustWander() && (random.nextInt(i) < size || this.getDistanceSQToEntity(entity) > rangeSQ))
             {
-                //System.out.println("Debug in PackEntity procked living for: " + entity);
                 int x = 0;
                 int y = 0;
                 int z = 0;
@@ -328,9 +351,9 @@ public class PackEntity
 
                 for (int l = 0; l < 5; ++l)
                 {
-                    int x1 = (int) this.posX + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
+                    int x1 = (int) this.posX + random.nextInt(doubleRange) - (int) range;
                     int y1 = (int) this.posY + random.nextInt(height);
-                    int z1 = (int) this.posZ + random.nextInt(MathHelper.floor_float(doubleRange)) - range;
+                    int z1 = (int) this.posZ + random.nextInt(doubleRange) - (int) range;
 
                     float blockWeight1 = entity.getBlockPathWeight(x1, y1, z1);
 
@@ -345,8 +368,7 @@ public class PackEntity
 
                 if (blockWeight >= 0.0F)
                 {
-                    //System.out.println("Coords " + x + " " + y + " " +z +" " + entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getBaseValue() + " " + entity.getWanderSpeedModofier());
-                    entity.getNavigator().tryMoveToXYZ(x, y, z, entity.getWanderSpeedModofier());
+                    entity.getNavigator().tryMoveToXYZ(x, y, z, entity.getWanderSpeedModifier());
                 }
             }
         }
@@ -436,4 +458,10 @@ public class PackEntity
         }
     }
 
+
+    @Override
+    public String toString()
+    {
+        return "EntityPack id: " + this.id + " coords: " + this.posX + " " + this.posY + " " + this.posZ;
+    }
 }

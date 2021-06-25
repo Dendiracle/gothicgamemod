@@ -7,6 +7,7 @@
 		"server.GGMMinecraftServer",
 		"world.GGMWorld",
 		"world.GGMWorldServer",
+		"world.chunk.GGMChunk",
 		"entity.ai.attributes.GGMBaseAttributeMap",
 		"entity.ai.attributes.GGMServersideAttributeMap",
 		"entity.ai.attributes.GGMBaseAttribute",

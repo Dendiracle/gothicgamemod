@@ -3,6 +3,8 @@ package mrfinger.gothicgamemod.mixin.entity;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -120,4 +122,46 @@ public abstract class GGMEntity implements IGGMEntity {
     {
         return false;
     }
+
+
+    public void faceEntity(Entity p_70625_1_, float p_70625_2_, float p_70625_3_)
+    {
+        double d0 = p_70625_1_.posX - this.posX;
+        double d2 = p_70625_1_.posZ - this.posZ;
+        double d1;
+
+        if (p_70625_1_ instanceof EntityLivingBase)
+        {
+            EntityLivingBase entitylivingbase = (EntityLivingBase)p_70625_1_;
+            d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.getEyeHeight());
+        }
+        else
+        {
+            d1 = (p_70625_1_.boundingBox.minY + p_70625_1_.boundingBox.maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
+        }
+
+        double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d2 * d2);
+        float f2 = (float)(Math.atan2(d2, d0) * 57.2957795131) - 90.0F;
+        float f3 = (float)-(Math.atan2(d1, d3) * 57.2957795131);
+        this.rotationPitch = this.updateRotation(this.rotationPitch, f3, p_70625_3_);
+        this.rotationYaw = this.updateRotation(this.rotationYaw, f2, p_70625_2_);
+    }
+
+    protected float updateRotation(float p_70663_1_, float p_70663_2_, float p_70663_3_)
+    {
+        float f3 = MathHelper.wrapAngleTo180_float(p_70663_2_ - p_70663_1_);
+
+        if (f3 > p_70663_3_)
+        {
+            f3 = p_70663_3_;
+        }
+
+        if (f3 < -p_70663_3_)
+        {
+            f3 = -p_70663_3_;
+        }
+
+        return p_70663_1_ + f3;
+    }
+
 }

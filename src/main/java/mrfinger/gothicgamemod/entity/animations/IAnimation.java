@@ -18,7 +18,7 @@ public interface IAnimation {
     String getUnlocalizedName();
 
 
-    void onUpdate();
+    void updateAnimation();
 
 
     default IAnimation onSetNewAnimation(IAnimation animation)
@@ -45,6 +45,15 @@ public interface IAnimation {
     default void setEpisodeCount(int count) {}
 
     void clearAnimationEpisode();
+
+
+    default void setMoveControl(float forward, float strafe) {}
+
+    default void setRotationControl(float yaw, float pitch) {}
+
+    default void controlMove() {}
+
+    default void controlRotation() {}
 
 
     default boolean denyMovement()

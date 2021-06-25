@@ -336,6 +336,10 @@ public class GGMModelRenderer extends ModelRenderer
         this.rotateAngleY = this.defaultRotateAngleY;
         this.rotateAngleZ = this.defaultRotateAngleZ;
 
+        this.rotationPointX = this.defaultRotationPointX;
+        this.rotationPointY = this.defaultRotationPointY;
+        this.rotationPointZ = this.defaultRotationPointZ;
+
         if (this.childModels != null)
         {
             for (Object o : this.childModels)

@@ -32,4 +32,10 @@ public abstract class AbstractAnimation implements IAnimation
         this.entity = entity;
     }
 
+
+    @Override
+    public String toString()
+    {
+        return "Animation:" + this.getUnlocalizedName();
+    }
 }

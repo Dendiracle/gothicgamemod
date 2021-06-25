@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.entity.animations.episodes.HittypeSplash;
 import mrfinger.gothicgamemod.client.multiplayer.IGGMPlayerControllerMP;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
+import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.client.CPacketStartAttack;
 import net.minecraft.client.Minecraft;
@@ -43,7 +44,7 @@ public class GGMPlayerControllerMP implements IGGMPlayerControllerMP {
             if (player().getAttackCount() <= 0)
             {
                 PacketDispatcher.sendToServer(new CPacketStartAttack((short) 0));
-                player().startAttack(new HittypeSplash());
+                player().startAttack(GGMEntityAnimations.hitSplash);
             }
             else
             {

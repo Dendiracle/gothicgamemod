@@ -10,8 +10,8 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
 
     float getStaminaSpendingFromJump();
 
-    default boolean canJump() {
-
+    default boolean canJump()
+    {
         IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
         float d = this.getStaminaSpendingFromJump();
         double dd = stamina.getCurrentValue();
@@ -27,16 +27,18 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
 
     float getStaminaSpendingOnSprint();
 
-    default void sprintUpdate() {
-
+    default void sprintUpdate()
+    {
         IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
         double d = this.getStaminaSpendingOnSprint();
         double dd = stamina.getCurrentValue();
-        if (dd < d) {
+        if (dd < d)
+        {
             this.setSprinting(false);
             this.setDisallowSprintTimer((short) 60);
         }
-        else if (!thisEntity().worldObj.isRemote) {
+        else if (!thisEntity().worldObj.isRemote)
+        {
             stamina.changeCurrentValue(-d);
         }
 
@@ -45,8 +47,8 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase {
 
     float getStaminaSpendingFromAttack();
 
-    default boolean canAttack() {
-
+    default boolean canAttack()
+    {
         IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
         float d = this.getStaminaSpendingFromAttack();
 

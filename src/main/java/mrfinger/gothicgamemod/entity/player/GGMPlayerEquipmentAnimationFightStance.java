@@ -40,9 +40,9 @@ public abstract class GGMPlayerEquipmentAnimationFightStance extends AnimationFi
     }
 
     @Override
-    public void onUpdate()
+    public void updateAnimation()
     {
-        super.onUpdate();
+        super.updateAnimation();
     }
 
     @Override

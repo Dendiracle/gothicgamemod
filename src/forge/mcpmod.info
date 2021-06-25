@@ -10,7 +10,7 @@
   "updateUrl": "",
   "authors": ["Searge", "ProfMobius", "IngisKahn", "Fesh0r", "ZeuX", "R4wk", "Others"],
   "credits": "Made by the MCP team",
-  "parent": "",
+  "baby": "",
   "screenshots": [],
   "dependencies": []
 }

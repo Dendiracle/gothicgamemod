@@ -34,4 +34,6 @@ public interface IGGMWorld {
     Block getBlock(int x, int y, int z);
 
     boolean setBlock(int x, int y, int z, Block block, int metadata, int p_147465_6_);
+
+    boolean setBlock(int x, int y, int z, Block block);
 }

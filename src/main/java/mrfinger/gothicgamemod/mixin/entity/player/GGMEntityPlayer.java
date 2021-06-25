@@ -15,7 +15,7 @@ import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.fractions.Fraction;
-import mrfinger.gothicgamemod.init.GEntities;
+import mrfinger.gothicgamemod.init.GGMEntities;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMFractions;
@@ -292,8 +292,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
-    private void onJump(CallbackInfo ci) {
-
+    private void onJump(CallbackInfo ci)
+    {
         if (!this.capabilities.isCreativeMode && (this.currentAnimation.denyJump() || !this.canJump()))
         {
             ci.cancel();
@@ -449,18 +449,6 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         return (short) this.equpmentAndFightAnim.getEpisodeCount();
     }
 
-    @Override
-    public short getAttackTick()
-    {
-        return this.equpmentAndFightAnim.getAttackTick();
-    }
-
-    @Override
-    public byte getAttackSeries()
-    {
-        return this.equpmentAndFightAnim.getAttackSeries();
-    }
-
 
     @Override
     public float getStaminaSpendingFromAttack()
@@ -507,6 +495,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Override
     public void setInFightStance(boolean inFightStance)
     {
+        System.out.println("Debug in GGMEntityPlayer setInFS " + inFightStance);
         if (inFightStance)
         {
             if (!this.inFightStance())
@@ -521,6 +510,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                 this.tryEndAnimation();
             }
         }
+        System.out.println(currentAnimation);
     }
 
     @Override
@@ -531,9 +521,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public void startAttack(IAnimationEpisode hitType)
+    public boolean startAttack(IAnimationEpisode hitType)
     {
-        this.equpmentAndFightAnim.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
+        return this.equpmentAndFightAnim.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
     }
 
     @Override
@@ -632,8 +622,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             effect.onKillEntity((IGGMEntityLivingBase) entity);
         }
 
-        int gainExp = ((IGGMEntityLivingBase) entity).getLvl() * GEntities.EXPModifier;
-        if (entity instanceof EntityPlayer) gainExp += 10 * GEntities.EXPModifier;
+        int gainExp = ((IGGMEntityLivingBase) entity).getLvl() * GGMEntities.EXPModifier;
+        if (entity instanceof EntityPlayer) gainExp += 10 * GGMEntities.EXPModifier;
         this.gainExp(gainExp);
     }
 

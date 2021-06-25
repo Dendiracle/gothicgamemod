@@ -266,11 +266,11 @@ public class EntityFireBolt extends EntityThrowable {
 	}*/
 	
 	/*@Override
-	public void onUpdate() {
+	public void updateAnimation() {
 		this.lastTickPosX = this.posX;
         this.lastTickPosY = this.posY;
         this.lastTickPosZ = this.posZ;
-        super.onUpdate();
+        super.updateAnimation();
 
         if (this.throwableShake > 0)
         {

@@ -4,18 +4,18 @@ import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.ai.GGMPathNavigate;
 import mrfinger.gothicgamemod.entity.animations.AnimationEntityHerdLiving;
+import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Map;
@@ -25,10 +25,6 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 
     protected PackEntity pack;
 
-    protected IGGMEntity entityToAttack;
-
-    protected int chaseCount;
-
 
     public EntityHerd(World world)
     {
@@ -36,11 +32,22 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 
         this.navigator = new GGMPathNavigate(this, world);
         this.getNavigator().setAvoidsWater(this.isAvoidsWater());
-
-        this.setDefaulAnimation(new AnimationEntityHerdLiving(this));
-        this.setAnimation(this.getDefaultAnimation());
     }
 
+
+    @Override
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+
+        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(128D);
+    }
+
+    @Override
+    public IAnimation getNewDefaultAnimation()
+    {
+        return new AnimationEntityHerdLiving(this);
+    }
 
     @Override
     public PackFraction getFraction() {
@@ -60,13 +67,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     }
 
     @Override
-    public void onRemoveFromPack(PackEntity pack)
-    {
-        if (this.chaseCount == 0)
-        {
-            this.findNewPack();
-        }
-    }
+    public void onRemoveFromPack(PackEntity pack) {}
 
 
     @Override
@@ -112,41 +113,28 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 
 
     @Override
-    public IGGMEntity getEntityToAttack() {
-        return this.entityToAttack;
-    }
-
-    @Override
-    public void setEntityToAttack(IGGMEntity entity)
+    public void setAttackTarget(EntityLivingBase entity)
     {
-        this.entityToAttack = entity;
-        if (entity != null)
+        super.setAttackTarget(entity);
+
+        if (entity != null && entity.isEntityAlive())
         {
-            this.chaseCount = this.getDefaultChaseDuration();
             this.setSprinting(true);
         }
         else
         {
-            this.chaseCount = 0;
             this.setSprinting(false);
         }
-    }
-
-    @Override
-    public void setEntityToAttack(IGGMEntity entity, int chaseDuration)
-    {
-        this.entityToAttack = entity;
-        if (entity != null) this.chaseCount = chaseDuration;
-        else this.chaseCount = 0;
     }
 
 
     @Override
     public void onEntityUpdate()
     {
-        if (this.pack == null)
+        if (!this.worldObj.isRemote && this.pack == null)
         {
             this.findNewPack();
+            System.out.println("Debug in EntityHerd pack " + pack);
         }
 
         super.onEntityUpdate();
@@ -274,20 +262,6 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 
 
     @Override
-    public void nullifyEntityToAttack()
-    {
-        this.entityToAttack = null;
-        this.chaseCount = 0;
-        this.getNavigator().clearPathEntity();
-
-        if (this.pack == null)
-        {
-            this.findNewPack();
-        }
-    }
-
-
-    @Override
     public void setPath(PathEntity path)
     {
         this.getNavigator().setPath(path, 1.0D);
@@ -299,18 +273,16 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         this.getNavigator().tryMoveToXYZ(x, y, z, 1.0D);
     }
 
+    @Override
+    public void setPathToEntity(IGGMEntity entity)
+    {
+        this.getNavigator().tryMoveToEntityLiving((Entity) entity, 1.0D);
+    }
 
     @Override
-    public boolean attackEntityFrom(DamageSource damageSource, float damage)
+    public void cleartPath()
     {
-        boolean flag = super.attackEntityFrom(damageSource, damage);
-
-        if (flag)
-        {
-            this.setEntityToAttack((IGGMEntity) damageSource.getSourceOfDamage());
-        }
-
-        return flag;
+        this.getNavigator().clearPathEntity();
     }
 
     @Override
@@ -323,24 +295,10 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     @Override
     public boolean isCanJustWander()
     {
-        return this.getNavigator().noPath() && this.getCurrentAnimation().getEpisode() == null;
+        return this.onGround && this.isEntityAlive() && this.getNavigator().noPath() && this.getCurrentAnimation().getEpisode() == null;
     }
 
-    @Override
-    public IAnimationEpisode getRandomJustLivingEpisode()
-    {
-        int i = this.rand.nextInt(1);
-
-        switch (i)
-        {
-            case 0:
-                return GGMEntityAnimations.ScavLiving0;
-        }
-
-        return null;
-    }
-
-    public Map<String, IAnimationEpisode> getLivingEpisodesMap()
+    public Map<String, IAnimationEpisode> getAnimationEpisodesMap()
     {
         return null;
     }
@@ -353,11 +311,6 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
             IAnimationEpisode episode = this.getRandomJustLivingEpisode();
             this.getCurrentAnimation().setAnimationEpisode(episode, episode.getStandartDuration());
         }
-    }
-
-    @Override
-    protected String getLivingSound() {
-        return GothicMain.MODID + ":scavenger_living";
     }
 
 

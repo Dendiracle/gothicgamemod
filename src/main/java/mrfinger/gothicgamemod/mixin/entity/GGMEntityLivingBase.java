@@ -3,7 +3,6 @@ package mrfinger.gothicgamemod.mixin.entity;
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.AnimationEntityLiving;
 import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
@@ -29,21 +28,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Mixin(EntityLivingBase.class)
-public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntityLivingBase {
-
+public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntityLivingBase
+{
 
     private int 							lvl;
     private boolean							needExpUpdate;
 
 	private short 							disSprintTimer;
 
-    @Shadow private BaseAttributeMap 		attributeMap;
-
+    @Shadow protected BaseAttributeMap 		attributeMap;
 
     protected Map<IGGMEffect, IGGMEffectInstance> tickingEffectsMap;
 	protected Map<IGGMEffect, IGGMEffectInstance> attackEffectsMap;
 	protected Map<IGGMEffect, IGGMEffectInstance> otherEffectsMap;
-
 
     protected IAnimation currentAnimation;
     protected IAnimation defaulAnimation;
@@ -52,9 +49,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected boolean needEndAnimation;
     private boolean needAnimSync;
 
-
 	@Shadow protected float 				lastDamage;
-
 
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;setHealth(F)V"))
 	private void deleteHealthing(EntityLivingBase entity, float value)
@@ -72,7 +67,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		this.attackEffectsMap 	= new HashMap<>();
 		this.otherEffectsMap	= new HashMap<>();
 
-		this.defaulAnimation = new AnimationEntityLiving(this);
+		this.defaulAnimation = getNewDefaultAnimation();
 		this.currentAnimation = this.getDefaultAnimation();
 		this.animationToSet = this.getDefaultAnimation();
 	}
@@ -147,24 +142,35 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	@Inject(method = "onEntityUpdate", at = @At("HEAD"))
 	private void onOnLivingUpdate(CallbackInfo ci)
 	{
-		for (IGGMEffectInstance effect : this.tickingEffectsMap.values())
+		if (this.isEntityAlive())
 		{
-			effect.onEntityUpdate();
-		}
+			for (IGGMEffectInstance effect : this.tickingEffectsMap.values())
+			{
+				effect.onEntityUpdate();
+			}
 
-		if (this.needEndAnimation)
-		{
-			this.tryEndAnimation();
-		}
+			if (this.needEndAnimation)
+			{
+				this.tryEndAnimation();
+			}
 
-		this.currentAnimation.onUpdate();
+			this.currentAnimation.updateAnimation();
+		}
 
     	if (this.disSprintTimer > 0 ) --this.disSprintTimer;
 	}
 
 	@ModifyArg(method = "onEntityUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;setAir(I)V", ordinal = 2))
-	private int modifyMaxAir(int air) {
+	private int modifyMaxAir(int air)
+	{
 		return this.getMaxAir();
+	}
+
+	@Inject(method = "onLivingUpdate", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;randomYawVelocity:F", ordinal = 1))
+	private void controlMove(CallbackInfo ci)
+	{
+		this.currentAnimation.controlMove();
+		this.currentAnimation.controlRotation();
 	}
 
 
@@ -185,6 +191,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	{
 		return otherEffectsMap;
 	}
+
+
 
 
 	@Override
@@ -212,6 +220,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		if (this.currentAnimation == null) this.currentAnimation = this.getDefaultAnimation();
 
 		this.currentAnimation.setEntity(this);
+		this.flagForAnimSync();
 	}
 
 	@Override
@@ -273,6 +282,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		this.animationToSet = this.getDefaultAnimation();
 		old.onEndAnimation();
 		this.needEndAnimation = false;
+		this.flagForAnimSync();
 	}
 
 	@Override
@@ -397,11 +407,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		}
 	}
 
-	/*@Override
-	public IGGMSkillInstance getSkill(EntitySkills name) {
-		return this.skillsMap.getValue(name);
-	}*/
-
 
 	@Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
 	private void onJumpHead(CallbackInfo ci)
@@ -504,6 +509,14 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Shadow public int attackTime;
 
 	@Shadow public abstract float getHealth();
+
+	@Shadow public abstract boolean isEntityAlive();
+
+	@Shadow public float moveForward;
+
+	@Shadow public float moveStrafing;
+
+	@Shadow protected float landMovementFactor;
 
 	@Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
 	private void onKnockback(Entity knockbacker, float power, double x, double y, CallbackInfo ci) {

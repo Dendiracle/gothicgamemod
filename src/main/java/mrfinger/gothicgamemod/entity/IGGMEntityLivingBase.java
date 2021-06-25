@@ -1,5 +1,6 @@
 package mrfinger.gothicgamemod.entity;
 
+import mrfinger.gothicgamemod.entity.animations.AnimationEntityLiving;
 import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
@@ -17,6 +18,8 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.util.MathHelper;
 
 import java.util.Collection;
 import java.util.Map;
@@ -77,6 +80,11 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 
 	void onLivingUpdate();
 
+
+	default IAnimation getNewDefaultAnimation()
+	{
+		return new AnimationEntityLiving(this);
+	}
 
 	default IAnimation getCurrentAnimation()
 	{
@@ -198,13 +206,29 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	}
 
 
+	float getAIMoveSpeed();
+
+	void setAIMoveSpeed(float speed);
+
+
+	void moveEntityWithHeading(float strafe, float forward);
+
+
+	default float getStandartRotationSpeed()
+	{
+		return 30.0F;
+	}
+
+	default void faceEntity(Entity p_70625_1_, float p_70625_2_, float p_70625_3_) {}
+
+
 	default double getJumpHeight()
 	{
 		return 0.41999998688697815D;
 	}
 
 
-	default double getWanderSpeedModofier()
+	default double getWanderSpeedModifier()
 	{
 		return 0.5D;
 	}
@@ -224,6 +248,15 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	{
 		return 0;
 	}
+
+
+	default void setPath(PathEntity path) {}
+
+	default void setPath(int x, int y, int z) {}
+
+	default void setPathToEntity(IGGMEntity entity) {}
+
+	default void cleartPath() {}
 
 
 	default float waterMovementModifier()

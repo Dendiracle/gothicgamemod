@@ -1,14 +1,5 @@
 package mrfinger.gothicgamemod.event;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.capability.IGGMEntityExperienceable;
-import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.init.GEntities;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-
 public class EventHandlerEntity {
 	
 	
@@ -21,7 +12,7 @@ public class EventHandlerEntity {
 	    {
 			EntityLivingBase to = event.entityLiving;
 			IGGMEntityExperienceable statsFrom = (IGGMEntityExperienceable) from;
-			int gainExp = ((IGGMEntityLivingBase) to).getLvl() * GEntities.EXPModifier;
+			int gainExp = ((IGGMEntityLivingBase) to).getLvl() * GGMEntities.EXPModifier;
 			if (to instanceof IGGMEntityPlayer) gainExp += 100;
 			statsFrom.getExpCap().gainExp(gainExp);
 	    }

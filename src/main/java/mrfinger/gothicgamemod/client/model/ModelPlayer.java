@@ -3,8 +3,11 @@ package mrfinger.gothicgamemod.client.model;
 import mrfinger.gothicgamemod.client.IGGMMinecraft;
 import mrfinger.gothicgamemod.client.entity.IGGMEntityClientPlayerMP;
 import mrfinger.gothicgamemod.client.entity.IGGMEntityPlayerSP;
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -71,9 +74,9 @@ public class ModelPlayer extends ModelBiped
 
 
     @Override
-    public void render(Entity p_78088_1_, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float p_78088_7_) {
-
-        this.setRotationAngles(p_78088_2_, p_78088_3_, p_78088_4_, p_78088_5_, p_78088_6_, p_78088_7_, p_78088_1_);
+    public void render(Entity entity, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float p_78088_7_)
+    {
+        this.setRotationAngles(p_78088_2_, p_78088_3_, p_78088_4_, p_78088_5_, p_78088_6_, p_78088_7_, entity);
 
         this.bipedHead.render(p_78088_7_);
         this.bipedBody.render(p_78088_7_);
@@ -89,14 +92,14 @@ public class ModelPlayer extends ModelBiped
     {
         super.setRotationAngles(p_78087_1_, p_78087_2_, p_78087_3_, p_78087_4_, p_78087_5_, p_78087_6_, entity);
 
-        /*this.forearmRight.rotateAngleX = 0.0F;
+        this.forearmRight.rotateAngleX = 0.0F;
         this.forearmRight.rotateAngleY = 0.0F;
         this.forearmRight.rotateAngleZ = 0.0F;
         this.forearmLeft.rotateAngleX = 0.0F;
         this.forearmLeft.rotateAngleY = 0.0F;
         this.forearmLeft.rotateAngleZ = 0.0F;
 
-        float keks = (entity.ticksExisted + this.mineTimer.renderPartialTicks) * 0.02F * (float) Math.PI;
+        /*float keks = (entity.ticksExisted + this.mineTimer.renderPartialTicks) * 0.02F * (float) Math.PI;
         this.forearmRight.rotateAngleY = keks;
         this.forearmLeft.rotateAngleY = -keks;
 
@@ -108,25 +111,23 @@ public class ModelPlayer extends ModelBiped
         this.forearmRight.rotateAngleX = keks;
         this.forearmLeft.rotateAngleZ = keks;*/
 
+        ((IGGMEntityPlayer) entity).getCurrentAnimation().modifyModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
 
-        IGGMEntityPlayer player = (IGGMEntityPlayer) entity;
+    }
 
-        float count = player.getAttackCount();
 
-        if (count > -player.getLastAttackDuration())
-        {
-            float progress = ((player.getLastAttackDuration() - count) + this.mineTimer.renderPartialTicks) / (player.getLastAttackDuration() - player.getAttackTick());
-            if (progress > 1.5F) progress = 1.5F;
-            if (player.getAttackSeries() % 2 == 0) progress = 1.5F - progress;
+    public void updateAnimationHitSplash(IGGMEntityPlayer player, IAnimationEpisode animationEpisode, float progress)
+    {
+        if (progress > 1.5F) progress = 1.5F;
+        if ((player.getGGMEquipment().getAttackSeries() & 1) == 0) progress = 1.5F - progress;
 
-            float pi = (float) Math.PI;
+        float pi = (float) Math.PI;
 
-            this.bipedRightArm.rotateAngleY = -(pi * 0.2F * progress);
-            this.bipedRightArm.rotateAngleZ = -(pi * 0.2F * progress);
-            this.bipedRightArm.rotateAngleX = -(pi * 0.1F * progress) - 0.5F;
-            this.bipedRightArm.rotationPointX += 1.5F * progress;
-            this.bipedRightArm.rotationPointZ -= progress;
-        }
+        this.bipedRightArm.rotateAngleY = -(pi * 0.2F * progress);
+        this.bipedRightArm.rotateAngleZ = -(pi * 0.2F * progress);
+        this.bipedRightArm.rotateAngleX = -(pi * 0.1F * progress) - 0.5F;
+        this.bipedRightArm.rotationPointX += 1.5F * progress;
+        this.bipedRightArm.rotationPointZ -= progress;
     }
 
 }

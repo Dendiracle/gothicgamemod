@@ -6,7 +6,7 @@ import mrfinger.gothicgamemod.client.model.GiantRatModel;
 import mrfinger.gothicgamemod.client.model.MeatbugModel;
 import mrfinger.gothicgamemod.client.model.NikitaModel;
 import mrfinger.gothicgamemod.client.model.ModelScavenger;
-import mrfinger.gothicgamemod.client.render.entity.RenderAnimal;
+import mrfinger.gothicgamemod.client.render.entity.RenderGGMAnimal;
 import mrfinger.gothicgamemod.client.render.entity.RenderEntity;
 import mrfinger.gothicgamemod.client.render.item.magic.RuneItemRenderer;
 import mrfinger.gothicgamemod.entity.animals.EntityGiantRat;
@@ -19,9 +19,10 @@ import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.init.Items;
 import net.minecraftforge.client.MinecraftForgeClient;
 
-public class GRenderers {
+public class GGMRenderers {
 	
-	public static void load(FMLInitializationEvent e) {
+	public static void load(FMLInitializationEvent e)
+	{
 		registerEntityAnimalRenderer();
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityMeatBug.class, new RenderEntity(new MeatbugModel(), "meatbug.png", 0.3F));
@@ -31,10 +32,11 @@ public class GRenderers {
 		registerRuneRenderer();
 	}
 
-	private static void registerEntityAnimalRenderer() {		
-		RenderingRegistry.registerEntityRenderingHandler(EntityScavenger.class, new RenderAnimal(new ModelScavenger(), "scavenger.png", 1.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityNikita.class, new RenderAnimal(new NikitaModel(), "nikita.png", 1.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGiantRat.class, new RenderAnimal(new GiantRatModel(), "giantrat.png", 0.5F));
+	private static void registerEntityAnimalRenderer()
+	{
+		RenderingRegistry.registerEntityRenderingHandler(EntityScavenger.class, new RenderGGMAnimal(new ModelScavenger(), "scavenger.png", 0.8F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityNikita.class, new RenderGGMAnimal(new NikitaModel(), "nikita.png", 1.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGiantRat.class, new RenderGGMAnimal(new GiantRatModel(), "giantrat.png", 0.5F));
 	}
 	
 	private static void registerItemRenderer() {

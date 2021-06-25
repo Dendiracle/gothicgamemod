@@ -202,7 +202,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     }
 
     @Override
-    public void setEntityToAttack(IGGMEntity entity)
+    public void setAttackTarget(IGGMEntity entity)
     {
         this.entityToAttack = entity;
         if (entity != null)
@@ -218,7 +218,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     }
 
     @Override
-    public void setEntityToAttack(IGGMEntity entity, int chaseDuration)
+    public void setAttackTarget(IGGMEntity entity, int chaseDuration)
     {
         this.entityToAttack = entity;
         if (entity != null) this.chaseCount = chaseDuration;
@@ -432,7 +432,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
 
         if (flag)
         {
-            this.setEntityToAttack((IGGMEntity) damageSource.getSourceOfDamage());
+            this.setAttackTarget((IGGMEntity) damageSource.getSourceOfDamage());
         }
 
         return flag;
@@ -465,7 +465,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
         return null;
     }
 
-    public Map<String, IAnimationEpisode> getLivingEpisodesMap()
+    public Map<String, IAnimationEpisode> getAnimationEpisodesMap()
     {
         return null;
     }
