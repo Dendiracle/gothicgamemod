@@ -55,7 +55,12 @@ public class NikitaModel extends ModelAnimal {
       head.mirror = true;
       setRotation(head, 0F, 0F, 0F);
   }
-  
+
+  @Override
+  public float corpusHeight() {
+    return 0;
+  }
+
   public void render (Entity entity, float f, float f1, float f2, float f3, float f4, float f5, float f7)
   {
     super.render(entity, f, f1, f2, f3, f4, f5);

@@ -230,6 +230,12 @@ public class ModelScavenger extends ModelAnimal
         this.corpus.addChild(this.tail0);
     }
 
+    @Override
+    public float corpusHeight()
+    {
+        return this.corpus.defaultRotationPointY;
+    }
+
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
     {
         super.render(entity, f, f1, f2, f3, f4, f5);
@@ -274,6 +280,12 @@ public class ModelScavenger extends ModelAnimal
 
 
     @Override
+    public void updateAnimationLookingAround(float progress)
+    {
+        this.head.rotateAngleX = progress * 2F;
+    }
+
+    @Override
     public void updateAnimationEat(IGGMEntityLivingBase entity, IAnimationEpisode animationEpisode, float progress)
     {
         super.updateAnimationEat(entity, animationEpisode, progress);
@@ -292,6 +304,22 @@ public class ModelScavenger extends ModelAnimal
         }
     }
 
+    @Override
+    public void updateAnimationEat(float progress)
+    {
+        if (progress < 0.3F)
+        {
+            progress %= 0.1F;
+            progress *= 10F;
+
+            this.updateAnimationPecking(progress);
+        }
+        else
+        {
+            this.updateAnimationSwallowing((progress - 0.3F) * 1.42857142857F);
+
+        }
+    }
 
     public void updateAnimationPecking(float progress)
     {
@@ -373,7 +401,14 @@ public class ModelScavenger extends ModelAnimal
 
     }
 
+    @Override
+    public void updateAnimationChildBirth(float progress)
+    {
+        this.updateAnimationSitting(progress);
+    }
 
+
+    @Override
     public void updateAnimationHit(float progress)
     {
         this.head.rotateAngleX = this.head.defaultRotateAngleX;
@@ -390,5 +425,11 @@ public class ModelScavenger extends ModelAnimal
         this.hip0Left.rotateAngleX += progress;
         this.neck0.rotateAngleX = this.neck0.defaultRotateAngleX - progress;
         this.neck1.rotateAngleX = this.neck1.defaultRotateAngleX + progress;
+    }
+
+    @Override
+    public void updateAnimationHitOnRun(float progress)
+    {
+        this.updateAnimationHit(progress);
     }
 }

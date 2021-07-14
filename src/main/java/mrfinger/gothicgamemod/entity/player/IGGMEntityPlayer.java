@@ -1,10 +1,9 @@
 package mrfinger.gothicgamemod.entity.player;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.IGGMEntityExperienceable;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityCaster;
-import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
+import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityHumanoid;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithStamina;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -14,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 
-public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperienceable, IGGMEntityWithStamina, IGGMEntityCaster, IGGMEntityWithAttackAnim {
-
+public interface IGGMEntityPlayer extends IGGMEntityHumanoid, IGGMEntityExperienceable, IGGMEntityWithStamina, IGGMEntityCaster
+{
 
         @Override
         IGGMDynamicAttributeInstance getHealthAttribute();
@@ -24,7 +23,7 @@ public interface IGGMEntityPlayer extends IGGMEntityLivingBase, IGGMEntityExperi
         InventoryPlayer getInventoryPlayer();
 
 
-        IGGMPlayerEquipmentAnimationFightStance getGGMEquipment();
+        IGGMPlayerEquipmentAnimationHelperFightStance getGGMEquipment();
 
         Container getGGMContainer();
 

@@ -1,21 +1,147 @@
 package mrfinger.gothicgamemod.init;
 
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import mrfinger.gothicgamemod.client.model.ModelAnimal;
 import mrfinger.gothicgamemod.client.model.ModelPlayer;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animals.EntityScavenger;
-import mrfinger.gothicgamemod.entity.animations.episodes.AbstractPlayerAnimationHit;
+import mrfinger.gothicgamemod.entity.animations.episodes.*;
+import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
+import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GGMEntityAnimations
 {
+
+    public static final Map<String, IAnimationEpisode> GothicAnimalLivingEpisodesMap = new HashMap<>();
+
+
+    public static final AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal> AnimationLookingAroundEntityGothicAnimal = new AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal>("GA_LA0", 40)
+    {
+        @Override
+        public void updateModel(IEntityGothicAnimal entityLivingBase, ModelAnimal modelBase, float progress)
+        {
+            modelBase.updateAnimationLookingAround(progress);
+        }
+    };
+
+    public static final AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal> AnimationEatEntityGothicAnimal = new AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal>("GA_Eat0", 100, 0.2F)
+    {
+        @Override
+        public void onCulmination(IEntityGothicAnimal entity, int duration, int count, byte series)
+        {
+            if (!entity.getEntityWorld().isRemote()) entity.changeGrowth(1);
+        }
+
+        @Override
+        public void updateModel(IEntityGothicAnimal entityLivingBase, ModelAnimal model, float progress)
+        {
+            model.updateAnimationEat(progress);
+        }
+    };
+
+    public static final AbstractAnimationEpisode<IEntityGothicAnimal, ModelAnimal> AnimationSleepingEntityGothicAnimal = new AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal>("GA_Sleep0", 10000)
+    {
+        @Override
+        public void updateModel(IEntityGothicAnimal entityLivingBase, ModelAnimal model, float progress)
+        {
+            model.updateAnimationEat(progress);
+        }
+    };
+
+    public static final AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal> AnimationAggrEntityGothicAnimal = new AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal>("GA_Eat0", 60)
+    {
+        @Override
+        public void onCulmination(IEntityGothicAnimal entity, int duration, int count, byte series)
+        {
+            if (!entity.getEntityWorld().isRemote()) entity.changeGrowth(1);
+        }
+
+        @Override
+        public void updateModel(IEntityGothicAnimal entityLivingBase, ModelAnimal model, float progress)
+        {
+            model.updateAnimationEat(progress);
+        }
+    };
+
+    public static final AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal> AnimationChildBirthEntityGothicAnimal = new AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal>("GA_CB0", 600, 0.4F)
+    {
+        @Override
+        public void onCulmination(IEntityGothicAnimal entity, int duration, int count, byte series)
+        {
+            entity.birthChild();
+        }
+
+        @Override
+        public void updateModel(IEntityGothicAnimal entityLivingBase, ModelAnimal modelBase, float progress)
+        {
+            modelBase.updateAnimationChildBirth(progress);
+        }
+    };
+
+
+    public static final AbstractAnimationHit<IEntityGothicAnimal, ModelAnimal> AnimationHitGothicAnimal = new AbstractAnimationHit<IEntityGothicAnimal, ModelAnimal>("GA_Hit0")
+    {
+        @Override
+        public int getStandartDuration()
+        {
+            return 10;
+        }
+
+        @Override
+        public float getCulminationTickMultiplier()
+        {
+            return 0.4F;
+        }
+
+        @Override
+        public void updateModel(IEntityGothicAnimal entity, ModelAnimal modelAnimal, float progress)
+        {
+            modelAnimal.updateAnimationHit(progress);
+        }
+    };
+
+    public static final AbstractAnimationHit<IEntityGothicAnimal, ModelAnimal> AnimationHitOnRunGothicAnimal = new AbstractAnimationHit<IEntityGothicAnimal, ModelAnimal>("GA_HitOR0")
+    {
+        @Override
+        public int getStandartDuration()
+        {
+            return 20;
+        }
+
+        @Override
+        public void onUpdate(IEntityGothicAnimal entity, int duration, int count)
+        {
+            if (entity.getCurrentAnimation().getEpisodeCount() > 0)
+            {
+                entity.getCurrentAnimation().setMoveControl((float) entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue(), 0F);
+                entity.getCurrentAnimation().setRotationControl(entity.getRotationYaw(), 0F);
+            }
+        }
+
+        @Override
+        public float getCulminationTickMultiplier()
+        {
+            return 0.35F;
+        }
+
+        @Override
+        public void updateModel(IEntityGothicAnimal entity, ModelAnimal modelAnimal, float progress)
+        {
+            modelAnimal.updateAnimationHitOnRun(progress);
+        }
+    };
+
 
     public static final AbstractPlayerAnimationHit hitSplash = new AbstractPlayerAnimationHit("Hit_Player_Splash", 20, 0.8F)
     {
@@ -258,7 +384,19 @@ public class GGMEntityAnimations
 
     public static void preLoad(FMLPreInitializationEvent event)
     {
-        EntityScavenger.loadAnimations();
+        loadGothiAnimalLivingAnimations();
+    }
+
+    private static void loadGothiAnimalLivingAnimations()
+    {
+        GothicAnimalLivingEpisodesMap.put(AnimationLookingAroundEntityGothicAnimal.getUnlocalizedName(), AnimationLookingAroundEntityGothicAnimal);
+        GothicAnimalLivingEpisodesMap.put(AnimationEatEntityGothicAnimal.getUnlocalizedName(), AnimationEatEntityGothicAnimal);
+        GothicAnimalLivingEpisodesMap.put(AnimationChildBirthEntityGothicAnimal.getUnlocalizedName(), AnimationChildBirthEntityGothicAnimal);
+        GothicAnimalLivingEpisodesMap.put(AnimationSleepingEntityGothicAnimal.getUnlocalizedName(), AnimationSleepingEntityGothicAnimal);
+        GothicAnimalLivingEpisodesMap.put(AnimationAggrEntityGothicAnimal.getUnlocalizedName(), AnimationAggrEntityGothicAnimal);
+
+        GothicAnimalLivingEpisodesMap.put(AnimationHitGothicAnimal.getUnlocalizedName(), AnimationHitGothicAnimal);
+        GothicAnimalLivingEpisodesMap.put(AnimationHitOnRunGothicAnimal.getUnlocalizedName(), AnimationHitOnRunGothicAnimal);
     }
 
 

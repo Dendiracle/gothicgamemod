@@ -2,6 +2,7 @@ package mrfinger.gothicgamemod.entity.packentities;
 
 import mrfinger.gothicgamemod.block.BlockAnimalEggs;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithStamina;
 import mrfinger.gothicgamemod.init.GGMBlocks;
@@ -10,7 +11,10 @@ import mrfinger.gothicgamemod.tileentity.TileEntityAnimalEgg;
 public interface IEntityGothicAnimal extends IEntityHerd, IGGMEntityWithStamina, IGGMEntityWithAttackAnim
 {
 
-    IAnimationEpisode getHitAnimation(float distance);
+    IAnimationHit getHitAnimation(float distance);
+
+
+    int getEpisodeDuration(IAnimationEpisode episode);
 
 
     int getNewBornGrowthAge();

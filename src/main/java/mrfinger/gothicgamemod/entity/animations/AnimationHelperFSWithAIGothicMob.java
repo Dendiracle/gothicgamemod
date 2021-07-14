@@ -1,9 +1,8 @@
 package mrfinger.gothicgamemod.entity.animations;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
-import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
@@ -12,7 +11,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 
 import java.util.Map;
 
-public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimationFightStance
+public class AnimationHelperFSWithAIGothicMob<Animal extends IEntityGothicAnimal, Episode extends IAnimationHit> extends EntityAIBase implements IAnimationHelperFightStance<Animal, Episode>
 {
 
     protected IEntityGothicAnimal entity;
@@ -32,7 +31,7 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
     protected float rotationPitch;
 
 
-    public AnimationFSWithAIGothicMob(IEntityGothicAnimal entity)
+    public AnimationHelperFSWithAIGothicMob(IEntityGothicAnimal entity)
     {
         this.entity = entity;
         this.attackDuration = 1;
@@ -42,12 +41,12 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
 
 
     @Override
-    public IGGMEntityWithAttackAnim getEntity() {
-        return this.entity;
+    public Animal getEntity() {
+        return (Animal) this.entity;
     }
 
     @Override
-    public void setEntity(IGGMEntityLivingBase entity) {
+    public void setEntity(Animal entity) {
         this.entity = (IEntityGothicAnimal) entity;
     }
 
@@ -112,8 +111,8 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
 
 
     @Override
-    public IAnimationEpisode getEpisode() {
-        return this.hitType;
+    public Episode getEpisode() {
+        return (Episode) this.hitType;
     }
 
     @Override
@@ -130,7 +129,13 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
 
 
     @Override
-    public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, int count)
+    public boolean setAnimationEpisode(Episode animationEpisode)
+    {
+        return this.setAnimationEpisode(animationEpisode, this.entity.getNewAttackDuration(animationEpisode));
+    }
+
+    @Override
+    public boolean setAnimationEpisode(Episode animationEpisode, int count)
     {
         if (animationEpisode != null)
         {
@@ -157,7 +162,7 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
     {
         if (episodeName == null)
         {
-            this.setAnimationEpisode((IAnimationEpisode) null, 0);
+            this.setAnimationEpisode((Episode) null, 0);
             return true;
         }
         else
@@ -166,7 +171,7 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
 
             if (map != null)
             {
-                IAnimationEpisode episode = map.get(episodeName);
+                Episode episode = (Episode) map.get(episodeName);
                 this.setAnimationEpisode(episode, duration);
 
                 return episode != this.getEpisode();
@@ -268,7 +273,7 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
     @Override
     public String toString()
     {
-        return "AnimationFightStance:" + this.getUnlocalizedName();
+        return "AnimationHelperFightStance:" + this.getUnlocalizedName();
     }
 
 
@@ -287,6 +292,7 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
     @Override
     public void resetTask()
     {
+        this.clearAnimationEpisode();
         this.entity.getNavigator().clearPathEntity();
         this.entity.tryEndAnimation();
     }
@@ -313,7 +319,6 @@ public class AnimationFSWithAIGothicMob extends EntityAIBase implements IAnimati
         {
             this.entity.getNavigator().tryMoveToEntityLiving((Entity) this.entity.getEntityToAttack(), 1.0D);
         }
-
     }
 
 }

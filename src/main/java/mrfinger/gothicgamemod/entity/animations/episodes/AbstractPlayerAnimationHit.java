@@ -2,15 +2,13 @@ package mrfinger.gothicgamemod.entity.animations.episodes;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.client.CPacketEntitiesToAttack;
-import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 
-public abstract class AbstractPlayerAnimationHit extends AbstractAnimationHit
+public abstract class AbstractPlayerAnimationHit<Player extends IGGMEntityPlayer> extends AbstractAnimationEpisodeWithDurAndMultiplier<Player, ModelBiped> implements IAnimationHit<Player, ModelBiped>
 {
 
     public AbstractPlayerAnimationHit(String unlocalizedName, int standartDuration, float attackTickMultiplier)
@@ -20,15 +18,15 @@ public abstract class AbstractPlayerAnimationHit extends AbstractAnimationHit
 
 
     @Override
-    public void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte attackSeries)
+    public void onCulmination(IGGMEntityPlayer entity, int duration, int count, byte attackSeries)
     {
-        Entity[] targets = this.entitiesToAttack((IGGMEntityPlayer) entity, attackSeries);
+        Entity[] targets = this.entitiesToAttack(entity, attackSeries);
 
         if (targets != null)
         {
             PacketDispatcher.sendToServer(new CPacketEntitiesToAttack(targets));
 
-            IGGMEntityPlayer player = (IGGMEntityPlayer) entity;
+            IGGMEntityPlayer player = entity;
 
             for (Entity target : targets)
             {

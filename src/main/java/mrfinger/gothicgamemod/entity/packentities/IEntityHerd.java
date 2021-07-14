@@ -1,12 +1,10 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
-import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.client.model.ModelAnimal;
+import mrfinger.gothicgamemod.client.model.ModelEntityHerd;
 import mrfinger.gothicgamemod.entity.IGGMEntityLiving;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.fractions.PackFraction;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.pathfinding.PathEntity;
 
 import java.util.Map;
 
@@ -18,21 +16,33 @@ public interface IEntityHerd extends IGGMEntityLiving
     PackFraction getStandartFraction();
 
 
-    void onAddToPack(PackEntity pack);
+    void onAddToPack(IPackEntity pack);
 
-    void onRemoveFromPack(PackEntity pack);
+    void onRemoveFromPack(IPackEntity pack);
 
 
-    PackEntity findNewPack();
+    boolean isPackLeader();
+
+    boolean isAggressive();
+
+
+    IPackEntity getPack();
+
+    void setPackEntity(IPackEntity pack);
+
+    IPackEntity findNewPack();
 
 
     float getNeedSpaceMultiplier();
 
 
-    int getDefaultChaseDuration();
+    boolean isNeedWander();
 
+    void setIsNeedWander(boolean b);
 
     float getBlockPathWeight(int x, int y, int z);
+
+    boolean isBlockAvailableToLiving();
 
 
     boolean isCanJustWander();

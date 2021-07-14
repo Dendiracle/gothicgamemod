@@ -9,7 +9,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
-public abstract class ModelAnimal extends ModelBase
+public abstract class ModelAnimal extends ModelEntityHerd
 {
 	
 	public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float distance, float A, float B)
@@ -17,6 +17,9 @@ public abstract class ModelAnimal extends ModelBase
 		attachingShape.rotationPointY = baseShape.rotationPointY + (float) (distance * Math.sin(B - baseShape.rotateAngleX));
 		attachingShape.rotationPointZ = baseShape.rotationPointZ + (float) (distance * Math.sin(A + baseShape.rotateAngleX));
 	}
+
+	public abstract float corpusHeight();
+
 
 	@Override
 	public void setRotationAngles(float p_78087_1_, float p_78087_2_, float p_78087_3_, float p_78087_4_, float p_78087_5_, float p_78087_6_, Entity entity)
@@ -40,6 +43,15 @@ public abstract class ModelAnimal extends ModelBase
 
 
 	public void updateAnimationEat(IGGMEntityLivingBase entity, IAnimationEpisode animationEpisode, float progress) {}
+
+
+	public void updateAnimationEat(float progress) {}
+
+	public void updateAnimationChildBirth(float progress) {}
+
+	public void updateAnimationHit(float progress) {}
+
+	public void updateAnimationHitOnRun(float progress) {}
 
 
 /*public void attachX (ModelRenderer baseShape, ModelRenderer attachingShape, float differenceY, float differenceZ) {

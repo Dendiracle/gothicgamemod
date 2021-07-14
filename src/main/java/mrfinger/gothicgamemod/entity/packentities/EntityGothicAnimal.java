@@ -1,15 +1,19 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.block.BlockAnimalEggs;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.animations.AnimationFSWithAIGothicMob;
-import mrfinger.gothicgamemod.entity.animations.IAnimationFightStance;
+import mrfinger.gothicgamemod.entity.animations.*;
+import mrfinger.gothicgamemod.entity.animations.AnimationHelperGothicAnimalLiving;
+import mrfinger.gothicgamemod.entity.animations.IAnimationHelperFightStance;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.attributes.GGMDPAttributeInfo;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
-import mrfinger.gothicgamemod.init.GGMBlocks;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
+import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.tileentity.TileEntityAnimalEgg;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -21,12 +25,17 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
+import java.util.Map;
+
 public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGothicAnimal
 {
 
-    protected final IAnimationFightStance animationFightStance;
+    protected final IAnimationHelperFightStance animationFightStance;
 
     protected final IGGMDynamicAttributeInstance stamina;
+
+    @SideOnly(Side.CLIENT)
+    protected int growthAge;
 
 
     public EntityGothicAnimal(World world)
@@ -58,14 +67,32 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     protected abstract GGMDPAttributeInfo getNewStaminaAI();
 
 
-    protected IAnimationFightStance getNewAnimationFightStance()
+    @Override
+    public IAnimationHelper getNewDefaultAnimation()
     {
-        return new AnimationFSWithAIGothicMob(this);
+        return new AnimationHelperGothicAnimalLiving(this);
+    }
+
+
+    protected IAnimationHelperFightStance getNewAnimationFightStance()
+    {
+        return new AnimationHelperFSWithAIGothicMob(this);
     }
 
     protected int addTasks(int priority)
     {
+        return this.addLivingAI(this.addFightAI(priority));
+    }
+
+    protected int addFightAI(int priority)
+    {
         this.tasks.addTask(priority++, (EntityAIBase) this.animationFightStance);
+        return priority;
+    }
+
+    protected int addLivingAI(int priority)
+    {
+        this.tasks.addTask(priority++, (EntityAIBase) this.getDefaultAnimation());
         return priority;
     }
 
@@ -73,9 +100,20 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     @Override
     public void onEntityUpdate()
     {
-        if (this.isSprinting())
+        if (!this.worldObj.isRemote)
         {
-            this.sprintUpdate();
+            if (this.isSprinting())
+            {
+                this.sprintUpdate();
+            }
+        }
+        else
+        {
+            if (this.growthAge != this.getGrowingAge())
+            {
+                this.growthAge = this.getGrowingAge();
+                this.setGrowingAge(this.growthAge);
+            }
         }
 
         super.onEntityUpdate();
@@ -89,7 +127,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
 
     @Override
-    public boolean setAnimation(String animationName)
+    public boolean setAnimationHelper(String animationName)
     {
         if (animationName.equals(this.animationFightStance.getUnlocalizedName()))
         {
@@ -101,7 +139,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
             return true;
         }
 
-        return super.setAnimation(animationName);
+        return super.setAnimationHelper(animationName);
     }
 
     @Override
@@ -112,7 +150,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     }
 
     @Override
-    public short getNewAttackDuration(IAnimationEpisode hitType)
+    public short getNewAttackDuration(IAnimationHit hitType)
     {
         return (short) hitType.getStandartDuration();
     }
@@ -144,7 +182,13 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
 
     @Override
-    public boolean startAttack(IAnimationEpisode hitType)
+    public Map<String, IAnimationEpisode> getAnimationEpisodesMap()
+    {
+        return GGMEntityAnimations.GothicAnimalLivingEpisodesMap;
+    }
+
+    @Override
+    public boolean startAttack(IAnimationHit hitType)
     {
         if (this.getCurrentAnimation() != this.animationFightStance)
         {
@@ -152,6 +196,12 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
         }
 
         return this.getCurrentAnimation() == this.animationFightStance && this.canAttack() && this.animationFightStance.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
+    }
+
+    @Override
+    public IAnimationHit getHitAnimation(float distance)
+    {
+        return distance > this.getMeleeAttackDistance() ? GGMEntityAnimations.AnimationHitGothicAnimal : GGMEntityAnimations.AnimationHitOnRunGothicAnimal;
     }
 
     @Override
@@ -208,10 +258,20 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
 
     @Override
-    public boolean isChild()
+    public int getEpisodeDuration(IAnimationEpisode episode)
     {
-        return this.getGrowingAge() < 0;
+        return episode.getStandartDuration();
     }
+
+
+    @Override
+    public IAnimationEpisode getRandomJustLivingEpisode()
+    {
+        if (this.getGrowingAge() > this.getChildBirthNeedsGrowth() && this.rand.nextInt(4) == 0) return GGMEntityAnimations.AnimationChildBirthEntityGothicAnimal;
+
+        return GGMEntityAnimations.AnimationEatEntityGothicAnimal;
+    }
+
 
     public int getGrowingAge()
     {
@@ -220,21 +280,21 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
     public void setGrowingAge(int value)
     {
-        if (value != this.getGrowingAge())
+        this.dataWatcher.updateObject(12, value);
+
+        if (value < 0)
         {
-            this.dataWatcher.updateObject(12, value);
+            float f0 = this.getNewBornGrowthAge();
+            f0 = (f0 - value) / f0;
 
-            if (value < 0)
-            {
-                float f0 = this.getNewBornGrowthAge();
-                f0 = (f0 - value) / f0;
+            float f1 = this.getNewBornSizeScale();
+            f1 = (1F - f1) * f0 + f1;
 
-                float f1 = this.getNewBornSizeScale();
-                f1 = (1F - f1) * f0 + f1;
-
-                this.setSize(this.width * f1, this.height * f1);
-            }
-
+            this.setSize(this.getStandartWidth() * f1, this.getStandartHeight() * f1);
+        }
+        else
+        {
+            this.setSize(this.getStandartWidth(), this.getStandartHeight());
         }
     }
 
@@ -263,6 +323,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     {
         IEntityGothicAnimal child = (IEntityGothicAnimal) EntityList.createEntityByName(EntityList.getEntityString(this), this.worldObj);
         child.setGrowingAge(this.getNewBornGrowthAge());
+        this.pack.addEntityToPack(child);
         return child;
     }
 
@@ -279,6 +340,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
                 baby.renderYawOffset = baby.rotationYaw;
                 this.worldObj.spawnEntityInWorld(baby);
                 this.changeGrowth(this.getChildBirthNeedsGrowth());
+                baby.setGrowingAge(baby.getGrowingAge());
             }
             else if (this.worldObj.getBlock((int) this.posX, (int) this.posY, (int) this.posZ) == Blocks.air)
             {
@@ -306,4 +368,5 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     {
         return 1200;
     }
+
 }

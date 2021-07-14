@@ -3,32 +3,39 @@ package mrfinger.gothicgamemod.network.client;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import mrfinger.gothicgamemod.entity.animations.episodes.HittypeSplash;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
+import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.network.server.AbstractServerMessageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class CPacketStartAttack implements IMessage {
-
+public class CPacketStartAttack implements IMessage
+{
 
     short i;
+    byte duration;
 
 
     public CPacketStartAttack() {}
 
-    public CPacketStartAttack(short i) {
+    public CPacketStartAttack(short i, byte duration)
+    {
         this.i = i;
+        this.duration = duration;
     }
 
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(ByteBuf buf)
+    {
         this.i = buf.readShort();
+        this.duration = buf.readByte();
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf buf)
+    {
         buf.writeShort(i);
+        buf.writeByte(this.duration);
     }
 
 
@@ -37,7 +44,7 @@ public class CPacketStartAttack implements IMessage {
         @Override
         public IMessage handleServerMessage(EntityPlayer player, CPacketStartAttack message, MessageContext ctx)
         {
-            ((IGGMEntityPlayer) player).startAttack(new HittypeSplash());
+            ((IGGMEntityPlayer) player).startAttack(GGMEntityAnimations.hitSplash);
             return null;
         }
     }

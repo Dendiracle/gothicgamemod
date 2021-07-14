@@ -1,6 +1,7 @@
 package mrfinger.gothicgamemod.mixin.world;
 
 import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
+import mrfinger.gothicgamemod.entity.packentities.IPackEntity;
 import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.fractions.PackFraction;
@@ -16,13 +17,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 @Mixin(World.class)
-public abstract class GGMWorld implements IGGMWorld {
-
+public abstract class GGMWorld implements IGGMWorld
+{
 
     @Shadow public boolean isRemote;
-    public List<PackEntity>[] packListsArray;
+    protected List<IPackEntity>[] packListsArray;
 
-    public Map<Fraction, Collection<PackEntity>> packMapByFractions;
+    protected Map<Fraction, Collection<IPackEntity>> packMapByFractions;
+    protected Map<UUID, IPackEntity> packMapByID;
 
     private int count;
 
@@ -39,6 +41,7 @@ public abstract class GGMWorld implements IGGMWorld {
 
         this.packMapByFractions = new HashMap<>();
         this.packMapByFractions.put(GGMFractions.neutralFraction, new ArrayList<>());
+        this.packMapByID = new HashMap<>();
     }
 
 
@@ -50,49 +53,42 @@ public abstract class GGMWorld implements IGGMWorld {
 
 
     @Override
-    public PackEntity createNewPack()
+    public Map<UUID, IPackEntity> getPackMapByID()
     {
-        PackEntity pack = new PackEntity(this);
+        return packMapByID;
+    }
+
+    @Override
+    public IPackEntity createNewPack()
+    {
+        IPackEntity pack = new PackEntity(this);
         this.addPack(pack);
         return pack;
     }
 
     @Override
-    public PackEntity createNewPack(PackFraction fraction)
+    public IPackEntity createNewPack(PackFraction fraction)
     {
-        PackEntity pack = fraction.getNewEntityPack(this);
+        IPackEntity pack = fraction.getNewEntityPack(this);
         this.addPack(pack);
         return pack;
     }
 
     @Override
-    public PackEntity findRightPack(IEntityHerd entity)
+    public IPackEntity createNewPack(PackFraction fraction, UUID id)
     {
-        Collection<PackEntity> fractions = this.packMapByFractions.get(entity.getFraction());
-
-        if (fractions != null)
-        {
-            for (PackEntity pack : fractions)
-            {
-                float maxRangeSQ = pack.getMaxRangeToMembers();
-                maxRangeSQ *= maxRangeSQ;
-                if (pack.getDistanceSQToEntity(entity) <= maxRangeSQ) return pack;
-            }
-        }
-
-        PackEntity pack = createNewPack(entity.getFraction());
-        pack.setPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
-        pack.setSize(entity.getFraction().getSimplePackRange(), entity.getFraction().getSimplePackHeight());
+        IPackEntity pack = fraction.getNewEntityPack(this, id);
+        this.addPack(pack);
         return pack;
     }
 
     @Override
-    public void addPack(PackEntity pack)
+    public void addPack(IPackEntity pack)
     {
         if (this.count >= packListsArray.length) this.count = 0;
         packListsArray[this.count++].add(pack);
 
-        Collection<PackEntity> fractions = this.packMapByFractions.get(pack.getFraction());
+        Collection<IPackEntity> fractions = this.packMapByFractions.get(pack.getFraction());
         if (fractions != null)
         {
             fractions.add(pack);
@@ -103,6 +99,14 @@ public abstract class GGMWorld implements IGGMWorld {
             fractions.add(pack);
             this.packMapByFractions.put(pack.getFraction(), fractions);
         }
+
+        this.packMapByID.put(pack.getId(), pack);
     }
 
+    @Override
+    public void removePack(IPackEntity pack)
+    {
+        this.packMapByFractions.get(pack.getFraction()).remove(pack);
+        this.packMapByID.remove(pack.getId());
+    }
 }

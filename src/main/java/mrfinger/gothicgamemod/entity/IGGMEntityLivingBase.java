@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.entity;
 
-import mrfinger.gothicgamemod.entity.animations.AnimationEntityLiving;
-import mrfinger.gothicgamemod.entity.animations.IAnimation;
+import mrfinger.gothicgamemod.entity.animations.AnimationHelperEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
@@ -19,13 +19,12 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.MathHelper;
 
 import java.util.Collection;
 import java.util.Map;
 
-public interface IGGMEntityLivingBase extends IGGMEntity {
-
+public interface IGGMEntityLivingBase extends IGGMEntity
+{
 
 	default int initialLevel()
 	{
@@ -81,31 +80,31 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 	void onLivingUpdate();
 
 
-	default IAnimation getNewDefaultAnimation()
+	default IAnimationHelper getNewDefaultAnimation()
 	{
-		return new AnimationEntityLiving(this);
+		return new AnimationHelperEntityLivingBase(this);
 	}
 
-	default IAnimation getCurrentAnimation()
-	{
-		return null;
-	}
-
-	default IAnimation getDefaultAnimation()
+	default IAnimationHelper getCurrentAnimation()
 	{
 		return null;
 	}
 
-	default IAnimation getAnimationToSet()
+	default IAnimationHelper getDefaultAnimation()
 	{
 		return null;
 	}
 
-	default void setDefaulAnimation(IAnimation defaulAnimation) {}
+	default IAnimationHelper getAnimationToSet()
+	{
+		return null;
+	}
 
-	default void setAnimation(IAnimation animation) {}
+	default void setDefaulAnimation(IAnimationHelper defaulAnimation) {}
 
-	default boolean setAnimation(String animationName)
+	default void setAnimationHelper(IAnimationHelper animation) {}
+
+	default boolean setAnimationHelper(String animationName)
 	{
 		return false;
 	}
@@ -119,7 +118,7 @@ public interface IGGMEntityLivingBase extends IGGMEntity {
 		return true;
 	}
 
-	default boolean tryEndAnimation(IAnimation animation)
+	default boolean tryEndAnimation(IAnimationHelper animation)
 	{
 		return true;
 	}

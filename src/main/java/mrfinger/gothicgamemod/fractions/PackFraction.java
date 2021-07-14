@@ -1,7 +1,11 @@
 package mrfinger.gothicgamemod.fractions;
 
+import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
 import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.UUID;
 
 public class PackFraction extends Fraction
 {
@@ -47,6 +51,20 @@ public class PackFraction extends Fraction
     public PackEntity getNewEntityPack(IGGMWorld world)
     {
         return new PackEntity(world, this);
+    }
+
+    public PackEntity getNewEntityPack(IGGMWorld world, UUID id)
+    {
+        return new PackEntity(world, id, this, null);
+    }
+
+
+    public PackEntity getPackEntityFromNBT(NBTTagCompound nbt, UUID id, IEntityHerd entity)
+    {
+        PackEntity pack = new PackEntity(entity.getEntityWorld(), id, entity.getFraction(), entity);
+        pack.readPackFromNBT(nbt);
+        pack.addEntityToPack(entity);
+        return pack;
     }
 
 

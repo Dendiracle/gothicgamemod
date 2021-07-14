@@ -66,12 +66,12 @@ public class SPacketExpValues implements IMessage {
     }
 
 
-    public static class Handler extends AbstractClientMessageHandler<SPacketExpValues> {
-
+    public static class Handler extends AbstractClientMessageHandler<SPacketExpValues>
+    {
 
         @Override
-        public IMessage handleClientMessage(EntityPlayer player, SPacketExpValues message, MessageContext ctx) {
-
+        public IMessage handleClientMessage(EntityPlayer player, SPacketExpValues message, MessageContext ctx)
+        {
             Entity entityE = player.worldObj.getEntityByID(message.id);
 
             if (entityE != null && entityE instanceof IGGMEntityLivingBase) {

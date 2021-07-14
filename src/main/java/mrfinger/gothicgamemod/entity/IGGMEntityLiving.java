@@ -18,9 +18,6 @@ public interface IGGMEntityLiving extends IGGMEntityLivingBase
     PathNavigate getNavigator();
 
 
-    default void onNewAIFinishedPath() {}
-
-
     EntityLivingBase getAttackTarget();
 
     void setAttackTarget(EntityLivingBase entity);

@@ -1,12 +1,15 @@
 package mrfinger.gothicgamemod.entity.animals;
 
 import mrfinger.gothicgamemod.GothicMain;
+import mrfinger.gothicgamemod.block.BlockAnimalEggs;
+import mrfinger.gothicgamemod.client.model.ModelAnimal;
 import mrfinger.gothicgamemod.client.model.ModelScavenger;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.episodes.AbstractAnimationEpisode;
-import mrfinger.gothicgamemod.entity.animations.episodes.AbstractAnimationHit;
+import mrfinger.gothicgamemod.entity.animations.episodes.AbstractAnimationEpisodeWithDur;
+import mrfinger.gothicgamemod.entity.animations.episodes.AbstractAnimationEpisodeWithDurAndMultiplier;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.attributes.GGMDPAttributeInfo;
 import mrfinger.gothicgamemod.entity.packentities.EntityGothicAnimal;
 import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
@@ -16,9 +19,7 @@ import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,9 +30,6 @@ import java.util.Map;
 
 public class EntityScavenger extends EntityGothicAnimal
 {
-
-	public static final Map<String, IAnimationEpisode> AnimationEpisodesMap = new HashMap<>();
-	public static boolean keks = false;
 
 	public EntityScavenger(World world)
 	{
@@ -65,7 +63,6 @@ public class EntityScavenger extends EntityGothicAnimal
 	protected int addTasks(int priority)
 	{
 		this.tasks.addTask(priority++, new EntityAISwimming(this));
-
 		return super.addTasks(priority);
 	}
 
@@ -107,44 +104,23 @@ public class EntityScavenger extends EntityGothicAnimal
 
 
 	@Override
-	public Map<String, IAnimationEpisode> getAnimationEpisodesMap()
+	public float getAttackRangeSquare()
 	{
-		return AnimationEpisodesMap;
+		return 2.25F;
 	}
 
 	@Override
-	public IAnimationEpisode getRandomJustLivingEpisode()
+	public boolean startAttack(IAnimationHit hitType)
 	{
-		int i = this.rand.nextInt(1);
-
-		switch (i)
-		{
-			case 0:
-				return ScavChildbirth0;
-		}
-
-		return null;
-	}
-
-
-	@Override
-	public boolean startAttack(IAnimationEpisode hitType)
-	{
-		boolean b = super.startAttack(hitType);
-
-		if (b)
+		if (super.startAttack(hitType))
 		{
 			this.playSound(GothicMain.MODID + ":scavenger_attack", 1.0F, 1.0F);
+			return true;
 		}
 
-		return b;
+		return false;
 	}
 
-	@Override
-	public IAnimationEpisode getHitAnimation(float distance)
-	{
-		return distance > 3.0F ? ScavHitOnRun : ScavHit0;
-	}
 
 	@Override
 	public int getNewBornGrowthAge() {
@@ -164,8 +140,13 @@ public class EntityScavenger extends EntityGothicAnimal
 	@Override
 	public boolean isViviparous()
 	{
-		keks = !keks;
-		return keks;
+		return false;
+	}
+
+	@Override
+	public BlockAnimalEggs getBlockEgg()
+	{
+		return GGMBlocks.scavengerEgg;
 	}
 
 	@Override
@@ -202,120 +183,5 @@ public class EntityScavenger extends EntityGothicAnimal
 	{
 		super.readEntityFromNBT(nbt);
 	}
-
-
-	public static void loadAnimations()
-	{
-		AnimationEpisodesMap.put(EntityScavenger.ScavLiving0.getUnlocalizedName(), EntityScavenger.ScavLiving0);
-		AnimationEpisodesMap.put(ScavChildbirth0.getUnlocalizedName(), ScavChildbirth0);
-		AnimationEpisodesMap.put(ScavHit0.getUnlocalizedName(), ScavHit0);
-		AnimationEpisodesMap.put(ScavHitOnRun.getUnlocalizedName(), ScavHitOnRun);
-	}
-
-
-
-	public static final AbstractAnimationEpisode ScavLiving0 = new AbstractAnimationEpisode("Scav_Living0", 100)
-	{
-		@Override
-		public float getCulminationTickMultiplier()
-		{
-			return 0.1F;
-		}
-
-
-		@Override
-		public void updateModel(IGGMEntityLivingBase entity, ModelBase model, float progress)
-		{
-			ModelScavenger mdl = (ModelScavenger) model;
-
-			mdl.updateAnimationEat(entity, this, progress);
-		}
-
-		@Override
-		public void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte series)
-		{
-			if (entity.isClientWorld()) ((EntityScavenger) entity).changeGrowth(1);
-		}
-	};
-
-	public static final AbstractAnimationEpisode ScavChildbirth0 = new AbstractAnimationEpisode("Scav_Childbirth0", 60)
-	{
-		@Override
-		public float getCulminationTickMultiplier()
-		{
-			return 0.4F;
-		}
-
-
-		@Override
-		public void updateModel(IGGMEntityLivingBase entity, ModelBase model, float progress)
-		{
-			ModelScavenger mdl = (ModelScavenger) model;
-
-			mdl.updateAnimationSitting(progress);
-		}
-
-		@Override
-		public void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte series)
-		{
-			((IEntityGothicAnimal) entity).birthChild();
-		}
-	};
-
-	public static final AbstractAnimationHit ScavHit0 = new AbstractAnimationHit("Scav_Hit0", 10, 0.5F)
-	{
-		@Override
-		public void updateModel(IGGMEntityLivingBase entity, ModelBase model, float progress)
-		{
-			if (entity.getCurrentAnimation().getEpisodeCount() > 0) ((ModelScavenger) model).updateAnimationHit(progress);
-		}
-
-		@Override
-		public void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte attackSeries)
-		{
-			if (entity.isClientWorld())
-			{
-				EntityScavenger scavenger = (EntityScavenger) entity;
-
-				if (scavenger.getDistanceSqToEntity(scavenger.getAttackTarget()) < 3.0D)
-				{
-					scavenger.attackEntityAsMob(scavenger.getAttackTarget());
-				}
-			}
-		}
-	};
-
-	public static final AbstractAnimationHit ScavHitOnRun = new AbstractAnimationHit("Scav_Hit_OnRun", 20, 0.4F)
-	{
-		@Override
-		public void updateModel(IGGMEntityLivingBase entity, ModelBase model, float progress)
-		{
-			if (entity.getCurrentAnimation().getEpisodeCount() > 0) ((ModelScavenger) model).updateAnimationHit(progress);
-		}
-
-		@Override
-		public void onUpdate(IGGMEntityLivingBase entity, int duration, int count)
-		{
-			if (entity.getCurrentAnimation().getEpisodeCount() > 0)
-			{
-				entity.getCurrentAnimation().setMoveControl((float) entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue(), 0F);
-				entity.getCurrentAnimation().setRotationControl(entity.getRotationYaw(), 0F);
-			}
-		}
-
-		@Override
-		public void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte attackSeries)
-		{
-			if (entity.isClientWorld())
-			{
-				EntityScavenger scavenger = (EntityScavenger) entity;
-
-				if (scavenger.getDistanceSqToEntity(scavenger.getAttackTarget()) < 3.0D)
-				{
-					scavenger.attackEntityAsMob(scavenger.getAttackTarget());
-				}
-			}
-		}
-	};
 
 }

@@ -2,16 +2,20 @@ package mrfinger.gothicgamemod.entity.animations;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
-import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
+import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
+import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 
 import java.util.Map;
 
-public class AnimationEntityHerdLiving extends AnimationEntityLiving
+public class AnimationHelperGothicAnimalLiving extends EntityAIBase implements IAnimationHelper<IEntityGothicAnimal, IAnimationEpisode>
 {
+
+    protected IEntityGothicAnimal entity;
 
     protected IAnimationEpisode episode;
     protected short episodeDuration;
@@ -23,9 +27,25 @@ public class AnimationEntityHerdLiving extends AnimationEntityLiving
     protected float moveStrafe;
 
 
-    public AnimationEntityHerdLiving(IEntityHerd entity)
+    protected boolean isEntityHavePath;
+    protected byte episodesSeries;
+
+
+    public AnimationHelperGothicAnimalLiving(IEntityGothicAnimal entity)
     {
-        super(entity);
+        this.entity = entity;
+    }
+
+    @Override
+    public IEntityGothicAnimal getEntity()
+    {
+        return this.entity;
+    }
+
+    @Override
+    public void setEntity(IEntityGothicAnimal entity)
+    {
+        this.entity = entity;
     }
 
     @Override
@@ -38,8 +58,6 @@ public class AnimationEntityHerdLiving extends AnimationEntityLiving
     @Override
     public void updateAnimation()
     {
-        super.updateAnimation();
-
         if (this.episode != null)
         {
             if (this.episodeCount > 0)
@@ -90,6 +108,13 @@ public class AnimationEntityHerdLiving extends AnimationEntityLiving
         return episodeCount;
     }
 
+
+    @Override
+    public boolean setAnimationEpisode(IAnimationEpisode episode)
+    {
+        return this.setAnimationEpisode(episode, this.entity.getEpisodeDuration(episode));
+    }
+
     @Override
     public boolean setAnimationEpisode(IAnimationEpisode episode, int duration)
     {
@@ -118,13 +143,13 @@ public class AnimationEntityHerdLiving extends AnimationEntityLiving
         }
         else
         {
-            Map<String, IAnimationEpisode> map = ((IEntityHerd) this.entity).getAnimationEpisodesMap();
-
+            Map<String, IAnimationEpisode> map = this.entity.getAnimationEpisodesMap();
+            System.out.println("Debug in AnimationHelperGothicAnimalLiving setting anim");
             if (map != null)
             {
                 IAnimationEpisode episode = map.get(episodeName);
                 this.setAnimationEpisode(episode, duration);
-
+                System.out.println(episodeName + " " + episode + " " + entity.getGrowingAge());
                 return episode != this.getEpisode();
             }
         }
@@ -256,4 +281,64 @@ public class AnimationEntityHerdLiving extends AnimationEntityLiving
         }
     }
 
+
+    @Override
+    public boolean shouldExecute()
+    {
+        System.out.println("Debug in AnimationHelperGothicAnimalLiving " + (this.entity.getCurrentAnimation() == this));
+        return this.entity.getCurrentAnimation() == this;
+    }
+
+    @Override
+    public void resetTask()
+    {
+        this.clearAnimationEpisode();
+        super.resetTask();
+    }
+
+
+    @Override
+    public void updateTask()
+    {
+        System.out.println("Debug in AnimationHelperGothicAnimalLiving updatingtask " + episodesSeries);
+        if (this.entity.getNavigator().noPath())
+        {
+            System.out.println("1 " + this.isEntityHavePath + " " + episode + " " + this.entity.isNeedWander());
+            if (this.isEntityHavePath)
+            {
+                this.setAnimationEpisode(GGMEntityAnimations.AnimationLookingAroundEntityGothicAnimal);
+                this.isEntityHavePath = false;
+            }
+            else if (this.episode == null && !this.entity.isNeedWander())
+            {
+                System.out.println("2");
+                if (this.entity.isBlockAvailableToLiving() && (this.entity.getRNG().nextInt(25) + 1) > this.episodesSeries)
+                {
+                    IAnimationEpisode episode = this.entity.getRandomJustLivingEpisode();
+
+                    if (episode != null)
+                    {
+                        this.setAnimationEpisode(episode);
+                        ++this.episodesSeries;
+                    }
+                    else
+                    {
+                        this.entity.setIsNeedWander(true);
+                        this.episodesSeries = 0;
+                    }
+                    System.out.println("3 " + episodesSeries + " " + episode);
+                }
+                else
+                {
+                    this.entity.setIsNeedWander(true);
+                    this.episodesSeries = 0;
+                }
+            }
+        }
+        else
+        {
+            this.isEntityHavePath = true;
+        }
+
+    }
 }

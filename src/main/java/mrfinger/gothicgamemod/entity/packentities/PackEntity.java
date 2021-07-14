@@ -7,20 +7,20 @@ import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 
 import java.util.*;
 
-public class PackEntity
+public class PackEntity implements IPackEntity
 {
 
-    protected static int nextPackId = 0;
-
     protected IGGMWorld world;
-
-    protected int id;
+    protected final UUID id;
+    protected final PackFraction fraction;
 
     protected double posX;
     protected double posY;
@@ -31,8 +31,7 @@ public class PackEntity
 
     protected AxisAlignedBB aabb;
 
-    protected PackFraction fraction;
-
+    protected IEntityHerd leader;
     protected Set<IEntityHerd> entitiesSet;
     protected Map<IGGMEntity, EnemyEntry> enemiesMap;
 
@@ -47,39 +46,50 @@ public class PackEntity
 
     public PackEntity(IGGMWorld world, PackFraction fraction)
     {
+        this(world, fraction, null);
+    }
+
+    public PackEntity(IGGMWorld world, PackFraction fraction, IEntityHerd leader)
+    {
+        this(world, UUID.randomUUID(), fraction, leader);
+    }
+
+    public PackEntity(IGGMWorld world, UUID id, PackFraction fraction, IEntityHerd leader)
+    {
         this.world = world;
-        this.id = nextPackId++;
+        this.id = id;
         this.fraction = fraction;
+
         this.aabb = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
+        this.leader = leader;
         this.entitiesSet = new HashSet<>();
         this.enemiesMap = new HashMap<>();
 
         this.aggressiveness = 0.3F;
     }
 
-    public PackEntity(IGGMWorld world, NBTTagCompound nbt)
-    {
-        this.world = world;
 
-        this.id = nbt.getInteger("id");
-        this.posX = nbt.getDouble("posx");
-        this.posY =  nbt.getDouble("posy");
-        this.posZ =  nbt.getDouble("posz");
-        this.fraction = (PackFraction) GGMFractions.fractionsMap.get(nbt.getString("fraction"));
-    }
-
+    @Override
     public IGGMWorld getWorld()
     {
         return this.world;
     }
 
-    public int getId()
+    @Override
+    public UUID getId()
     {
         return this.id;
     }
 
+    @Override
+    public PackFraction getFraction()
+    {
+        return fraction;
+    }
 
+
+    @Override
     public void setPos(double x, double y, double z)
     {
         this.posX = x;
@@ -89,50 +99,104 @@ public class PackEntity
     }
 
 
+    @Override
+    public IEntityHerd getLeader()
+    {
+        return leader;
+    }
+
+    @Override
+    public boolean setLeader(IEntityHerd leader)
+    {
+        if (this.entitiesSet.contains(leader))
+        {
+            this.leader = leader;
+            return true;
+        }
+
+        return false;
+    }
+
+    protected void reChooseLeader()
+    {
+        for (IEntityHerd entity : this.entitiesSet)
+        {
+            if (entity.isEntityAlive())
+            {
+                this.leader = entity;
+                break;
+            }
+        }
+    }
+
+
+    @Override
     public Set<IEntityHerd> getEntitiesSet() {
         return entitiesSet;
     }
 
+    @Override
     public void addEntityToPack(IEntityHerd entity)
     {
         if (this.entitiesSet.add(entity))
         {
+            if (this.entitiesSet.size() == 1)
+            {
+                this.setLeader(entity);
+            }
             entity.onAddToPack(this);
             this.setSize((float) calculatePackRadiusWithAdd(this.rad, entity.getNeedSpaceMultiplier() * this.fraction.getSpaceForEntity()), this.height);
         }
     }
 
+    @Override
     public void removeEntityFromPack(IEntityHerd entity)
     {
         if (this.entitiesSet.remove(entity))
         {
             entity.onRemoveFromPack(this);
+            if (entity == this.leader)
+            {
+                this.reChooseLeader();
+            }
             this.setSize((float) calculatePackRadiusWithout(this.rad, entity.getNeedSpaceMultiplier() * this.fraction.getSpaceForEntity()), this.height);
         }
     }
 
 
+    @Override
+    public boolean isPackToRemove()
+    {
+        return this.entitiesSet.isEmpty();
+    }
+
+
+    @Override
     public void addEnemy(IGGMEntity entity)
     {
         this.addEnemy(entity, this.fraction.getStandartRevengeDuration());
     }
 
+    @Override
     public void addEnemy(IGGMEntity entity, int count)
     {
         this.enemiesMap.put(entity, new EnemyEntry(entity, count));
     }
 
 
+    @Override
     public float getRadius()
     {
         return rad;
     }
 
+    @Override
     public float getMaxRangeToMembers()
     {
         return this.getRadius() + 128.0F;
     }
 
+    @Override
     public void setSize(float rad, float height)
     {
         this.rad = rad;
@@ -141,17 +205,8 @@ public class PackEntity
     }
 
 
-    public PackFraction getFraction() {
-        return fraction;
-    }
-
-    public void setFraction(PackFraction fraction)
-    {
-        this.fraction = fraction;
-    }
-
-
-    public void onHalfSecUpdate()
+    @Override
+    public void onUpdatePackAI()
     {
         this.checkDeads();
 
@@ -211,11 +266,12 @@ public class PackEntity
             {
                 this.aggrLevel -= this.aggressiveness;
                 if (this.aggrLevel < 0F) this.aggrLevel = 0F;
+                this.clearAttackTargets();
             }
         }
-        else if (this.aggrLevel >= 1.0F)
+        else if (this.aggrLevel > 0F)
         {
-            this.aggrLevel = 1.0F;
+            if (this.aggrLevel > 1F) this.aggrLevel = 1.0F;
 
             if (entitiesToAttackList.size() == 1)
             {
@@ -248,7 +304,6 @@ public class PackEntity
                 }
             }
         }
-
 
         if (this.isJustLiving())
         {
@@ -296,9 +351,25 @@ public class PackEntity
     }
 
 
-    protected boolean isJustLiving()
+    protected void clearAttackTargets()
+    {
+        for (IEntityHerd entity : this.entitiesSet)
+        {
+            entity.setAttackTarget(null);
+        }
+    }
+
+
+    @Override
+    public boolean isJustLiving()
     {
         return this.aggrLevel <= 0.0F;
+    }
+
+    @Override
+    public boolean isAttacking()
+    {
+        return this.aggrLevel >= 1F;
     }
 
 
@@ -341,9 +412,9 @@ public class PackEntity
 
         for (IEntityHerd entity : this.entitiesSet)
         {
-            Random random = entity.getRNG();
-            if (entity.isCanJustWander() && (random.nextInt(i) < size || this.getDistanceSQToEntity(entity) > rangeSQ))
+            if (entity.isCanJustWander() && (entity.isNeedWander() || this.getDistanceSQToEntity(entity) > rangeSQ))
             {
+                Random random = entity.getRNG();
                 int x = 0;
                 int y = 0;
                 int z = 0;
@@ -369,18 +440,14 @@ public class PackEntity
                 if (blockWeight >= 0.0F)
                 {
                     entity.getNavigator().tryMoveToXYZ(x, y, z, entity.getWanderSpeedModifier());
+                    entity.setIsNeedWander(false);
                 }
             }
         }
     }
 
 
-    public int getChaseDuration(IEntityHerd entity)
-    {
-        return 100;
-    }
-
-
+    @Override
     public double getDistanceSQ(double x, double y, double z)
     {
         x -= this.posX;
@@ -390,17 +457,19 @@ public class PackEntity
         return x * x + y * y + z * z;
     }
 
+    @Override
     public double getDistanceTo(double x, double y, double z)
     {
         return Math.sqrt(this.getDistanceSQ(x, y, z));
     }
 
-
+    @Override
     public double getDistanceSQToEntity(IGGMEntity entity)
     {
         return this.getDistanceSQ(entity.getPosX(), entity.getPosY(), entity.getPosZ());
     }
 
+    @Override
     public double getDistanceToEntity(IGGMEntity entity)
     {
         return this.getDistanceTo(entity.getPosX(), entity.getPosY(), entity.getPosZ());
@@ -418,13 +487,24 @@ public class PackEntity
     }
 
 
+    @Override
     public void writePackToNBT(NBTTagCompound nbt)
     {
-        nbt.setInteger("id", this.id);
         nbt.setDouble("posx", this.posX);
         nbt.setDouble("posy", this.posY);
         nbt.setDouble("posz", this.posZ);
-        nbt.setString("fraction", this.fraction.getUnlocalizedName());
+        nbt.setFloat("aggres", this.aggressiveness);
+        nbt.setFloat("aggr", this.aggrLevel);
+    }
+
+    @Override
+    public void readPackFromNBT(NBTTagCompound nbt)
+    {
+        this.posX = nbt.getDouble("posx");
+        this.posY = nbt.getDouble("posy");
+        this.posZ = nbt.getDouble("posz");
+        this.aggressiveness = nbt.getFloat("aggres");
+        this.aggrLevel = nbt.getFloat("aggr");
     }
 
 

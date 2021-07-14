@@ -1,24 +1,5 @@
 package mrfinger.gothicgamemod.entity;
 
-import mrfinger.gothicgamemod.GothicMain;
-import mrfinger.gothicgamemod.entity.animations.AnimationEntityHerdLiving;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
-import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
-import mrfinger.gothicgamemod.entity.packentities.PackEntity;
-import mrfinger.gothicgamemod.fractions.PackFraction;
-import mrfinger.gothicgamemod.init.GGMEntityAnimations;
-import mrfinger.gothicgamemod.init.GGMFractions;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
-import java.util.Map;
 /*
 public abstract class EntityLivingBaseHerd extends EntityLivingBase implements IEntityHerd
 {
@@ -36,8 +17,8 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     {
         super(world);
 
-        this.setDefaulAnimation(new AnimationEntityHerdLiving(this));
-        this.setAnimation(this.getDefaultAnimation());
+        this.setDefaulAnimation(new AnimationHelperGothicAnimalLiving(this));
+        this.setAnimationHelper(this.getDefaultAnimation());
     }
 
 

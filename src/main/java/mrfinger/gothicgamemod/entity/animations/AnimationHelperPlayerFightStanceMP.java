@@ -1,31 +1,31 @@
 package mrfinger.gothicgamemod.entity.animations;
 
+import mrfinger.gothicgamemod.entity.animations.episodes.AbstractPlayerAnimationHit;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationFightStance;
-import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
+import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationHelperFightStance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Collection;
 
-public class AnimationPlayerFightStanceMP extends GGMPlayerEquipmentAnimationFightStance
+public class AnimationHelperPlayerFightStanceMP extends GGMPlayerEquipmentAnimationHelperFightStance<IGGMEntityPlayerMP, AbstractPlayerAnimationHit>
 {
 
     protected IGGMEntity[] targets;
 
-    protected IAnimationEpisode repeatAttackHitType;
+    protected AbstractPlayerAnimationHit repeatAttackHitType;
 
 
-    public AnimationPlayerFightStanceMP(IGGMEntityPlayerMP entity)
+    public AnimationHelperPlayerFightStanceMP(IGGMEntityPlayerMP entity)
     {
         super(entity);
     }
 
 
     @Override
-    public boolean setAnimationEpisode(IAnimationEpisode animationEpisode, int count)
+    public boolean setAnimationEpisode(AbstractPlayerAnimationHit animationEpisode, int count)
     {
         if (super.setAnimationEpisode(animationEpisode, count))
         {

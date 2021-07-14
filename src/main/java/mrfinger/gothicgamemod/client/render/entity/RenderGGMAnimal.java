@@ -38,16 +38,22 @@ public class RenderGGMAnimal extends RenderLiving
         this.bindEntityTexture(entity);
         this.modelAnimal.setRotationAngles(p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, size, entity);
 
-        //System.out.println("Debug in RenderGGMAnimal renderModel " + size);
-
-        if (entity.width != ((IEntityGothicAnimal) entity).getStandartWidth())
-        {
-            size *= entity.width / ((IEntityGothicAnimal) entity).getStandartWidth();
-            System.out.println(size);
-        }
         if (!entity.isInvisible())
         {
-            this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, size);
+            if (entity.width != ((IEntityGothicAnimal) entity).getStandartWidth())
+            {
+                float f0 =  entity.width / ((IEntityGothicAnimal) entity).getStandartWidth();
+                GL11.glPushMatrix();
+                GL11.glScalef(f0, f0, f0);
+                float f1 = (24F - this.modelAnimal.corpusHeight()) * (1F - f0) * size;
+                GL11.glTranslatef(0F, f1, 0F);
+                this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, size);
+                GL11.glPopMatrix();
+            }
+            else
+            {
+                this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, size);
+            }
         }
         else if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
         {
@@ -57,15 +63,19 @@ public class RenderGGMAnimal extends RenderLiving
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+            if (entity.width != ((IEntityGothicAnimal) entity).getStandartWidth())
+            {
+                float f0 =  entity.width / ((IEntityGothicAnimal) entity).getStandartWidth();
+                GL11.glScalef(f0, f0, f0);
+                GL11.glTranslatef(0F, (24F - this.modelAnimal.corpusHeight()) * (1F - f0) * size, 0F);
+            }
+            this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, size);
             this.modelAnimal.render(entity, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, size);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
             GL11.glPopMatrix();
             GL11.glDepthMask(true);
         }
-
     }
-	
-	
-	
+
 }

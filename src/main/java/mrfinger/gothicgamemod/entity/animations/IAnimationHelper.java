@@ -7,12 +7,12 @@ import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 
-public interface IAnimation {
+public interface IAnimationHelper<Entity extends IGGMEntityLivingBase, Episode extends IAnimationEpisode>
+{
 
+    Entity getEntity();
 
-    IGGMEntityLivingBase getEntity();
-
-    void setEntity(IGGMEntityLivingBase entity);
+    void setEntity(Entity entity);
 
 
     String getUnlocalizedName();
@@ -21,7 +21,7 @@ public interface IAnimation {
     void updateAnimation();
 
 
-    default IAnimation onSetNewAnimation(IAnimation animation)
+    default IAnimationHelper onSetNewAnimation(IAnimationHelper animation)
     {
         return this;
     }
@@ -31,14 +31,16 @@ public interface IAnimation {
     default void onEndAnimation() {}
 
 
-    IAnimationEpisode getEpisode();
+    Episode getEpisode();
 
     int getEpisodeDuration();
 
     int getEpisodeCount();
 
 
-    boolean setAnimationEpisode(IAnimationEpisode animationEpisode,int duration);
+    boolean setAnimationEpisode(Episode animationEpisode);
+
+    boolean setAnimationEpisode(Episode animationEpisode, int duration);
 
     boolean setAnimationEpisode(String episodeName, int duration);
 

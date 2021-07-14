@@ -3,7 +3,7 @@ package mrfinger.gothicgamemod.mixin.entity;
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimation;
+import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
@@ -42,9 +42,9 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	protected Map<IGGMEffect, IGGMEffectInstance> attackEffectsMap;
 	protected Map<IGGMEffect, IGGMEffectInstance> otherEffectsMap;
 
-    protected IAnimation currentAnimation;
-    protected IAnimation defaulAnimation;
-    protected IAnimation animationToSet;
+    protected IAnimationHelper currentAnimation;
+    protected IAnimationHelper defaulAnimation;
+    protected IAnimationHelper animationToSet;
 
     protected boolean needEndAnimation;
     private boolean needAnimSync;
@@ -196,24 +196,24 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 
 	@Override
-	public IAnimation getCurrentAnimation() {
+	public IAnimationHelper getCurrentAnimation() {
 		return this.currentAnimation;
 	}
 
 	@Override
-	public IAnimation getDefaultAnimation()
+	public IAnimationHelper getDefaultAnimation()
 	{
 		return this.defaulAnimation;
 	}
 
 	@Override
-	public IAnimation getAnimationToSet()
+	public IAnimationHelper getAnimationToSet()
 	{
 		return this.animationToSet;
 	}
 
 	@Override
-	public void setAnimation(IAnimation animation)
+	public void setAnimationHelper(IAnimationHelper animation)
 	{
 		this.currentAnimation = this.currentAnimation.onSetNewAnimation(animation);
 
@@ -224,7 +224,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
-	public boolean setAnimation(String animationName)
+	public boolean setAnimationHelper(String animationName)
 	{
 		if (animationName.equals(this.getDefaultAnimation().getUnlocalizedName()))
 		{
@@ -241,7 +241,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
-	public void setDefaulAnimation(IAnimation defaulAnimation)
+	public void setDefaulAnimation(IAnimationHelper defaulAnimation)
 	{
 		this.defaulAnimation = defaulAnimation;
 	}
@@ -260,7 +260,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 	@Override
-	public boolean tryEndAnimation(IAnimation animation)
+	public boolean tryEndAnimation(IAnimationHelper animation)
 	{
 		if (animation != null) this.animationToSet = animation;
 
@@ -277,7 +277,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	@Override
 	public void clearAnimation()
 	{
-		IAnimation old = this.getCurrentAnimation();
+		IAnimationHelper old = this.getCurrentAnimation();
 		this.currentAnimation = this.getAnimationToSet();
 		this.animationToSet = this.getDefaultAnimation();
 		old.onEndAnimation();

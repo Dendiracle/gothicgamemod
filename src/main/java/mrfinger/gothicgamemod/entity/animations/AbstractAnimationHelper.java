@@ -2,34 +2,40 @@ package mrfinger.gothicgamemod.entity.animations;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
-import mrfinger.gothicgamemod.network.PacketDispatcher;
 
-public abstract class AbstractAnimation implements IAnimation
+public abstract class AbstractAnimationHelper<Entity extends IGGMEntityLivingBase, Episode extends IAnimationEpisode> implements IAnimationHelper<Entity, Episode>
 {
 
     protected IGGMEntityLivingBase entity;
 
 
-    public AbstractAnimation()
+    public AbstractAnimationHelper()
     {
 
     }
 
-    public AbstractAnimation(IGGMEntityLivingBase entity)
+    public AbstractAnimationHelper(IGGMEntityLivingBase entity)
     {
         this.entity = entity;
     }
 
     @Override
-    public IGGMEntityLivingBase getEntity()
+    public Entity getEntity()
     {
-        return this.entity;
+        return (Entity) this.entity;
     }
 
     @Override
     public void setEntity(IGGMEntityLivingBase entity)
     {
         this.entity = entity;
+    }
+
+
+    @Override
+    public boolean setAnimationEpisode(Episode animationEpisode)
+    {
+        return this.setAnimationEpisode(animationEpisode, animationEpisode.getStandartDuration());
     }
 
 

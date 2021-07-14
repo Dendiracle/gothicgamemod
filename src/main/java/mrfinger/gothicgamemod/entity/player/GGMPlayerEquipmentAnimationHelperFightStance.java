@@ -1,6 +1,8 @@
 package mrfinger.gothicgamemod.entity.player;
 
-import mrfinger.gothicgamemod.entity.animations.AnimationFightStance;
+import mrfinger.gothicgamemod.entity.animations.AnimationHelperFightStance;
+import mrfinger.gothicgamemod.entity.animations.episodes.AbstractPlayerAnimationHit;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
 import mrfinger.gothicgamemod.network.BPacketSyncCurrentItemInGGMSlot;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
@@ -12,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public abstract class GGMPlayerEquipmentAnimationFightStance extends AnimationFightStance implements IGGMPlayerEquipmentAnimationFightStance
+public abstract class GGMPlayerEquipmentAnimationHelperFightStance<Entity extends IGGMEntityPlayer, Episode extends AbstractPlayerAnimationHit> extends AnimationHelperFightStance<Entity, Episode> implements IGGMPlayerEquipmentAnimationHelperFightStance<Entity, Episode>
 {
 
     protected ItemStack[] equip;
@@ -24,7 +26,7 @@ public abstract class GGMPlayerEquipmentAnimationFightStance extends AnimationFi
     protected byte stats;
 
 
-    public GGMPlayerEquipmentAnimationFightStance(IGGMEntityPlayer player)
+    public GGMPlayerEquipmentAnimationHelperFightStance(IGGMEntityPlayer player)
     {
         super(player);
 

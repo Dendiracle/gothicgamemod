@@ -192,6 +192,11 @@ public class GiantRatModel extends ModelAnimal {
       setRotation(earLeft, -0.2792527F, -0.5235988F, 1.117011F);
       
   }
+
+  @Override
+  public float corpusHeight() {
+    return 0;
+  }
   
   @Override
   public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)

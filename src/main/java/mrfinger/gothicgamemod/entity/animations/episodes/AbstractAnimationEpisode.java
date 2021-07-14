@@ -1,34 +1,23 @@
 package mrfinger.gothicgamemod.entity.animations.episodes;
 
-public abstract class AbstractAnimationEpisode implements IAnimationEpisode
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import net.minecraft.client.model.ModelBase;
+
+public abstract class AbstractAnimationEpisode<Entity extends IGGMEntityLivingBase, Model extends ModelBase> implements IAnimationEpisode<Entity, Model>
 {
 
     protected final String unlocalizedName;
-    protected final int standartDuration;
 
-    public AbstractAnimationEpisode(String unlocalizedName, int standartDuration)
+
+    public AbstractAnimationEpisode(String unlocalizedName)
     {
         this.unlocalizedName = unlocalizedName;
-        this.standartDuration = standartDuration;
     }
-
 
     @Override
     public String getUnlocalizedName()
     {
-        return unlocalizedName;
-    }
-
-    @Override
-    public int getStandartDuration()
-    {
-        return standartDuration;
-    }
-
-    @Override
-    public float getCulminationTickMultiplier()
-    {
-        return 0.0F;
+        return this.unlocalizedName;
     }
 
 
@@ -37,4 +26,5 @@ public abstract class AbstractAnimationEpisode implements IAnimationEpisode
     {
         return "AnimationEpisode:" + this.unlocalizedName;
     }
+
 }

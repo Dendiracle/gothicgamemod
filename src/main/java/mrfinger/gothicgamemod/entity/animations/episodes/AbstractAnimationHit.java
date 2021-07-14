@@ -1,39 +1,27 @@
 package mrfinger.gothicgamemod.entity.animations.episodes;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAttackAnim;
 import net.minecraft.client.model.ModelBase;
 
-public abstract class AbstractAnimationHit extends AbstractAnimationEpisode
+public abstract class AbstractAnimationHit<Entity extends IGGMEntityWithAttackAnim, Model extends ModelBase> extends AbstractAnimationEpisode<Entity, Model> implements IAnimationHit<Entity, Model>
 {
 
-    protected final float attackTickMultiplier;
-
-
-    public AbstractAnimationHit(String unlocalizedName, int standartDuration, float attackTickMultiplier)
+    public AbstractAnimationHit(String unlocalizedName)
     {
-        super(unlocalizedName, standartDuration);
-
-        if (attackTickMultiplier < 0.0F || attackTickMultiplier > 1.0F) throw new IllegalArgumentException("attackTickMultiplier must have range from 0 to 1");
-        this.attackTickMultiplier = attackTickMultiplier;
+        super(unlocalizedName);
     }
 
 
     @Override
-    public float getCulminationTickMultiplier()
+    public void onCulmination(Entity entity, int duration, int count, byte series)
     {
-        return this.attackTickMultiplier;
+        IGGMEntity target = entity.getEntityToAttack();
+
+        if (entity.isClientWorld() && target != null && target.isEntityAlive() && entity.getDistanceSqToEntity((net.minecraft.entity.Entity) target) < entity.getAttackRangeSquare())
+        {
+            entity.attackEntityAsMob((net.minecraft.entity.Entity) entity.getEntityToAttack());
+        }
     }
 
-
-    @Override
-    public void onUpdate(IGGMEntityLivingBase entity, int duration, int count)
-    {
-
-    }
-
-    @Override
-    public void onCulmination(IGGMEntityLivingBase entity, int duration, int count, byte attackSeries)
-    {
-
-    }
 }

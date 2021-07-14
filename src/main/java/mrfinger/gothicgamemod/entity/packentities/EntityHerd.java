@@ -1,37 +1,32 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
-import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.ai.GGMPathNavigate;
-import mrfinger.gothicgamemod.entity.animations.AnimationEntityHerdLiving;
-import mrfinger.gothicgamemod.entity.animations.IAnimation;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.fractions.PackFraction;
-import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import mrfinger.gothicgamemod.init.GGMFractions;
+import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class EntityHerd extends EntityLiving implements IEntityHerd
 {
 
-    protected PackEntity pack;
+    protected IPackEntity pack;
+
+    protected boolean isNeedWander;
 
 
     public EntityHerd(World world)
     {
         super(world);
-
-        this.navigator = new GGMPathNavigate(this, world);
-        this.getNavigator().setAvoidsWater(this.isAvoidsWater());
     }
 
 
@@ -43,11 +38,6 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(128D);
     }
 
-    @Override
-    public IAnimation getNewDefaultAnimation()
-    {
-        return new AnimationEntityHerdLiving(this);
-    }
 
     @Override
     public PackFraction getFraction() {
@@ -61,27 +51,63 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     }
 
 
+
     @Override
-    public void onAddToPack(PackEntity pack)
+    public void onAddToPack(IPackEntity pack)
     {
+        this.pack = pack;
     }
 
     @Override
-    public void onRemoveFromPack(PackEntity pack) {}
+    public void onRemoveFromPack(IPackEntity pack)
+    {
+        this.findNewPack();
+    }
 
 
     @Override
-    public PackEntity findNewPack()
+    public boolean isPackLeader()
     {
-        PackEntity pack = this.getEntityWorld().findRightPack(this);
+        return this.pack != null && this.pack.getLeader() == this;
+    }
 
-        if (this.pack != pack)
+    @Override
+    public boolean isAggressive()
+    {
+        return pack.isAttacking();
+    }
+
+
+    @Override
+    public IPackEntity getPack()
+    {
+        return pack;
+    }
+
+    @Override
+    public void setPackEntity(IPackEntity pack)
+    {
+        pack.addEntityToPack(this);
+    }
+
+    @Override
+    public IPackEntity findNewPack()
+    {
+        IPackEntity pack = this.getEntityWorld().findRightPack(this);
+
+        if (this.pack != null)
         {
-            if (this.pack != null) this.pack.removeEntityFromPack(this);
-            pack.addEntityToPack(this);
-            this.pack = pack;
+            if (this.pack != pack)
+            {
+                this.pack.removeEntityFromPack(this);
+                pack.addEntityToPack(this);
+            }
         }
-
+        else
+        {
+            pack.addEntityToPack(this);
+        }
+        System.out.println("Debug in EntityHerd finded new pack " + pack + " " + this);
         return pack;
     }
 
@@ -103,12 +129,6 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     protected void updateAITasks()
     {
         super.updateAITasks();
-    }
-
-    @Override
-    public int getDefaultChaseDuration()
-    {
-        return 100;
     }
 
 
@@ -134,7 +154,6 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         if (!this.worldObj.isRemote && this.pack == null)
         {
             this.findNewPack();
-            System.out.println("Debug in EntityHerd pack " + pack);
         }
 
         super.onEntityUpdate();
@@ -285,10 +304,29 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         this.getNavigator().clearPathEntity();
     }
 
+
+    @Override
+    public boolean isNeedWander()
+    {
+        return this.isNeedWander;
+    }
+
+    @Override
+    public void setIsNeedWander(boolean b)
+    {
+        this.isNeedWander = b;
+    }
+
     @Override
     public float getBlockPathWeight(int x, int y, int z)
     {
         return 0.0F;
+    }
+
+    @Override
+    public boolean isBlockAvailableToLiving()
+    {
+        return this.getBlockPathWeight((int) this.posX, (int) this.posY, (int) this.posZ) > 0F;
     }
 
 
@@ -298,38 +336,50 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         return this.onGround && this.isEntityAlive() && this.getNavigator().noPath() && this.getCurrentAnimation().getEpisode() == null;
     }
 
-    public Map<String, IAnimationEpisode> getAnimationEpisodesMap()
-    {
-        return null;
-    }
-
-    @Override
-    public void onNewAIFinishedPath()
-    {
-        if (this.getCurrentAnimation() == this.getDefaultAnimation() && this.getCurrentAnimation().getEpisode() == null)
-        {
-            IAnimationEpisode episode = this.getRandomJustLivingEpisode();
-            this.getCurrentAnimation().setAnimationEpisode(episode, episode.getStandartDuration());
-        }
-    }
-
 
     @Override
     public boolean allowLeashing()
     {
-        return !this.getLeashed();
+        return false;
     }
 
     @Override
     public void writeEntityToNBT(NBTTagCompound nbt)
     {
         super.writeEntityToNBT(nbt);
+
+        nbt.setString("packid", this.pack.getId().toString());
+
+        if (this.isPackLeader())
+        {
+            NBTTagCompound packNBT = new NBTTagCompound();
+            this.pack.writePackToNBT(packNBT);
+            nbt.setTag("pack", packNBT);
+        }
     }
 
     @Override
     public void readEntityFromNBT(NBTTagCompound nbt)
     {
         super.readEntityFromNBT(nbt);
+
+        UUID packID = UUID.fromString(nbt.getString("packid"));
+        if (nbt.hasKey("pack"))
+        {
+            IPackEntity pack = this.getFraction().getPackEntityFromNBT(nbt.getCompoundTag("pack"), packID, this);
+            pack.setSize(pack.getFraction().getSimplePackRange(), pack.getFraction().getSimplePackHeight());
+            ((IGGMWorld) this.worldObj).addPack(pack);
+            pack.addEntityToPack(this);
+        }
+        else
+        {
+            IPackEntity pack = ((IGGMWorld) this.worldObj).getPackMapByID().get(packID);
+
+            if (pack != null)
+            {
+                pack.addEntityToPack(this);
+            }
+        }
     }
 
 }

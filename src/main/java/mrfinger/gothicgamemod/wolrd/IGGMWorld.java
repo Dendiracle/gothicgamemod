@@ -1,6 +1,7 @@
 package mrfinger.gothicgamemod.wolrd;
 
 import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
+import mrfinger.gothicgamemod.entity.packentities.IPackEntity;
 import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import net.minecraft.block.Block;
@@ -9,6 +10,8 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.AxisAlignedBB;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public interface IGGMWorld {
 
@@ -16,13 +19,19 @@ public interface IGGMWorld {
     boolean isRemote();
 
 
-    PackEntity createNewPack();
+    Map<UUID, IPackEntity> getPackMapByID();
 
-    PackEntity createNewPack(PackFraction fraction);
+    IPackEntity createNewPack();
 
-    PackEntity findRightPack(IEntityHerd entity);
+    IPackEntity createNewPack(PackFraction fraction);
 
-    void addPack(PackEntity entity);
+    IPackEntity createNewPack(PackFraction fraction, UUID id);
+
+    IPackEntity findRightPack(IEntityHerd entity);
+
+    void addPack(IPackEntity pack);
+
+    void removePack(IPackEntity pack);
 
 
     List getEntitiesWithinAABB(Class clas, AxisAlignedBB aabb);

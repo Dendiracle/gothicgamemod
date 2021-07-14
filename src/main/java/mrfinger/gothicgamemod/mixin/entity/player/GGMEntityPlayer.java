@@ -5,7 +5,8 @@ import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimation;
+import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
+import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.GGMExp;
 import mrfinger.gothicgamemod.entity.capability.IGGMExp;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMAttribute;
@@ -13,7 +14,7 @@ import mrfinger.gothicgamemod.entity.capability.attributes.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attributes.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.effects.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationHelperFightStance;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GGMEntities;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
@@ -79,7 +80,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
     @Shadow public abstract void stopUsingItem();
 
-    protected IGGMPlayerEquipmentAnimationFightStance equpmentAndFightAnim;
+    protected IGGMPlayerEquipmentAnimationHelperFightStance equpmentAndFightAnim;
 
     protected Container ggmContainerEquipment;
 
@@ -225,15 +226,15 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public void setAnimation(IAnimation animation)
+    public void setAnimationHelper(IAnimationHelper animation)
     {
-        super.setAnimation(animation);
+        super.setAnimationHelper(animation);
 
         if (this.itemInUse != null && this.currentAnimation.denyUsingItems()) this.stopUsingItem();
     }
 
     @Override
-    public boolean setAnimation(String animationName)
+    public boolean setAnimationHelper(String animationName)
     {
         if (animationName.equals(this.equpmentAndFightAnim.getUnlocalizedName()))
         {
@@ -246,7 +247,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             return true;
         }
 
-        return super.setAnimation(animationName);
+        return super.setAnimationHelper(animationName);
     }
 
     @Override
@@ -265,7 +266,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public IGGMPlayerEquipmentAnimationFightStance getGGMEquipment() {
+    public IGGMPlayerEquipmentAnimationHelperFightStance getGGMEquipment() {
         return this.equpmentAndFightAnim;
     }
 
@@ -427,8 +428,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public short getNewAttackDuration(IAnimationEpisode hitType) {
-        return 20;
+    public short getNewAttackDuration(IAnimationHit hitType)
+    {
+        return (short) hitType.getStandartDuration();
     }
 
     @Override
@@ -521,7 +523,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public boolean startAttack(IAnimationEpisode hitType)
+    public boolean startAttack(IAnimationHit hitType)
     {
         return this.equpmentAndFightAnim.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
     }

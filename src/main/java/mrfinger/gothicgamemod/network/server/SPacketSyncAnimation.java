@@ -104,7 +104,7 @@ public class SPacketSyncAnimation implements IMessage
 
             if (entity instanceof IGGMEntityLivingBase)
             {
-                if (((IGGMEntityLivingBase) entity).setAnimation(message.animationName))
+                if (((IGGMEntityLivingBase) entity).setAnimationHelper(message.animationName))
                 {
                     ((IGGMEntityLivingBase) entity).getCurrentAnimation().setAnimationEpisode(message.episodeName, message.duration);
 
