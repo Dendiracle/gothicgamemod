@@ -144,12 +144,10 @@ public class AnimationHelperGothicAnimalLiving extends EntityAIBase implements I
         else
         {
             Map<String, IAnimationEpisode> map = this.entity.getAnimationEpisodesMap();
-            System.out.println("Debug in AnimationHelperGothicAnimalLiving setting anim");
             if (map != null)
             {
                 IAnimationEpisode episode = map.get(episodeName);
                 this.setAnimationEpisode(episode, duration);
-                System.out.println(episodeName + " " + episode + " " + entity.getGrowingAge());
                 return episode != this.getEpisode();
             }
         }
@@ -285,7 +283,6 @@ public class AnimationHelperGothicAnimalLiving extends EntityAIBase implements I
     @Override
     public boolean shouldExecute()
     {
-        System.out.println("Debug in AnimationHelperGothicAnimalLiving " + (this.entity.getCurrentAnimation() == this));
         return this.entity.getCurrentAnimation() == this;
     }
 
@@ -300,10 +297,8 @@ public class AnimationHelperGothicAnimalLiving extends EntityAIBase implements I
     @Override
     public void updateTask()
     {
-        System.out.println("Debug in AnimationHelperGothicAnimalLiving updatingtask " + episodesSeries);
         if (this.entity.getNavigator().noPath())
         {
-            System.out.println("1 " + this.isEntityHavePath + " " + episode + " " + this.entity.isNeedWander());
             if (this.isEntityHavePath)
             {
                 this.setAnimationEpisode(GGMEntityAnimations.AnimationLookingAroundEntityGothicAnimal);
@@ -311,7 +306,6 @@ public class AnimationHelperGothicAnimalLiving extends EntityAIBase implements I
             }
             else if (this.episode == null && !this.entity.isNeedWander())
             {
-                System.out.println("2");
                 if (this.entity.isBlockAvailableToLiving() && (this.entity.getRNG().nextInt(25) + 1) > this.episodesSeries)
                 {
                     IAnimationEpisode episode = this.entity.getRandomJustLivingEpisode();
@@ -326,7 +320,6 @@ public class AnimationHelperGothicAnimalLiving extends EntityAIBase implements I
                         this.entity.setIsNeedWander(true);
                         this.episodesSeries = 0;
                     }
-                    System.out.println("3 " + episodesSeries + " " + episode);
                 }
                 else
                 {

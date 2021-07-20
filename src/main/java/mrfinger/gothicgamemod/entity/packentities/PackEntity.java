@@ -7,9 +7,7 @@ import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 
@@ -31,7 +29,6 @@ public class PackEntity implements IPackEntity
 
     protected AxisAlignedBB aabb;
 
-    protected IEntityHerd leader;
     protected Set<IEntityHerd> entitiesSet;
     protected Map<IGGMEntity, EnemyEntry> enemiesMap;
 
@@ -46,15 +43,10 @@ public class PackEntity implements IPackEntity
 
     public PackEntity(IGGMWorld world, PackFraction fraction)
     {
-        this(world, fraction, null);
+        this(world, UUID.randomUUID(), fraction);
     }
 
-    public PackEntity(IGGMWorld world, PackFraction fraction, IEntityHerd leader)
-    {
-        this(world, UUID.randomUUID(), fraction, leader);
-    }
-
-    public PackEntity(IGGMWorld world, UUID id, PackFraction fraction, IEntityHerd leader)
+    public PackEntity(IGGMWorld world, UUID id, PackFraction fraction)
     {
         this.world = world;
         this.id = id;
@@ -62,7 +54,6 @@ public class PackEntity implements IPackEntity
 
         this.aabb = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
-        this.leader = leader;
         this.entitiesSet = new HashSet<>();
         this.enemiesMap = new HashMap<>();
 
@@ -88,6 +79,12 @@ public class PackEntity implements IPackEntity
         return fraction;
     }
 
+    @Override
+    public void setWorld(IGGMWorld world)
+    {
+        this.world = world;
+    }
+
 
     @Override
     public void setPos(double x, double y, double z)
@@ -102,31 +99,13 @@ public class PackEntity implements IPackEntity
     @Override
     public IEntityHerd getLeader()
     {
-        return leader;
+        return null;
     }
 
     @Override
     public boolean setLeader(IEntityHerd leader)
     {
-        if (this.entitiesSet.contains(leader))
-        {
-            this.leader = leader;
-            return true;
-        }
-
         return false;
-    }
-
-    protected void reChooseLeader()
-    {
-        for (IEntityHerd entity : this.entitiesSet)
-        {
-            if (entity.isEntityAlive())
-            {
-                this.leader = entity;
-                break;
-            }
-        }
     }
 
 
@@ -136,17 +115,36 @@ public class PackEntity implements IPackEntity
     }
 
     @Override
-    public void addEntityToPack(IEntityHerd entity)
+    public void addEntity(IEntityHerd entity)
     {
-        if (this.entitiesSet.add(entity))
+        if (this.addToSet(entity))
         {
-            if (this.entitiesSet.size() == 1)
-            {
-                this.setLeader(entity);
-            }
+            float needSpace = entity.getNeedSpaceInHabitat();
             entity.onAddToPack(this);
-            this.setSize((float) calculatePackRadiusWithAdd(this.rad, entity.getNeedSpaceMultiplier() * this.fraction.getSpaceForEntity()), this.height);
+            this.setSize((float) calculatePackRadiusWithAdd(this.rad, needSpace), this.height);
         }
+    }
+
+    @Override
+    public void addEntities(Collection<IEntityHerd> entities)
+    {
+        double needSpace = 0F;
+
+        for (IEntityHerd entity : entities)
+        {
+            if (this.addToSet(entity))
+            {
+                needSpace += entity.getNeedSpaceInHabitat();
+                entity.onAddToPack(this);
+            }
+        }
+
+        this.setSize((float) calculatePackRadiusWithAdd(this.rad, needSpace), height);
+    }
+
+    protected boolean addToSet(IEntityHerd entity)
+    {
+        return this.entitiesSet.add(entity);
     }
 
     @Override
@@ -154,13 +152,32 @@ public class PackEntity implements IPackEntity
     {
         if (this.entitiesSet.remove(entity))
         {
+            float overSpace = entity.getNeedSpaceInHabitat();
             entity.onRemoveFromPack(this);
-            if (entity == this.leader)
-            {
-                this.reChooseLeader();
-            }
-            this.setSize((float) calculatePackRadiusWithout(this.rad, entity.getNeedSpaceMultiplier() * this.fraction.getSpaceForEntity()), this.height);
+            this.setSize((float) calculatePackRadiusWithout(this.rad, overSpace), this.height);
         }
+    }
+
+    @Override
+    public void removeEntities(Collection<IEntityHerd> entities)
+    {
+        double overSpace = 0F;
+
+        for (IEntityHerd entity : entities)
+        {
+            if (this.removeFromSet(entity))
+            {
+                overSpace += entity.getNeedSpaceInHabitat();
+                entity.onRemoveFromPack(this);
+            }
+        }
+
+        this.setSize((float) calculatePackRadiusWithout(this.rad, overSpace), height);
+    }
+
+    protected boolean removeFromSet(IEntityHerd entity)
+    {
+        return this.entitiesSet.remove(entity);
     }
 
 
@@ -500,9 +517,7 @@ public class PackEntity implements IPackEntity
     @Override
     public void readPackFromNBT(NBTTagCompound nbt)
     {
-        this.posX = nbt.getDouble("posx");
-        this.posY = nbt.getDouble("posy");
-        this.posZ = nbt.getDouble("posz");
+        this.setPos(nbt.getDouble("posx"), nbt.getDouble("posy"), nbt.getDouble("posz"));
         this.aggressiveness = nbt.getFloat("aggres");
         this.aggrLevel = nbt.getFloat("aggr");
     }

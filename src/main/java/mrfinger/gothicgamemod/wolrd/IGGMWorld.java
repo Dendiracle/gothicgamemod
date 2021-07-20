@@ -1,5 +1,6 @@
 package mrfinger.gothicgamemod.wolrd;
 
+import mrfinger.gothicgamemod.entity.HabitatsCollection;
 import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
 import mrfinger.gothicgamemod.entity.packentities.IPackEntity;
 import mrfinger.gothicgamemod.entity.packentities.PackEntity;
@@ -19,19 +20,7 @@ public interface IGGMWorld {
     boolean isRemote();
 
 
-    Map<UUID, IPackEntity> getPackMapByID();
-
-    IPackEntity createNewPack();
-
-    IPackEntity createNewPack(PackFraction fraction);
-
-    IPackEntity createNewPack(PackFraction fraction, UUID id);
-
-    IPackEntity findRightPack(IEntityHerd entity);
-
-    void addPack(IPackEntity pack);
-
-    void removePack(IPackEntity pack);
+    HabitatsCollection getHabitatsCollection();
 
 
     List getEntitiesWithinAABB(Class clas, AxisAlignedBB aabb);

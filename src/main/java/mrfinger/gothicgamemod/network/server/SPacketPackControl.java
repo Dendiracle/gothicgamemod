@@ -85,8 +85,8 @@ public class SPacketPackControl implements IMessage
         @Override
         public IMessage handleClientMessage(EntityPlayer player, SPacketPackControl message, MessageContext ctx)
         {
-            IPackEntity pack = ((IGGMWorld) player.worldObj).createNewPack((PackFraction) GGMFractions.fractionsMap.get(message.fraction), message.id);
-            pack.setPos(message.posX, message.posY, message.posZ);
+            //IPackEntity pack = ((IGGMWorld) player.worldObj).createNewPack((PackFraction) GGMFractions.fractionsMap.get(message.fraction), message.id);
+            //pack.setPos(message.posX, message.posY, message.posZ);
 
             return null;
         }

@@ -19,49 +19,10 @@ import java.util.List;
 public abstract class GGMWorldServer extends GGMWorld
 {
 
-    @Inject(method = "tick", at = @At("HEAD"))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", ordinal = 4))
     private void onTick(CallbackInfo ci)
     {
-        int index = GGMTicks.gTicks % 10;
-        List<IPackEntity> listToRemove = new ArrayList<>();
-        List<IPackEntity> list = packListsArray[index];
-
-        for (IPackEntity pack : list)
-        {
-            pack.onUpdatePackAI();
-            if (pack.isPackToRemove()) listToRemove.add(pack);
-        }
-
-        if (!listToRemove.isEmpty())
-        {
-            list.removeAll(listToRemove);
-
-            for (IPackEntity pack : listToRemove)
-            {
-                this.removePack(pack);
-            }
-        }
-    }
-
-    @Override
-    public IPackEntity findRightPack(IEntityHerd entity)
-    {
-        Collection<IPackEntity> fractions = this.packMapByFractions.get(entity.getFraction());
-
-        if (fractions != null)
-        {
-            for (IPackEntity pack : fractions)
-            {
-                float maxRangeSQ = pack.getMaxRangeToMembers();
-                maxRangeSQ *= maxRangeSQ;
-                if (pack.getDistanceSQToEntity(entity) <= maxRangeSQ) return pack;
-            }
-        }
-
-        IPackEntity pack = createNewPack(entity.getFraction());
-        pack.setPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
-        pack.setSize(entity.getFraction().getSimplePackRange(), entity.getFraction().getSimplePackHeight());
-        return pack;
+        this.habitatsCollection.tick();
     }
 
 }

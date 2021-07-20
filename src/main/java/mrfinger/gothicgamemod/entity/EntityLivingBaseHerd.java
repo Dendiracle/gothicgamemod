@@ -57,7 +57,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
         if (this.pack != pack)
         {
             if (this.pack != null) this.pack.removeEntityFromPack(this);
-            pack.addEntityToPack(this);
+            pack.addEntity(this);
             this.pack = pack;
         }
 
@@ -66,7 +66,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
 
 
     @Override
-    public float getNeedSpaceMultiplier()
+    public float getNeedSpaceInHabitat()
     {
         return 1.0F;
     }

@@ -1,6 +1,7 @@
 package mrfinger.gothicgamemod.fractions;
 
 import mrfinger.gothicgamemod.entity.packentities.IEntityHerd;
+import mrfinger.gothicgamemod.entity.packentities.IPackEntity;
 import mrfinger.gothicgamemod.entity.packentities.PackEntity;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,23 +13,23 @@ public class PackFraction extends Fraction
 
     protected final float simplePackRange;
 
-    protected final float spaceForEntity;
-
     protected final float simplePackHeight;
 
+    protected final int maxMembersInPack;
 
-    public PackFraction(String unlocalizedName,float simplePackRange, float spaceForEntity)
+
+    public PackFraction(String unlocalizedName, float simplePackRange, int maxMembersInPack)
     {
-        this(unlocalizedName, simplePackRange, spaceForEntity, 4.0F);
+        this(unlocalizedName, simplePackRange, 4.0F, maxMembersInPack);
     }
 
-    public PackFraction(String unlocalizedName,float simplePackRange, float spaceForEntity, float simplePackHeight)
+    public PackFraction(String unlocalizedName,float simplePackRange, float simplePackHeight, int maxMembersInPack)
     {
         super(unlocalizedName);
 
         this.simplePackRange = simplePackRange;
-        this.spaceForEntity = spaceForEntity;
         this.simplePackHeight = simplePackHeight;
+        this.maxMembersInPack = maxMembersInPack;
     }
 
 
@@ -37,34 +38,34 @@ public class PackFraction extends Fraction
         return this.simplePackRange;
     }
 
-    public float getSpaceForEntity()
-    {
-        return spaceForEntity;
-    }
-
     public float getSimplePackHeight()
     {
         return this.simplePackHeight;
     }
 
 
-    public PackEntity getNewEntityPack(IGGMWorld world)
+    public IPackEntity getNewEntityPack(IGGMWorld world)
     {
         return new PackEntity(world, this);
     }
 
-    public PackEntity getNewEntityPack(IGGMWorld world, UUID id)
+    protected IPackEntity getNewEntityPack(IGGMWorld world, UUID id)
     {
-        return new PackEntity(world, id, this, null);
+        return new PackEntity(world, id, this);
     }
 
 
-    public PackEntity getPackEntityFromNBT(NBTTagCompound nbt, UUID id, IEntityHerd entity)
+    public IPackEntity getPackEntityFromNBT(IGGMWorld world, NBTTagCompound compound)
     {
-        PackEntity pack = new PackEntity(entity.getEntityWorld(), id, entity.getFraction(), entity);
-        pack.readPackFromNBT(nbt);
-        pack.addEntityToPack(entity);
+        IPackEntity pack = this.getNewEntityPack(world, UUID.fromString(compound.getString("id")));
+        pack.readPackFromNBT(compound);
         return pack;
+    }
+
+    public void writePackToNBT(IPackEntity pack, NBTTagCompound compound)
+    {
+        compound.setString("id", pack.getId().toString());
+        pack.writePackToNBT(compound);
     }
 
 

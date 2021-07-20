@@ -1,7 +1,6 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
@@ -13,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.world.World;
 
-import java.util.Map;
 import java.util.UUID;
 
 public abstract class EntityHerd extends EntityLiving implements IEntityHerd
@@ -87,33 +85,33 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     @Override
     public void setPackEntity(IPackEntity pack)
     {
-        pack.addEntityToPack(this);
+        pack.addEntity(this);
     }
 
     @Override
     public IPackEntity findNewPack()
     {
-        IPackEntity pack = this.getEntityWorld().findRightPack(this);
+        IPackEntity pack = this.getEntityWorld().getHabitatsCollection().findRightPack(this);
 
         if (this.pack != null)
         {
             if (this.pack != pack)
             {
                 this.pack.removeEntityFromPack(this);
-                pack.addEntityToPack(this);
+                pack.addEntity(this);
             }
         }
         else
         {
-            pack.addEntityToPack(this);
+            pack.addEntity(this);
         }
-        System.out.println("Debug in EntityHerd finded new pack " + pack + " " + this);
+
         return pack;
     }
 
 
     @Override
-    public float getNeedSpaceMultiplier()
+    public float getNeedSpaceInHabitat()
     {
         return 1.0F;
     }
@@ -349,36 +347,20 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
         super.writeEntityToNBT(nbt);
 
         nbt.setString("packid", this.pack.getId().toString());
-
-        if (this.isPackLeader())
-        {
-            NBTTagCompound packNBT = new NBTTagCompound();
-            this.pack.writePackToNBT(packNBT);
-            nbt.setTag("pack", packNBT);
-        }
+        System.out.println("debug in entityherd write " + this.pack.getId().toString());
     }
 
     @Override
     public void readEntityFromNBT(NBTTagCompound nbt)
     {
         super.readEntityFromNBT(nbt);
+        System.out.println("debug in entityherd load " + nbt.getString("packid"));
 
-        UUID packID = UUID.fromString(nbt.getString("packid"));
-        if (nbt.hasKey("pack"))
-        {
-            IPackEntity pack = this.getFraction().getPackEntityFromNBT(nbt.getCompoundTag("pack"), packID, this);
-            pack.setSize(pack.getFraction().getSimplePackRange(), pack.getFraction().getSimplePackHeight());
-            ((IGGMWorld) this.worldObj).addPack(pack);
-            pack.addEntityToPack(this);
-        }
-        else
-        {
-            IPackEntity pack = ((IGGMWorld) this.worldObj).getPackMapByID().get(packID);
+        IPackEntity pack = this.getEntityWorld().getHabitatsCollection().getPackMapByID().get(UUID.fromString(nbt.getString("packid")));
 
-            if (pack != null)
-            {
-                pack.addEntityToPack(this);
-            }
+        if (pack != null)
+        {
+            pack.addEntity(this);
         }
     }
 

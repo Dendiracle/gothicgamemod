@@ -9,10 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface IPackEntity
 {
@@ -24,6 +21,9 @@ public interface IPackEntity
     PackFraction getFraction();
 
 
+    void setWorld(IGGMWorld world);
+
+
     void setPos(double x, double y, double z);
 
 
@@ -33,9 +33,13 @@ public interface IPackEntity
 
     Set<IEntityHerd> getEntitiesSet();
 
-    void addEntityToPack(IEntityHerd entity);
+    void addEntity(IEntityHerd entity);
+
+    void addEntities(Collection<IEntityHerd> entities);
 
     void removeEntityFromPack(IEntityHerd entity);
+
+    void removeEntities(Collection<IEntityHerd> entities);
 
 
     boolean isPackToRemove();

@@ -33,7 +33,7 @@ public interface IEntityHerd extends IGGMEntityLiving
     IPackEntity findNewPack();
 
 
-    float getNeedSpaceMultiplier();
+    float getNeedSpaceInHabitat();
 
 
     boolean isNeedWander();

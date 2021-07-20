@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class GGMWorldClient extends GGMWorld
 {
 
-    @Inject(method = "tick", at = @At("HEAD"))
+    /*@Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci)
     {
         int index = GGMTicks.gTicks % 10;
@@ -37,7 +37,7 @@ public abstract class GGMWorldClient extends GGMWorld
                 this.removePack(pack);
             }
         }
-    }
+    }*/
 
 
 

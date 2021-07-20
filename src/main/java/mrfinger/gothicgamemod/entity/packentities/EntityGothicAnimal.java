@@ -323,7 +323,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     {
         IEntityGothicAnimal child = (IEntityGothicAnimal) EntityList.createEntityByName(EntityList.getEntityString(this), this.worldObj);
         child.setGrowingAge(this.getNewBornGrowthAge());
-        this.pack.addEntityToPack(child);
+        this.pack.addEntity(child);
         return child;
     }
 
@@ -339,7 +339,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
                 baby.rotationYawHead = baby.rotationYaw;
                 baby.renderYawOffset = baby.rotationYaw;
                 this.worldObj.spawnEntityInWorld(baby);
-                this.changeGrowth(this.getChildBirthNeedsGrowth());
+                this.changeGrowth(-this.getChildBirthNeedsGrowth());
                 baby.setGrowingAge(baby.getGrowingAge());
             }
             else if (this.worldObj.getBlock((int) this.posX, (int) this.posY, (int) this.posZ) == Blocks.air)
@@ -347,7 +347,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
                 BlockAnimalEggs block = this.getBlockEgg();
                 this.worldObj.setBlock((int) this.posX, (int) this.posY, (int) this.posZ, block);
                 block.onBlockPlacedBy(this.worldObj, (int) this.posX, (int) this.posY, (int) this.posZ, this, null);
-                this.changeGrowth(this.getChildBirthNeedsGrowth());
+                this.changeGrowth(-this.getChildBirthNeedsGrowth());
             }
 
         }

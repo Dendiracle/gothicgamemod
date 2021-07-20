@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 public class TileEntityAnimalEgg extends TileEntity
 {
 
-    protected IEntityGothicAnimal baby;
+    protected NBTTagCompound babyNBT;
     protected int actionTimer;
     protected int timerToDestroyDuration;
 
@@ -21,21 +21,22 @@ public class TileEntityAnimalEgg extends TileEntity
     public TileEntityAnimalEgg()
     {
         this.actionTimer = Integer.MAX_VALUE;
-        System.out.println("Debug in TileEntityAnimalEgg init ");
-    }
-
-
-    public TileEntityAnimalEgg(IEntityGothicAnimal baby, int timer, int timerToDestroyDuration)
-    {
-        this.baby = baby;
-        this.actionTimer = timer;
-        this.timerToDestroyDuration = timerToDestroyDuration;
     }
 
 
     public void setParametrs(IEntityGothicAnimal baby, int actionTimer, int timerToDestroyDuration)
     {
-        this.baby = baby;
+        if (baby != null)
+        {
+            NBTTagCompound babyNBT = new NBTTagCompound();
+            babyNBT.setString("id", EntityList.getEntityString((Entity) baby));
+            baby.writeToNBT(babyNBT);
+            this.babyNBT = babyNBT;
+        }
+        else
+        {
+            this.babyNBT = null;
+        }
         this.actionTimer = actionTimer;
         this.timerToDestroyDuration = timerToDestroyDuration;
     }
@@ -46,12 +47,9 @@ public class TileEntityAnimalEgg extends TileEntity
     {
         super.writeToNBT(nbt);
 
-        if (this.baby != null)
+        if (this.babyNBT != null)
         {
-            NBTTagCompound babyNBT = new NBTTagCompound();
-            babyNBT.setString("id", EntityList.getEntityString((Entity) this.baby));
-            this.baby.writeToNBT(nbt);
-            nbt.setTag("Baby", babyNBT);
+            nbt.setTag("Baby", this.babyNBT);
         }
 
         nbt.setInteger("Timer", this.actionTimer);
@@ -63,7 +61,14 @@ public class TileEntityAnimalEgg extends TileEntity
     {
         super.readFromNBT(nbt);
 
-        if (nbt.hasKey("Baby")) this.baby = (IEntityGothicAnimal) EntityList.createEntityFromNBT(nbt.getCompoundTag("Baby"), this.worldObj);
+        if (nbt.hasKey("Baby"))
+        {
+            this.babyNBT = nbt.getCompoundTag("Baby");
+        }
+        else
+        {
+            this.babyNBT = null;
+        }
         this.actionTimer = nbt.getInteger("Timer");
         this.timerToDestroyDuration = nbt.getInteger("Dest");
     }
@@ -76,9 +81,10 @@ public class TileEntityAnimalEgg extends TileEntity
 
         if (this.actionTimer <= 0 && !this.worldObj.isRemote)
         {
-            if (this.baby != null)
+            if (this.babyNBT != null)
             {
                 this.birthChild();
+                this.babyNBT = null;
                 this.actionTimer = this.timerToDestroyDuration;
             }
             else
@@ -88,15 +94,11 @@ public class TileEntityAnimalEgg extends TileEntity
         }
 
         --this.actionTimer;
-        if (!this.worldObj.isRemote && this.actionTimer % 200 == 0)
-        {
-            System.out.println("Debug in TileEntityAnimalEgg isTileEntityAlive " + xCoord + " " + yCoord + " " + zCoord + " " + actionTimer);
-        }
     }
 
     protected void birthChild()
     {
-        EntityLivingBase baby = (EntityLivingBase) this.baby;
+        EntityLivingBase baby = (EntityLivingBase) EntityList.createEntityFromNBT(this.babyNBT, this.worldObj);
         baby.setLocationAndAngles(this.xCoord, this.yCoord, this.zCoord, MathHelper.wrapAngleTo180_float(this.worldObj.rand.nextFloat() * 360.0F), 0.0F);
         baby.rotationYawHead = baby.rotationYaw;
         baby.renderYawOffset = baby.rotationYaw;

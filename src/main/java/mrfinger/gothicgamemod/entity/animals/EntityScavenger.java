@@ -124,17 +124,17 @@ public class EntityScavenger extends EntityGothicAnimal
 
 	@Override
 	public int getNewBornGrowthAge() {
-		return -72;
+		return -480;
 	}
 
 	@Override
 	public int getMaxGrowth() {
-		return 24;
+		return 144;
 	}
 
 	@Override
 	public int getChildBirthNeedsGrowth() {
-		return 12;
+		return 72;
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class EntityScavenger extends EntityGothicAnimal
 	@Override
 	protected int getEggHatchingTime()
 	{
-		return 100;
+		return 12000;
 	}
 
 	@Override
