@@ -1,0 +1,119 @@
+{
+	"scavenger_living":
+	{
+        "category": "hostile",
+        "sounds":
+		[
+			{
+				"name": "mob/scavenger/sca_living01",
+				"stream": false,
+				"weight": 1.0
+			},					
+			{
+				"name": "mob/scavenger/sca_living02",
+				"stream": false,
+				"weight": 1.0
+			},					
+			{
+				"name": "mob/scavenger/sca_living03",
+				"stream": false,
+				"weight": 1.0
+			},					
+			{
+				"name": "mob/scavenger/sca_living04",
+				"stream": false,
+				"weight": 1.0
+			}
+		]
+    },
+	"scavenger_eat":
+	{
+		"category": "hostile",
+		"sounds":
+		[
+			{
+				"name": "mob/scavenger/sca_slurp01",
+				"stream": false
+			}
+		]
+	},
+    "scavenger_warn":
+	{
+        "category": "hostile",
+        "sounds":
+		[
+			{
+				"name": "mob/scavenger/sca_warn01",
+				"stream": false
+			}
+		]
+    },
+	"scavenger_hurt":
+	{
+		"category": "hostile",
+		"sounds":
+		[
+			{
+				"name": "mob/scavenger/sca_hurt01",
+				"stream": false
+			},
+			{
+				"name": "mob/scavenger/sca_hurt02",
+				"stream": false
+			},
+			{
+				"name": "mob/scavenger/sca_hurt03",
+				"stream": false
+			}
+		]
+	},
+	"scavenger_die":
+	{
+		"category": "hostile",
+		"sounds":
+		[
+			{
+				"name": "mob/scavenger/sca_die01",
+				"stream": false
+			},
+			{
+				"name": "mob/scavenger/sca_die02",
+				"stream": false
+			}
+		]
+	},
+	"scavenger_attack":
+	{
+		"category": "hostile",
+        "sounds": 
+		[			
+			{
+				"name": "mob/scavenger/sca_attack01",
+				"stream": false,
+				"weight": 1.0
+			},
+			{
+				"name": "mob/scavenger/sca_attack02",
+				"stream": false,
+				"weight": 1.0
+			}
+		]
+	},
+	"rat_living":
+	{
+		"category": "hostile",
+		"sounds":
+		[
+			{
+				"name": "mob/giantrat/rat_living04",
+				"stream": false,
+				"weight": 1.0
+			},
+			{
+				"name": "mob/giantrat/rat_living05",
+				"stream": false,
+				"weight": 1.0
+			}
+		]
+	}
+}
