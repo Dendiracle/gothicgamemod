@@ -51,10 +51,4 @@ public class DynamicAttributeInfo<Instance extends IGGMDynamicAttributeInstance>
         return 0;
     }
 
-
-    @Override
-    public Instance getNewAttributeInstance(BaseAttributeMap attributeMap, IAttribute attribute)
-    {
-        return (Instance) new GGMDynamicAttributeInstance(attributeMap, (IGGMAttribute) attribute, this);
-    }
 }

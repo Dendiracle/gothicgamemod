@@ -13,7 +13,7 @@ public abstract class GGMItemSword implements IItemTool {
 
     @Shadow private float field_150934_a;
 
-    @Shadow @Final private Item.ToolMaterial repairMaterial;
+    @Shadow @Final private Item.ToolMaterial field_150933_b;
 
 
     @Override
@@ -25,6 +25,6 @@ public abstract class GGMItemSword implements IItemTool {
     @Override
     public Item.ToolMaterial getToolMaterial()
     {
-        return this.repairMaterial;
+        return this.field_150933_b;
     }
 }

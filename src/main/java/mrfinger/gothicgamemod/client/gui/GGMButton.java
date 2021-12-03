@@ -58,7 +58,7 @@ public abstract class GGMButton extends GuiButton
         @Override
         public int getTexXPos()
         {
-            return this.enabled ? (this.hovered ? 8 : 0) : 16;
+            return this.enabled ? (this.field_146123_n ? 8 : 0) : 16;
         }
 
         @Override
@@ -88,7 +88,7 @@ public abstract class GGMButton extends GuiButton
         @Override
         public int getTexXPos()
         {
-            return this.enabled ? (this.hovered ? 8 : 0) : 16;
+            return this.enabled ? (this.field_146123_n ? 8 : 0) : 16;
         }
 
         @Override

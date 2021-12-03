@@ -1,0 +1,8 @@
+Class,Method,Signature,Interface
+net.minecraft.entity.Entity,canEntityBeSeen,(Lnet/minecraft/entity/Entity;)Z,mrfinger.gothicgamemod.entity.IGGMEntity
+net.minecraft.entity.player.EntityPlayer,getFightStanceAnimationHelper,()Lmrfinger/gothicgamemod/entity/animations/IAnimationHelperFightStance;,mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack
+net.minecraft.entity.player.EntityPlayer,getEntityToAttack,()Lmrfinger/gothicgamemod/entity/IGGMEntity;,mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack
+net.minecraft.entity.EntityLivingBase,getHeldItem,()Lnet/minecraft/item/ItemStack;,mrfinger.gothicgamemod.entity.IGGMEntityLivingBase
+net.minecraft.entity.EntityLivingBase,getEquipmentInSlot,(I)Lnet/minecraft/item/ItemStack;,mrfinger.gothicgamemod.entity.IGGMEntityLivingBase
+net.minecraft.entity.ai.attributes.AttributeModifier,setSaved,(Z)Lmrfinger/gothicgamemod/entity/capability/attribute/IGGMAttributeModifier;,mrfinger.gothicgamemod.entity.capability.attribute.IGGMAttributeModifier
+net.minecraft.entity.ai.attributes.BaseAttributeMap,registerAttribute,(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;,mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap

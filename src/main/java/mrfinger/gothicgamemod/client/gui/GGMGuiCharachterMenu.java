@@ -185,7 +185,7 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 	@Override
 	protected void actionPerformed(GuiButton button)
 	{
-		int id = button.id;
+		/*int id = button.id;
 		int length = statHelpersArray.length;
 		if (id < length * 3)
 		{
@@ -266,7 +266,7 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 					PacketDispatcher.sendToServer(new CPacketAttributesToUpgrade(player.getEntityId(), statHelpersArray));
 					break;
 			}
-		}
+		}*/
 
 		super.actionPerformed(button);
 	}

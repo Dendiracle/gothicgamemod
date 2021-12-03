@@ -65,7 +65,7 @@ public class GGMGuiInGame extends Gui {
 			int w = re.resolution.getScaledWidth();
 			int h = re.resolution.getScaledHeight();
 
-			this.fr = mc.fontRendererObj;
+			this.fr = mc.fontRenderer;
 			this.player = (IGGMEntityPlayer) mc.thePlayer;
 			this.pcontroller = (IGGMPlayerControllerMP) mc.playerController;
 

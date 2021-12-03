@@ -4,6 +4,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
 import mrfinger.gothicgamemod.entity.capability.attribute.generic.IGGMAttribute;
+import mrfinger.gothicgamemod.mixin.common.entity.player.GGMEntityPlayer;
 import net.minecraft.entity.SharedMonsterAttributes;
 
 import java.util.HashMap;
@@ -26,8 +27,8 @@ public class GGMBattleSystem {
 
 
     public static final Map<DamageType, UseSpendings> standartDamageValuesBlockModifiers = new HashMap<>(6, 1.0F);
-    static {
-
+    static
+    {
         standartDamageValuesBlockModifiers.put(cutting, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.16F, 1.0F));
         standartDamageValuesBlockModifiers.put(crushing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.1F, 1.2F));
         standartDamageValuesBlockModifiers.put(piersing, new UseSpendings((IGGMAttribute) SharedMonsterAttributes.attackDamage, 0.2F, 0.8F));

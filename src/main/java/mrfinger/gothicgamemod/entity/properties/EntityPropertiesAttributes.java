@@ -23,7 +23,7 @@ public class EntityPropertiesAttributes implements IEntityProperties
     @Override
     public void setProperties(IGGMEntityLivingBase entity)
     {
-        for (IGGMAttributeInstance attributeInstance : (Collection<IGGMAttributeInstance>) entity.getAttributeMap().getAllAttributes())
+        /*for (IGGMAttributeInstance attributeInstance : (Collection<IGGMAttributeInstance>) entity.getAttributeMap().getAllAttributes())
         {
             IAttributeInfo attributeInfo = this.attributeInfoMap.get(attributeInstance.getAttribute());
 
@@ -31,6 +31,6 @@ public class EntityPropertiesAttributes implements IEntityProperties
             {
                 attributeInstance.setParametrs(attributeInfo);
             }
-        }
+        }*/
     }
 }

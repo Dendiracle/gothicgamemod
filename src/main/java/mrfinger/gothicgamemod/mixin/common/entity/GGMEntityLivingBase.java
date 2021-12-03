@@ -62,6 +62,10 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 	@Shadow public abstract float getRotationYawHead();
 
+	@Shadow public abstract BaseAttributeMap getAttributeMap();
+
+	@Shadow protected abstract void damageArmor(float p_70675_1_);
+
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;setHealth(F)V"))
 	private void deleteHealthing(EntityLivingBase entity, float value)
 	{
@@ -123,15 +127,21 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 
 
-	@Inject(method = "getAttributeMap", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;<init>()V"))
+	/*@Inject(method = "getAttributeMap", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;<init>()V"))
 	private void onCreateNewMap(CallbackInfo callbackInfo)
 	{
-		for(int i = 0; i < 1000; ++i)
+		for(int i = 0; i < 10; ++i)
 		{
 			System.out.println(this.getClass() + "  " + this);
 		}
 		((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
 		System.out.println(((IGGMBaseAttributeMap) this.attributeMap).getEntity());
+	}*/
+
+	@Inject(method = "getAttributeMap", at = @At(value = "RETURN"))
+	private void onCreateNewMap(CallbackInfoReturnable callbackInfo)
+	{
+		if (((IGGMBaseAttributeMap) this.attributeMap).getEntity() == null) ((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
 	}
 
 	@Override
@@ -516,7 +526,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	public void wakeUpEntity() {}
 
 
-	@Inject(method = "applyArmorCalculations", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/EntityLivingBase;damageArmor(F)V"), cancellable = true)
+	@Inject(method = "applyArmorCalculations", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;damageArmor(F)V"), cancellable = true)
 	private void onApplyArmorCalculations(DamageSource ds, float damage, CallbackInfoReturnable<Float> cir)
 	{
 		IGGMDamageSource gds = (IGGMDamageSource) ds;
@@ -533,6 +543,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 				if (f > 0.0F) damage += a;
 			}
 
+			this.damageArmor(damage);
+
 			cir.setReturnValue(damage);
 		}
 	}
@@ -540,7 +552,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	@Inject(method = "damageEntity", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/EntityLivingBase;applyPotionDamageCalculations(Lnet/minecraft/util/DamageSource;F)F"))
 	private void onDamageCalculated(DamageSource damageSource, float damage, CallbackInfo ci)
 	{
-		this.getActiveAnimationHelper().onTakingDamage((IGGMDamageSource) damageSource, damage);
+		//this.getActiveAnimationHelper().onTakingDamage((IGGMDamageSource) damageSource, damage);
 	}
 
 	@Inject(method = "attackEntityFrom", at = @At(value = "JUMP", ordinal = 1), cancellable = true)

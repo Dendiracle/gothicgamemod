@@ -24,8 +24,8 @@ public abstract class GGMServersideAttributeMap extends GGMBaseAttributeMap
     private Set attributeInstanceSet;
 
 
-    @Redirect(method = "registerAttribute", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/ModifiableAttributeInstance;<init>(Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;Lnet/minecraft/entity/ai/attributes/IAttribute;)V"))
-    private ModifiableAttributeInstance fixAttributeInstanceCeation(IAttribute attribute)
+    @Redirect(method = "registerAttribute", at = @At(value = "NEW", target = "net/minecraft/entity/ai/attributes/ModifiableAttributeInstance", ordinal = 0))
+    private ModifiableAttributeInstance fixAttributeInstanceCeation(BaseAttributeMap attributeMap, IAttribute attribute)
     {
         if (attribute instanceof IGGMAttribute)
         {
@@ -34,7 +34,7 @@ public abstract class GGMServersideAttributeMap extends GGMBaseAttributeMap
             return (ModifiableAttributeInstance) attributeInstance;
         }
 
-        return new ModifiableAttributeInstance((BaseAttributeMap) (Object) this, attribute);
+        return new ModifiableAttributeInstance(attributeMap, attribute);
     }
 
 }

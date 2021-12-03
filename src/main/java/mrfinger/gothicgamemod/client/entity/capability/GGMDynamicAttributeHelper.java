@@ -35,7 +35,7 @@ public class GGMDynamicAttributeHelper extends GGMIncreasableAttributeHelper
     public void increaseRegen()
     {
         ++this.upgradeRegenAmount;
-        this.addedRegenBefore = this.getAttributeInstance().calculateIncreasingRegenValueWithAdded(this.addedRegen, this.getAttributeInstance().getNaturalRegenIncreasingValue());
+        //this.addedRegenBefore = this.getAttributeInstance().calculateIncreasingRegenValueWithAdded(this.addedRegen, this.getAttributeInstance().getNaturalRegenIncreasingValue());
         this.addedRegen += this.addedRegenBefore;
     }
 
@@ -44,7 +44,7 @@ public class GGMDynamicAttributeHelper extends GGMIncreasableAttributeHelper
         this.upgradeRegenAmount += amount;
         for (int i = 0; i < amount; ++i)
         {
-            this.addedRegenBefore = this.getAttributeInstance().calculateIncreasingRegenValueWithAdded(this.addedRegen, this.getAttributeInstance().getNaturalRegenIncreasingValue());
+           // this.addedRegenBefore = this.getAttributeInstance().calculateIncreasingRegenValueWithAdded(this.addedRegen, this.getAttributeInstance().getNaturalRegenIncreasingValue());
             this.addedRegen += this.addedRegenBefore;
         }
     }

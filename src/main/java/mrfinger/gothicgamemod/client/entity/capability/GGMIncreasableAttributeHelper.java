@@ -96,7 +96,7 @@ public class GGMIncreasableAttributeHelper
 	public void decrease()
 	{
 		//--this.upgradeAmounts;
-		this.addedValue -= (float) this.attributeInstance.calculateDecreasingValueWithAdded(this.addedValue, this.attributeInstance.getIncreasingValue());
+		//this.addedValue -= (float) this.attributeInstance.calculateDecreasingValueWithAdded(this.addedValue, this.attributeInstance.getIncreasingValue());
 		this.updateStr();
 	}
 

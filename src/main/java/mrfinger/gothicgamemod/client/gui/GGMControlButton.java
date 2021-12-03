@@ -12,7 +12,7 @@ public class GGMControlButton extends GuiButton
 {
 
 
-    FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+    FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
     public GGMControlButton(int id, int x, int y, String text) {
         super(id, x, y, 30, 10, text);

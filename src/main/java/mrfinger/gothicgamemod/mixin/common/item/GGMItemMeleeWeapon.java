@@ -69,7 +69,7 @@ public abstract class GGMItemMeleeWeapon extends GGMItem implements IItemMeleeWe
             this.blockerMap.put(e.getKey(), usMap);
         }
 
-        this.weight = (float) this.getMaxDurability() / 100.0F;
+        this.weight = (float) this.getMaxDamage() / 100.0F;
         this.sustainability = this.weight * 10.0F;
     }
 

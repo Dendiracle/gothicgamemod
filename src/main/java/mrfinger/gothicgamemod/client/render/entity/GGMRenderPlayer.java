@@ -137,7 +137,7 @@ public class GGMRenderPlayer extends RenderPlayer
 
                 if (itemstack1.getItem().requiresMultipleRenderPasses())
                 {
-                    for (k = 0; k < itemstack1.getItem().getRenderPasses(itemstack1.getCurrentDurability()); ++k)
+                    for (k = 0; k < itemstack1.getItem().getRenderPasses(itemstack1.getItemDamage()); ++k)
                     {
                         int i = itemstack1.getItem().getColorFromItemStack(itemstack1, k);
                         f12 = (float)(i >> 16 & 255) / 255.0F;
@@ -164,7 +164,7 @@ public class GGMRenderPlayer extends RenderPlayer
 
 
     @Override
-    protected float getSwingProgress(EntityLivingBase entity, float p_77040_2_)
+    protected float renderSwingProgress(EntityLivingBase entity, float p_77040_2_)
     {
         IGGMAbstractClientPlayer player = (IGGMAbstractClientPlayer) entity;
 
@@ -189,7 +189,7 @@ public class GGMRenderPlayer extends RenderPlayer
                 }
             }
         }
-        return super.getSwingProgress(entity, p_77040_2_);
+        return super.renderSwingProgress(entity, p_77040_2_);
     }
 
 }

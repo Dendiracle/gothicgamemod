@@ -64,7 +64,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
         super.applyEntityAttributes();
 
-        ((IGGMBaseAttributeMap) this.getAttributeMap()).registerAttribute(GGMCapabilities.maxStamina, this.getNewStaminaAI());
+        ((IGGMBaseAttributeMap) this.getAttributeMap()).registerAttribute(GGMCapabilities.maxStamina);
         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
     }
 

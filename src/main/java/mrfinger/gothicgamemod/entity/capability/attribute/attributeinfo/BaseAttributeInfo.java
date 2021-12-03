@@ -88,12 +88,4 @@ public class BaseAttributeInfo<Instance extends IGGMAttributeInstance> implement
         return this;
     }
 
-
-    @Override
-    public Instance getNewAttributeInstance(BaseAttributeMap attributeMap, IAttribute attribute)
-    {
-        return (Instance) new ModifiableAttributeInstance(attributeMap, attribute);
-    }
-
-
 }

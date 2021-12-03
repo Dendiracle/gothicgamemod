@@ -61,10 +61,4 @@ public class DynamicIncreasableAttributeInfo<Instance extends IGGMDynamicAttribu
         return maxNaturalRegenIncreasesNeedLP;
     }
 
-
-    @Override
-    public Instance getNewAttributeInstance(BaseAttributeMap attributeMap, IAttribute attribute)
-    {
-        return (Instance) new GGMDynamicAttributeInstance(attributeMap, (IGGMAttribute) attribute, this);
-    }
 }

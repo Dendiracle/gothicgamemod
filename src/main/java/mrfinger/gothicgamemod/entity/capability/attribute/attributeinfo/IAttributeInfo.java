@@ -32,7 +32,4 @@ public interface IAttributeInfo<Instance extends IGGMAttributeInstance>
 
     IAttributeInfo setBonuses(Map<IGGMAttribute, Float> map);
 
-
-    Instance getNewAttributeInstance(BaseAttributeMap attributeMap, IAttribute attribute);
-
 }

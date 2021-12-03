@@ -26,7 +26,7 @@ public class GGMNetHandlerPlayServer {
     @Inject(method = "processPlayerDigging", at = @At("HEAD"), cancellable = true)
     private void cancelDrop(C07PacketPlayerDigging packet, CallbackInfo ci)
     {
-        int func = packet.getDiggedBlockStatus();
+        int func = packet.func_149506_g();
         if ((func == 4 || func == 3) && !((IGGMEntityPlayer) this.playerEntity).isCanDropItems()) ci.cancel();
         else if ((func == 2 || func == 1 || func == 0) && !((IGGMEntityPlayer) this.playerEntity).isCanDigging()) ci.cancel();
     }

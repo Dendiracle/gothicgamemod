@@ -26,8 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SideOnly(Side.CLIENT)
 @Mixin(Minecraft.class)
-public class GGMMinecraft implements IGGMMinecraft {
-
+public class GGMMinecraft implements IGGMMinecraft
+{
 
     @Shadow public EntityClientPlayerMP thePlayer;
 
@@ -79,7 +79,7 @@ public class GGMMinecraft implements IGGMMinecraft {
     }
 
 
-    @Inject(method = "clickMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;swingItem()V", ordinal = 0), cancellable = true)
+    @Inject(method = "func_147116_af", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;swingItem()V", ordinal = 0), cancellable = true)
     private void onAttack(CallbackInfo ci)
     {
         IGGMEntityPlayer player = (IGGMEntityPlayer) this.thePlayer;
@@ -90,7 +90,7 @@ public class GGMMinecraft implements IGGMMinecraft {
         }
     }
 
-    @Inject(method = "sendClickBlockToController", at = @At(value = "FIELD", target = "Lnet/minecraft/util/MovingObjectPosition;blockX:I", ordinal = 0), cancellable = true)
+    @Inject(method = "func_147115_a", at = @At(value = "FIELD", target = "Lnet/minecraft/util/MovingObjectPosition;blockX:I", ordinal = 0), cancellable = true)
     private void onLeftClick(boolean b, CallbackInfo ci)
     {
         IGGMEntityPlayer player = (IGGMEntityPlayer) this.thePlayer;
@@ -109,7 +109,7 @@ public class GGMMinecraft implements IGGMMinecraft {
     }
 
 
-    @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/util/MovingObjectPosition;blockX:I", ordinal = 0), cancellable = true)
+    @Inject(method = "func_147121_ag", at = @At(value = "FIELD", target = "Lnet/minecraft/util/MovingObjectPosition;blockX:I", ordinal = 0), cancellable = true)
     private void fixUsingItem1(CallbackInfo ci)
     {
         IGGMEntityPlayer player = (IGGMEntityPlayer) this.thePlayer;
@@ -121,7 +121,7 @@ public class GGMMinecraft implements IGGMMinecraft {
     }
 
 
-    @Inject(method = "rightClickMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;getCurrentItem()Lnet/minecraft/item/ItemStack;", ordinal = 1), cancellable = true)
+    @Inject(method = "func_147121_ag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;getCurrentItem()Lnet/minecraft/item/ItemStack;", ordinal = 1), cancellable = true)
     private void fixUsingItem2(CallbackInfo ci)
     {
         IGGMEntityPlayer player = (IGGMEntityPlayer) this.thePlayer;

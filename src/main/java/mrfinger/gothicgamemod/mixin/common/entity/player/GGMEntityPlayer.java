@@ -526,11 +526,11 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         System.out.println("Debug in GGMEntityPlayer activeAnimationHelper.onItemUseSetted");
     }
 
-    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/Item;onUsingTick(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;I)V"))
+    /*@Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/Item;onUsingTick(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;I)V"), remap = false)
     private void animationOnItemUsingTick(CallbackInfo ci)
     {
         this.activeAnimationHelper.onUsingItem(this.itemInUse, this.itemInUseCount);
-    }
+    }*/
 
 
     @Redirect(method = "damageEntity", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ISpecialArmor$ArmorProperties;ApplyArmor(Lnet/minecraft/entity/EntityLivingBase;[Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/DamageSource;D)F", remap = false))

@@ -219,7 +219,7 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         @Override
         public IIcon getBackgroundIconIndex()
         {
-            return ItemArmor.getBackgroundIcon(this.armorIndex);
+            return ItemArmor.func_94602_b(this.armorIndex);
         }
     }
 
