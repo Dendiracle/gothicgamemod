@@ -18,8 +18,8 @@ public abstract class GGMBaseAttributeMap implements IGGMBaseAttributeMap
 {
 
     protected IGGMEntityLivingBase entity;
-    @Shadow private Map attributes;
-    @Shadow private Map attributesByName;
+    @Shadow protected Map attributes;
+    @Shadow protected Map attributesByName;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci)

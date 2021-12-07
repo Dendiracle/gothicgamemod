@@ -51,29 +51,36 @@ import java.util.Map;
 public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGGMEntityPlayer
 {
 
-    @Shadow public PlayerCapabilities       capabilities;
+    @Shadow
+    public PlayerCapabilities capabilities;
 
     protected long currentExp;
     protected long toNextLvl;
     protected int lp;
 
-    protected IGGMDynamicAttributeInstance  health;
-    protected IGGMDynamicAttributeInstance  stamina;
-    protected IGGMDynamicAttributeInstance  mana;
+    protected IGGMDynamicAttributeInstance health;
+    protected IGGMDynamicAttributeInstance stamina;
+    protected IGGMDynamicAttributeInstance mana;
 
     //protected Map<IGGMEffect, IGGMEffectInstance> useItemEffectsMap;
 
-    @Shadow private ItemStack itemInUse;
-    @Shadow private int itemInUseCount;
+    @Shadow
+    private ItemStack itemInUse;
+    @Shadow
+    private int itemInUseCount;
 
-    @Shadow public InventoryPlayer inventory;
+    @Shadow
+    public InventoryPlayer inventory;
 
 
-    @Shadow protected abstract void updateItemUse(ItemStack p_71010_1_, int p_71010_2_);
+    @Shadow
+    protected abstract void updateItemUse(ItemStack p_71010_1_, int p_71010_2_);
 
-    @Shadow public abstract void stopUsingItem();
+    @Shadow
+    public abstract void stopUsingItem();
 
-    @Shadow public abstract boolean isPlayerSleeping();
+    @Shadow
+    public abstract boolean isPlayerSleeping();
 
     protected IGGMPlayerEquipmentAnimationHelperFightStance equpmentAndFightAnim;
 
@@ -91,7 +98,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public int initialLevel() {
+    public int initialLevel()
+    {
         return 0;
     }
 
@@ -154,8 +162,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
                 this.toNextLvl = toCurrentLvl;
                 this.setLvl(lvl);
-            }
-            else if (value < toCurrentLvl)
+            } else if (value < toCurrentLvl)
             {
                 do
                 {
@@ -258,11 +265,11 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Redirect(method = "applyEntityAttributes", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;registerAttribute(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;"))
-    private IAttributeInstance onApplyAttributes(BaseAttributeMap map, IAttribute attribute) {
-
+    private IAttributeInstance onApplyAttributes(BaseAttributeMap map, IAttribute attribute)
+    {
         IGGMBaseAttributeMap gmap = (IGGMBaseAttributeMap) map;
 
-        this.health = (IGGMDynamicAttributeInstance) gmap.registerAttribute(GGMCapabilities.maxHealthDynamic);
+        this.health = (IGGMDynamicAttributeInstance) gmap.getAttributeInstance(GGMCapabilities.maxHealthDynamic);
         //this.health.applyRegenModifier(new RegenModifierInstanceSimple(0, 0, false, 0.001F));
         //this.health.applyRegenModifier(new RegenModifierInstanceSimple(0, 1, false, 0.001F));
         this.stamina = (IGGMDynamicAttributeInstance) gmap.registerAttribute(GGMCapabilities.maxStamina);
@@ -280,7 +287,16 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         return strenght;
     }
 
-    @Redirect(method = "applyEntityAttributes", at = @At(value = "INVOKE", target ="Lnet/minecraft/entity/ai/attributes/IAttributeInstance;setBaseValue(D)V"))
+    protected IAttribute getGenericMaxHealthAttribute()
+    {
+        return GGMCapabilities.maxHealthDynamic;
+    }
+
+
+    /*
+    * Don't delete!
+    */
+    @Redirect(method = "applyEntityAttributes", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;setBaseValue(D)V"))
     private void fixStrengtRegistry(IAttributeInstance attributeInstance, double value)
     {
 
@@ -288,7 +304,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public Fraction getStandartFraction() {
+    public Fraction getStandartFraction()
+    {
         return GGMFractions.humans;
     }
 
@@ -300,12 +317,14 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public void saveExp(NBTTagCompound nbt) {
+    public void saveExp(NBTTagCompound nbt)
+    {
         this.saveNBTData(nbt);
     }
 
     @Override
-    public void loadExp(NBTTagCompound nbt) {
+    public void loadExp(NBTTagCompound nbt)
+    {
         this.loadNBTData(nbt);
     }
 
@@ -317,7 +336,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Override
-    public float getHealth() {
+    public float getHealth()
+    {
         return (float) this.health.getDynamicValue();
     }
 
@@ -328,19 +348,22 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Override
-    public float getMaxHealth() {
+    public float getMaxHealth()
+    {
         return (float) this.health.getAttributeValue();
     }
 
 
     @Override
-    public IGGMDynamicAttributeInstance getStaminaAttribute() {
+    public IGGMDynamicAttributeInstance getStaminaAttribute()
+    {
         return this.stamina;
     }
 
 
     @Override
-    public IGGMDynamicAttributeInstance getManaAttribute() {
+    public IGGMDynamicAttributeInstance getManaAttribute()
+    {
         return this.mana;
     }
 
@@ -375,8 +398,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             if (dd < d)
             {
                 this.setSprinting(false);
-            }
-            else if (!thisEntity().worldObj.isRemote)
+            } else if (!thisEntity().worldObj.isRemote)
             {
                 stamina.changeCurrentValue(-d);
             }
@@ -411,18 +433,21 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public InventoryPlayer getInventoryPlayer() {
+    public InventoryPlayer getInventoryPlayer()
+    {
         return this.inventory;
     }
 
 
     @Override
-    public IGGMPlayerEquipmentAnimationHelperFightStance getGGMEquipment() {
+    public IGGMPlayerEquipmentAnimationHelperFightStance getGGMEquipment()
+    {
         return this.equpmentAndFightAnim;
     }
 
     @Override
-    public Container getGGMContainer() {
+    public Container getGGMContainer()
+    {
         return this.ggmContainerEquipment;
     }
 
@@ -436,7 +461,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public float getStaminaSpendingFromJump() {
+    public float getStaminaSpendingFromJump()
+    {
         return this.getStaminaSpendingOnSprint() * 12.0F;
     }
 
@@ -470,7 +496,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Override
-    public float getStaminaSpendingOnSprint() {
+    public float getStaminaSpendingOnSprint()
+    {
         return 0.1F;
     }
 
@@ -592,8 +619,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                 damageSumm -= a;
                 if (damageSumm > 0.0F) f += damageSumm;
             }
-        }
-        else {
+        } else
+        {
 
             f = ISpecialArmor.ArmorProperties.ApplyArmor(entity, inventory, source, damage);
         }
@@ -685,8 +712,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             {
                 this.tryChangeAnimationHelper(this.equpmentAndFightAnim);
             }
-        }
-        else
+        } else
         {
             if (this.inFightStance())
             {
@@ -723,7 +749,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
             {
                 IAttributeInstance ai = thisEntity().getEntityAttribute(e.getValue().getAttribute());
 
-                if (ai != null) {
+                if (ai != null)
+                {
                     float d = ((float) ai.getAttributeValue() * e.getValue().getAttributeMultiplier()) + e.getValue().getSpendsFromD();
                     map.put(e.getKey(), d);
                     damage += d;
@@ -766,15 +793,14 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
                 }
             }
             ((IGGMDamageSource) ds).setDamageValues(map);*/
-        }
-
-        else if (this.attackCooldown <= 10) {
+        } else if (this.attackCooldown <= 10)
+        {
 
             damage = (float) thisEntity().getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() * 0.5F;
             map = new HashMap<>(1, 1.0F);
             this.attackCooldown = 10;
-        }
-        else {
+        } else
+        {
 
             return false;
         }
@@ -818,7 +844,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Inject(method = "writeEntityToNBT", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setTag(Ljava/lang/String;Lnet/minecraft/nbt/NBTBase;)V", ordinal = 0))
-    private void onWriteEntityToNBT(NBTTagCompound compound, CallbackInfo ci) {
+    private void onWriteEntityToNBT(NBTTagCompound compound, CallbackInfo ci)
+    {
         compound.setTag("GGMEquipment", this.equpmentAndFightAnim.writeToNBT(new NBTTagList()));
     }
 
@@ -864,7 +891,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
 
-    public EntityPlayer thisEntity() {
+    public EntityPlayer thisEntity()
+    {
         return (EntityPlayer) (Object) this;
     }
 

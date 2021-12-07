@@ -78,10 +78,16 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		this.lvl = this.initialLevel();
 		this.flagForLvlUpdate();
 
-		this.effectsMap = new HashMap<>();
-
 		this.defaulAnimationHelper = getNewDefaultAnimationHelper();
 		this.activeAnimationHelper = this.getDefaultAnimationHelper();
+	}
+
+	@Inject(method = "entityInit", at = @At("HEAD"))
+	protected void onEntityOriginalInit(CallbackInfo callbackInfo)
+	{
+		this.effectsMap = new HashMap<>();
+		this.otherEffectsMap = new HashMap<>();
+		this.attackEffectsMap = new HashMap<>();
 	}
 
 
@@ -104,6 +110,18 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		else {
 			throw new IllegalArgumentException("Level of entity cannot be less than 0");
 		}
+	}
+
+
+	@ModifyArg(method = "applyEntityAttributes", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;registerAttribute(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;", ordinal = 0))
+	private IAttribute redirectMexHealthAttributePutting(IAttribute attribute)
+	{
+		return this.getGenericMaxHealthAttribute();
+	}
+
+	protected IAttribute getGenericMaxHealthAttribute()
+	{
+		return SharedMonsterAttributes.maxHealth;
 	}
 
 
@@ -130,10 +148,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	/*@Inject(method = "getAttributeMap", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;<init>()V"))
 	private void onCreateNewMap(CallbackInfo callbackInfo)
 	{
-		for(int i = 0; i < 10; ++i)
-		{
-			System.out.println(this.getClass() + "  " + this);
-		}
 		((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
 		System.out.println(((IGGMBaseAttributeMap) this.attributeMap).getEntity());
 	}*/
@@ -489,7 +503,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		return 0.41999998688697815D;
 	}
 
-	@Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ForgeHooks;onLivingJump(Lnet/minecraft/entity/EntityLivingBase;)V"))
+	@Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ForgeHooks;onLivingJump(Lnet/minecraft/entity/EntityLivingBase;)V", remap = false))
 	private void onJumped(CallbackInfo ci)
 	{
 		this.onJump();

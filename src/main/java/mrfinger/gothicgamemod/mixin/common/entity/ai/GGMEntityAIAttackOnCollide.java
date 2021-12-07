@@ -33,7 +33,7 @@ public class GGMEntityAIAttackOnCollide
     @Shadow private double field_151497_i;
     @Shadow private double field_151495_j;
     @Shadow private double field_151496_k;
-    @Shadow private int failedPathFindingPenalty;
+    @Shadow(remap = false) private int failedPathFindingPenalty;
     @Shadow double speedTowardsTarget;
 
 

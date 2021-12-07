@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import java.util.Collection;
 import java.util.UUID;
 
-@Mixin(ModifiableAttributeInstance.class)
 public interface IGGMAttributeInstance extends IAttributeInstance
 {
 

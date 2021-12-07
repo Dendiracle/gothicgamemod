@@ -1,4 +1,4 @@
-Mixin Implementation Report generated on 2021-12-03 22:49:37
+Mixin Implementation Report generated on 2021-12-07 22:07:45
 
 /******************************************************************************************************************************/
 /* Class: net.minecraft.entity.Entity                                                                                         */
@@ -60,3 +60,104 @@ Mixin Implementation Report generated on 2021-12-03 22:49:37
 /*****************************************************************************************************************************************************************/
 /*                                                                                   Total unimplemented: 1                                                      */
 /*****************************************************************************************************************************************************************/
+
+/************************************************************************************************************************************************************************/
+/* Class: net.minecraft.entity.player.InventoryPlayer                                                                                                                   */
+/************************************************************************************************************************************************************************/
+/* Return Type                      Missing Method                                   From Interface                                                                     */
+/************************************************************************************************************************************************************************/
+/* IGGMEntityLivingBase             getEntity()                                                                                                                         */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* boolean                          isCanAnimationHelperWillChanged()                                                                                                   */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* void                             endUseItem()                                                                                                                        */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelperHumanoidFightStance       */
+/*                                                                                                                                                                      */
+/* void                             setUseItem()                                                                                                                        */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelperHumanoidFightStance       */
+/*                                                                                                                                                                      */
+/* ItemStack                        getBelt()                                                                                                                           */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* void                             setEpisodeCountdown(int var0)                                                                                                       */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* ItemStack                        getQuiver()                                                                                                                         */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* ItemStack                        getNecklace()                                                                                                                       */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* boolean                          isUsingItem()                                                                                                                       */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelperFightStance               */
+/*                                                                                                                                                                      */
+/* ItemStack                        getHeldItem()                                                                                                                       */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* int                              getEpisodeDuration()                                                                                                                */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* IAnimationEpisode                getAnimationEpisode()                                                                                                               */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* void                             setCurrentItem(int var0)                                                                                                            */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* boolean                          setAnimationEpisode(IAnimationEpisode var0, int var1)                                                                               */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* ItemStack                        getBlockItem()                                                                                                                      */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelperHumanoidFightStance       */
+/*                                                                                                                                                                      */
+/* ItemStack                        getRing(int var0)                                                                                                                   */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* boolean                          breakAnimationEpisode()                                                                                                             */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* void                             setEntity(IGGMEntityLivingBase var0)                                                                                                */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* void                             changeCurrentItem(boolean var0)                                                                                                     */
+/*                                                                                   mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationHelperFightStance */
+/*                                                                                                                                                                      */
+/* void                             updateAnimation()                                                                                                                   */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* boolean                          setAnimationEpisode(String var0, int var1)                                                                                          */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* boolean                          isUsingLH()                                                                                                                         */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelperHumanoidFightStance       */
+/*                                                                                                                                                                      */
+/* boolean                          setAnimationEpisode(IAnimationEpisode var0)                                                                                         */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* int                              getEpisodeCountdown()                                                                                                               */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* ItemStack                        getSecHeldItem()                                                                                                                    */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* String                           getUnlocalizedName()                                                                                                                */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* ItemStack                        getGloves()                                                                                                                         */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* void                             clearAnimationEpisode()                                                                                                             */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelper                          */
+/*                                                                                                                                                                      */
+/* int                              getCurrentItemIndex()                                                                                                               */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* void                             clearInventory()                                                                                                                    */
+/*                                                                                   mrfinger.gothicgamemod.entity.inventory.IGGMHumanoidInventory                      */
+/*                                                                                                                                                                      */
+/* boolean                          isBlocking()                                                                                                                        */
+/*                                                                                   mrfinger.gothicgamemod.entity.animations.IAnimationHelperFightStance               */
+/************************************************************************************************************************************************************************/
+/*                                                                                   Total unimplemented: 31                                                            */
+/************************************************************************************************************************************************************************/

@@ -11,7 +11,6 @@ import net.minecraft.pathfinding.PathNavigate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(EntityLiving.class)
 public interface IGGMEntityLiving extends IGGMEntityLivingBase
 {
 
@@ -44,7 +43,7 @@ public interface IGGMEntityLiving extends IGGMEntityLivingBase
         this.getNavigator().clearPathEntity();
     }
 
-    @Accessor
+
     EntityLivingBase getAttackTarget();
 
     void setAttackTarget(EntityLivingBase entity);

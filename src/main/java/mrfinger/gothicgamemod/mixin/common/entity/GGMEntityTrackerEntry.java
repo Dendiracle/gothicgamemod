@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
+import net.minecraft.entity.player.EntityPlayerMP;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,17 +24,18 @@ import java.util.Set;
 public abstract class GGMEntityTrackerEntry
 {
 
-    @Shadow public Entity trackedEntity;
-    @Shadow public Set trackingPlayers;
-    @Shadow public Entity myEntity;
+    @Shadow
+    public Set trackingPlayers;
+    @Shadow
+    public Entity myEntity;
 
 
-    @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "JUMP", ordinal = 0))
-    private void remakeSendMetadataToAllAssociatedPlayers()
+    @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "JUMP", ordinal = 1), cancellable = true)
+    private void remakeSendMetadataToAllAssociatedPlayers(CallbackInfo callbackInfo)
     {
         if (this.myEntity instanceof EntityLivingBase)
         {
-            ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).getAttributeMap();
+            ServersideAttributeMap serversideattributemap = (ServersideAttributeMap) ((EntityLivingBase) this.myEntity).getAttributeMap();
             Set set = serversideattributemap.getAttributeInstanceSet();
 
             if (!set.isEmpty())
@@ -42,13 +44,44 @@ public abstract class GGMEntityTrackerEntry
             }
 
             set.clear();
+
+            IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.myEntity;
+
+            if (entity.isNeedSyncAnimation())
+            {
+                String episodeName = entity.getActiveAnimationHelper().getAnimationEpisode() != null ? entity.getActiveAnimationHelper().getAnimationEpisode().getUnlocalizedName() : null;
+
+                if (entity instanceof IGGMEntityPlayerMP)
+                {
+                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimationHelper().getUnlocalizedName(), episodeName, entity.getActiveAnimationHelper().getEpisodeCountdown());
+                    PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) this.myEntity);
+                }
+
+                for (Object o : this.trackingPlayers)
+                {
+                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimationHelper().getUnlocalizedName(), episodeName, entity.getActiveAnimationHelper().getEpisodeCountdown());
+                    PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) o);
+                }
+
+            }
         }
+
+        callbackInfo.cancel();
     }
 
 
     protected void sendMetadata(IMessage message)
     {
+        if (myEntity instanceof EntityPlayerMP)
+        {
+            PacketDispatcher.sendTo(message, (IGGMEntityPlayerMP) this.myEntity);
+        }
 
+        for (Object o : this.trackingPlayers)
+        {
+
+            PacketDispatcher.sendTo(message, (IGGMEntityPlayerMP) o);
+        }
     }
 
 
@@ -109,7 +142,7 @@ public abstract class GGMEntityTrackerEntry
         }
     }*/
 
-    @Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;getAttributeMap()Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;"))
+    /*@Inject(method = "sendMetadataToAllAssociatedPlayers", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;getAttributeMap()Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;"))
     private void onSendLivingEntityMetadata(CallbackInfo ci)
     {
         IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.trackedEntity;

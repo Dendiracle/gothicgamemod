@@ -17,7 +17,7 @@ public abstract class GGMWorld implements IGGMWorld
 
     @Shadow public boolean isRemote;
 
-    @Shadow @Final public MapStorage perWorldStorage;
+    @Shadow(remap = false) @Final public MapStorage perWorldStorage;
     protected HabitatsCollection habitatsCollection;
 
 

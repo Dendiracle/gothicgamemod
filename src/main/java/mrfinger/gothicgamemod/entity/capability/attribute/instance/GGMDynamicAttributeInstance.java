@@ -30,6 +30,8 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
     public GGMDynamicAttributeInstance(IGGMBaseAttributeMap map, GGMDynamicRangedAttribute attribute)
     {
         super((BaseAttributeMap) map, attribute);
+
+        this.regenModifiersMap = new TreeMap<>();
     }
 
 
@@ -193,7 +195,6 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
     public void applyRegenModifier(IRegenModifierInstance regenModifierInstance)
     {
         this.flagForRegenUpdate();
-        if (this.regenModifiersMap == null) this.regenModifiersMap = new TreeMap<>();
         this.regenModifiersMap.put(regenModifierInstance.getGenericRegenModifier(), regenModifierInstance);
     }
 
@@ -201,7 +202,7 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
     public IRegenModifierInstance removeRegenModifier(RegenModifier regenModifier)
     {
         this.flagForRegenUpdate();
-        return this.regenModifiersMap != null ? this.regenModifiersMap.remove(regenModifier) : null;
+        return this.regenModifiersMap.remove(regenModifier);
     }
 
 
@@ -227,7 +228,7 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
     {
         super.removeAllModifiers();
 
-        if (this.regenModifiersMap != null) this.regenModifiersMap.clear();
+        this.regenModifiersMap.clear();
     }
 
     @Override
@@ -245,7 +246,6 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
 
         if (!this.regenModifiersMap.isEmpty())
         {
-
             NBTTagList regenModifiersList = new NBTTagList();
 
             for (Map.Entry<RegenModifier, IRegenModifierInstance> entry : this.regenModifiersMap.entrySet())

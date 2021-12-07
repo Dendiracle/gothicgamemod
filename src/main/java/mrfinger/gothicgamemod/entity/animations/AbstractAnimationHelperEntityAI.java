@@ -1,9 +1,7 @@
 package mrfinger.gothicgamemod.entity.animations;
 
-import com.sun.istack.internal.NotNull;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -142,7 +140,7 @@ public abstract class AbstractAnimationHelperEntityAI<Entity extends IGGMEntityL
         return this.animationEpisode.isCanBreak(this.entity, this);
     }
 
-    private void setAnimationEpisodeDirectly(@NotNull Episode animationEpisode, int count)
+    private void setAnimationEpisodeDirectly(Episode animationEpisode, int count)
     {
         this.animationEpisode = animationEpisode;
         this.setEpisodeCountdown(count);

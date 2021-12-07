@@ -27,12 +27,12 @@ public abstract class GGMEntityPlayerSP extends GGMAbstractClientPlayer
         this.bonusModifer = (IGGMAttributeModifier) this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getModifier(GGMCapabilities.dexterity.getUUID());
     }
 
-    @Redirect(method = "getFOVMultiplier", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerCapabilities;getWalkSpeed()F", ordinal = 0))
+    /*@Redirect(method = "getFOVMultiplier", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerCapabilities;getWalkSpeed()F", ordinal = 0))
     private float fixGettingFovMiltiplier(PlayerCapabilities capabilities)
     {
         return capabilities.getWalkSpeed() + (float) this.bonusModifer.getAmount();
     }
-
+*/
 
 }
 

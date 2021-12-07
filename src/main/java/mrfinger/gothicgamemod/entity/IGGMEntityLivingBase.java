@@ -1,6 +1,5 @@
 package mrfinger.gothicgamemod.entity;
 
-import com.sun.istack.internal.NotNull;
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.animations.AnimationHelperEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
@@ -72,13 +71,11 @@ public interface IGGMEntityLivingBase extends IGGMEntity
 	}
 
 
-	@NotNull
 	default Fraction getCurrentFraction()
 	{
 		return this.getStandartFraction();
 	}
 
-	@NotNull
 	default Fraction getStandartFraction()
 	{
 		return GGMFractions.neutralFraction;
