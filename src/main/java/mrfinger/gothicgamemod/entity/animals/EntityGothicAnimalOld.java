@@ -80,7 +80,7 @@ public abstract class EntityGothicAnimalOld extends EntityMob {
 				return null;
 			}
 			
-			this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
+			this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
 			if (this.canBeCalled) {
 				this.setPathToEntity(this.worldObj.getPathEntityToEntity(this, annoyingPlayer, 100F, true, false, false, true));
 			}
@@ -96,7 +96,7 @@ public abstract class EntityGothicAnimalOld extends EntityMob {
 			
         	if (this.aggrAnimationsPassed < this.maxAggAnimations) { 
         		
-        		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
+        		this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
         		this.faceEntity(annoyingPlayer, 360F, 360F);
         		
         		if (this.stareTimer == 0) {        			
@@ -123,7 +123,7 @@ public abstract class EntityGothicAnimalOld extends EntityMob {
         			
         			if (this.getDistanceToEntity(annoyingPlayer) > this.aggrAnimsDist || !this.canEntityBeSeen(annoyingPlayer) || this.toAttackAfterAnim != null && this.toAttackAfterAnim.isEntityAlive() || this.annoyingPlayer.isEntityInvulnerable() || !this.annoyingPlayer.isEntityAlive()) {                		       		
                 		this.aggrAnimationsPassed = 0;
-                		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
+                		this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
                 		this.farToAnnoyingPlayer = true;
                 		this.annoyingPlayer = annoyingPlayer = null;
                 		this.setPathToEntity(null);
@@ -140,7 +140,7 @@ public abstract class EntityGothicAnimalOld extends EntityMob {
         	else {
         		this.annoyingPlayer = null;
         		this.aggrAnimationsPassed = 0;
-        		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
+        		this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
         		this.farToAnnoyingPlayer = true;        		
         		return annoyingPlayer;
         	}        

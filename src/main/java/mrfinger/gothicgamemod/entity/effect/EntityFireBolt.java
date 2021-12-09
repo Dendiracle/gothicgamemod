@@ -28,7 +28,7 @@ public class EntityFireBolt extends EntityThrowable {
 
 	public EntityFireBolt(World world, EntityLivingBase player) {
 		super(world, player);
-		float in = (float) ((IGGMEntityLivingBase) player).getEntityAttribute(GGMCapabilities.intelligence).getAttributeValue();
+		float in = (float) player.getEntityAttribute(GGMCapabilities.intelligence).getAttributeValue();
 		this.lifeTime = 20 + (int) in;
 		this.damage = in > this.getInstantlyDamage() ? this.getInstantlyDamage() * 2.0F : in + this.getInstantlyDamage();
 	}

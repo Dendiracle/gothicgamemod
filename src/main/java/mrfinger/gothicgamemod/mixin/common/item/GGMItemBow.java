@@ -16,11 +16,11 @@ public abstract class GGMItemBow {
 
    /* @Redirect(method = "onPlayerStoppedUsing", at = @At(value = "NEW", target = "net/minecraft/entity/projectile/EntityArrow"))
     private EntityArrow redirectArrow(EntityArrow arrow) {
-        arrow.setDamage(((EntityPlayer) arrow.shootingEntity).getEntityAttribute(EntityAttributes.dexterity).getAttributeValue());
+        arrow.setDamage(((EntityPlayer) arrow.shootingEntity).getEntityAttributeInstance(EntityAttributes.dexterity).getAttributeValue());
         return arrow;
     }*/
 
-//, World world, EntityLivingBase entity, float power entity.getEntityAttribute(EntityAttributes.dexterity).getAttributeValue()
+//, World world, EntityLivingBase entity, float power entity.getEntityAttributeInstance(EntityAttributes.dexterity).getAttributeValue()
 
 
     @Redirect(method = "onPlayerStoppedUsing", at = @At(value = "NEW", target = "net/minecraft/entity/projectile/EntityArrow"))

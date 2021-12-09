@@ -243,7 +243,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
                 double d3 = vec3.yCoord - (double)i;
                 float f1 = (float)(Math.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
                 float f2 = MathHelper.wrapAngleTo180_float(f1 - this.rotationYaw);
-                this.moveForward = (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+                this.moveForward = (float)this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getAttributeValue();
 
                 if (f2 > 30.0F)
                 {

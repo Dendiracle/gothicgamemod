@@ -269,20 +269,20 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     {
         IGGMBaseAttributeMap gmap = (IGGMBaseAttributeMap) map;
 
-        this.health = (IGGMDynamicAttributeInstance) gmap.getAttributeInstance(GGMCapabilities.maxHealthDynamic);
+        this.health = (IGGMDynamicAttributeInstance) map.getAttributeInstance(GGMCapabilities.maxHealthDynamic);
         //this.health.applyRegenModifier(new RegenModifierInstanceSimple(0, 0, false, 0.001F));
         //this.health.applyRegenModifier(new RegenModifierInstanceSimple(0, 1, false, 0.001F));
-        this.stamina = (IGGMDynamicAttributeInstance) gmap.registerAttribute(GGMCapabilities.maxStamina);
+        this.stamina = (IGGMDynamicAttributeInstance) map.registerAttribute(GGMCapabilities.maxStamina);
         //this.stamina.applyRegenModifier(new RegenModifierInstanceSimple(0, 0, false, 0.1F));
         //this.stamina.applyRegenModifier(new RegenModifierInstanceSimple(0, 1, false, 0.05F));
-        this.mana = (IGGMDynamicAttributeInstance) gmap.registerAttribute(GGMCapabilities.maxMana);
+        this.mana = (IGGMDynamicAttributeInstance) map.registerAttribute(GGMCapabilities.maxMana);
         // this.mana.applyRegenModifier(new RegenModifierInstanceSimple(0, 0, false, 0.001F));
         //this.mana.applyRegenModifier(new RegenModifierInstanceSimple(0, 1, false, 0.001F));
 
 
-        IAttributeInstance strenght = gmap.registerAttribute(SharedMonsterAttributes.attackDamage);
-        gmap.registerAttribute(GGMCapabilities.dexterity);
-        gmap.registerAttribute(GGMCapabilities.intelligence);
+        IAttributeInstance strenght = map.registerAttribute(SharedMonsterAttributes.attackDamage);
+        map.registerAttribute(GGMCapabilities.dexterity);
+        map.registerAttribute(GGMCapabilities.intelligence);
         gmap.resizeCollections();
         return strenght;
     }
@@ -768,8 +768,8 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
                 for(Map.Entry<IGGMAttribute, UseSpendings> ee : e.getValue().entrySet()) {
 
-                    IAttributeInstance mainAttribute = this.getEntityAttribute(ee.getKey());
-                    IAttributeInstance spendAttribute = this.getEntityAttribute(ee.getValue().getAttribute());
+                    IAttributeInstance mainAttribute = this.getEntityAttributeInstance(ee.getKey());
+                    IAttributeInstance spendAttribute = this.getEntityAttributeInstance(ee.getValue().getAttribute());
 
                     if (mainAttribute != null && (ee.getValue().getSpendsFromD() <= 0.0D || spendAttribute instanceof IGGMDynamicAttributeInstance)) {
 

@@ -6,6 +6,7 @@ import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.EntityLivingBase;
 
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class CommandGGMSet extends CommandBase
         {
             if (variables[0].equals(Variables[3]))
             {
-                IGGMAttributeInstance ai = (IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
+                IGGMAttributeInstance ai = (IGGMAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
                 if (ai != null)
                 {
                     ai.setBaseValue(Double.parseDouble(variables[2]));
@@ -68,7 +69,7 @@ public class CommandGGMSet extends CommandBase
             }
             else if (variables[0].equals(Variables[4]))
             {
-                IGGMAttributeInstance ai = (IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
+                IGGMAttributeInstance ai = (IGGMAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
                 if (ai instanceof IGGMDynamicAttributeInstance)
                 {
                     ((IGGMDynamicAttributeInstance) ai).setDynamicValue(Double.parseDouble(variables[2]));
@@ -76,7 +77,7 @@ public class CommandGGMSet extends CommandBase
             }
             else if (variables[0].equals(Variables[5]))
             {
-                IGGMAttributeInstance ai = (IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
+                IGGMAttributeInstance ai = (IGGMAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.AttributesMapByString.get(variables[1]));
                 if (ai instanceof IGGMDynamicAttributeInstance)
                 {
                     ((IGGMDynamicAttributeInstance) ai).setNaturalRegen(Float.parseFloat(variables[2]));

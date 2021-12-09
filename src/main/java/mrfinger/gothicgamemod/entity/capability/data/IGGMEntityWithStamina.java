@@ -45,7 +45,7 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase
 
     default void staminaMoveUpdate()
     {
-        if (this.isSprinting() && ((EntityLivingBase) this).moveForward > this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getBaseValue())
+        if (this.isSprinting() && ((EntityLivingBase) this).moveForward > this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getBaseValue())
         {
             IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
             double d = this.getStaminaSpendingOnSprint();

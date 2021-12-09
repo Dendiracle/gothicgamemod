@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -58,19 +59,19 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 
 		statHelpersArray = new GGMIncreasableAttributeHelper[] {
 
-				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxHealthDynamic), GGMCapabilities.maxHealthS),
-				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxStamina), GGMCapabilities.maxStaminaS),
-				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxMana), GGMCapabilities.maxManaS),
-				new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.attackDamage), GGMCapabilities.strenghtS),
-				new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.dexterity), GGMCapabilities.dexterityS),
-				new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.intelligence), GGMCapabilities.intelligenceS)
+				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.maxHealthDynamic), GGMCapabilities.maxHealthS),
+				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.maxStamina), GGMCapabilities.maxStaminaS),
+				new GGMDynamicAttributeHelper((IGGMDynamicAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.maxMana), GGMCapabilities.maxManaS),
+				new GGMIncreasableAttributeHelper((IGGMAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(SharedMonsterAttributes.attackDamage), GGMCapabilities.strenghtS),
+				new GGMIncreasableAttributeHelper((IGGMAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.dexterity), GGMCapabilities.dexterityS),
+				new GGMIncreasableAttributeHelper((IGGMAttributeInstance) ((EntityLivingBase) player).getEntityAttribute(GGMCapabilities.intelligence), GGMCapabilities.intelligenceS)
 		};
-		/*statHelpersMap.put(SharedMonsterAttributes.maxHealthDynamic, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.maxHealthDynamic), "Health"));
-		statHelpersMap.put(GGMCapabilities.maxStamina, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxStamina), "Stamina"));
-		statHelpersMap.put(GGMCapabilities.maxMana, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.maxMana), "Mana"));
-		statHelpersMap.put(SharedMonsterAttributes.attackDamage, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(SharedMonsterAttributes.attackDamage), "Strenght"));
-		statHelpersMap.put(GGMCapabilities.dexterity, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.dexterity), "Dexterity"));
-		statHelpersMap.put(GGMCapabilities.intelligence, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttribute(GGMCapabilities.intelligence), "Intelligence"));
+		/*statHelpersMap.put(SharedMonsterAttributes.maxHealthDynamic, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttributeInstance(SharedMonsterAttributes.maxHealthDynamic), "Health"));
+		statHelpersMap.put(GGMCapabilities.maxStamina, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttributeInstance(GGMCapabilities.maxStamina), "Stamina"));
+		statHelpersMap.put(GGMCapabilities.maxMana, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttributeInstance(GGMCapabilities.maxMana), "Mana"));
+		statHelpersMap.put(SharedMonsterAttributes.attackDamage, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttributeInstance(SharedMonsterAttributes.attackDamage), "Strenght"));
+		statHelpersMap.put(GGMCapabilities.dexterity, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttributeInstance(GGMCapabilities.dexterity), "Dexterity"));
+		statHelpersMap.put(GGMCapabilities.intelligence, new GGMIncreasableAttributeHelper((IGGMAttributeInstance) player.getEntityAttributeInstance(GGMCapabilities.intelligence), "Intelligence"));
 
 		for (GGMIncreasableAttributeHelper ah : statHelpersMap.values()) {
 			statHelpersArray[ah.id] = ah;

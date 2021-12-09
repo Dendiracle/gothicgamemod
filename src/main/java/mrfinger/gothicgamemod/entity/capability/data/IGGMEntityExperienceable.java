@@ -89,20 +89,12 @@ public interface IGGMEntityExperienceable extends IGGMEntityLivingBase
 
     default boolean inreaseAttributeForLP(IAttribute attribute, int amounts)
     {
-        IGGMAttributeInstance ai = (IGGMAttributeInstance) this.getEntityAttribute(attribute);
-
-        if (this.getExpCap().getLPValue() >= amounts)
-        {
-            //this.getExpCap().changeLP(-ai.increaseAttribute(amounts));
-            return true;
-        }
-
         return false;
     }
 
     default boolean inreaseAttributeForLP(String attributeName, int amounts)
     {
-        IGGMAttributeInstance ai = this.getEntityAttribute(attributeName);
+        IGGMAttributeInstance ai = this.getEntityAttributeInstance(attributeName);
 
         if (this.getExpCap().getLPValue() >= amounts)
         {
@@ -121,7 +113,7 @@ public interface IGGMEntityExperienceable extends IGGMEntityLivingBase
 
         for (Map.Entry<String, Integer> e : mapByNames.entrySet())
         {
-            IGGMAttributeInstance attributeInstance = this.getEntityAttribute(e.getKey());
+            IGGMAttributeInstance attributeInstance = this.getEntityAttributeInstance(e.getKey());
 
             if (attributeInstance == null)
             {

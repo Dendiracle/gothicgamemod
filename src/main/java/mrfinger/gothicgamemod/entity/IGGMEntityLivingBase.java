@@ -13,6 +13,7 @@ import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMEntities;
 import mrfinger.gothicgamemod.init.GGMFractions;
+import mrfinger.gothicgamemod.mixin.common.entity.IGGMEntityLivingBaseAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
@@ -21,11 +22,13 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Collection;
 import java.util.Map;
 
-public interface IGGMEntityLivingBase extends IGGMEntity
+public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 {
 
 	/*
@@ -33,16 +36,7 @@ public interface IGGMEntityLivingBase extends IGGMEntity
 	*/
 	default int initialLevel()
 	{
-		float l = 0.0F;
-		Collection<IAttributeInstance> attributes = this.getAttributeMap().getAllAttributes();
-
-		for (IAttributeInstance attributeInstance : attributes)
-		{
-			Float o = GGMCapabilities.expGainFromAttributesMap.get(attributeInstance.getAttribute());
-			if (o != null && o > 0.0F) l += attributeInstance.getBaseValue() * o;
-		}
-
-		return Math.round(l);
+		return 0;
 	}
 
 
@@ -58,10 +52,9 @@ public interface IGGMEntityLivingBase extends IGGMEntity
 
 	default void onSetLvl() {}
 
-
 	default int getGainingExperience()
 	{
-		return this.getLvl() * GGMEntities.EXPFromLvlModifier;
+		return 0;
 	}
 	
 
@@ -98,11 +91,12 @@ public interface IGGMEntityLivingBase extends IGGMEntity
 	default void setDefaulAnimationHelper(IAnimationHelper defaulAnimation) {}
 
 
-	BaseAttributeMap getAttributeMap();
+	default IAttributeInstance getEntityAttributeInstance(IAttribute attribute)
+	{
+		return this.getAttributeMap().getAttributeInstance(attribute);
+	}
 
-	IAttributeInstance getEntityAttribute(IAttribute attribute);
-
-	default IGGMAttributeInstance getEntityAttribute(String name)
+	default IGGMAttributeInstance getEntityAttributeInstance(String name)
 	{
 		return (IGGMAttributeInstance) this.getAttributeMap().getAttributeInstanceByName(name);
 	}
@@ -216,7 +210,7 @@ public interface IGGMEntityLivingBase extends IGGMEntity
 
 	default IGGMAttributeInstance getHealthAttribute()
 	{
-		return (IGGMAttributeInstance) this.getEntityAttribute(GGMCapabilities.maxHealthDynamic);
+		return null;
 	}
 
 	float getHealth();
@@ -226,17 +220,7 @@ public interface IGGMEntityLivingBase extends IGGMEntity
 	float getMaxHealth();
 
 
-	default void increaseAttribute(IAttribute attribute, float value)
-	{
-		if (value < 0F)
-		{
-			throw new IllegalArgumentException("Increasing value cannot be less than 0");
-		}
-
-		IGGMAttributeInstance ai = (IGGMAttributeInstance) this.getEntityAttribute(attribute);
-
-		if (ai != null) ai.changeBaseValue(value);
-	}
+	default void increaseAttribute(IAttribute attribute, float value) {}
 
 
 	default boolean isEntityLookingFor(Entity target, float deltaLookYaw, float deltaLookPitch)

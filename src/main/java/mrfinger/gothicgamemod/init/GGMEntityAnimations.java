@@ -158,7 +158,7 @@ public class GGMEntityAnimations
         @Override
         public void controlEntityMotion(IEntityGothicAnimal entity, IAnimationHelper helper)
         {
-            ((EntityLivingBase) entity).moveForward = (float) entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+            ((EntityLivingBase) entity).moveForward = (float) entity.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getAttributeValue();
             ((EntityLivingBase) entity).moveStrafing = 0F;
         }
 

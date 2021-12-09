@@ -94,7 +94,7 @@ public abstract class GGMItemMeleeWeapon extends GGMItem implements IItemMeleeWe
     {
         for (Map.Entry<IAttribute, Float> e : this.requiredsMap.entrySet())
         {
-            if (entity.getEntityAttribute(e.getKey()) == null || e.getValue() > entity.getEntityAttribute(e.getKey()).getBaseValue())
+            if (entity.getEntityAttributeInstance(e.getKey()) == null || e.getValue() > entity.getEntityAttributeInstance(e.getKey()).getBaseValue())
             {
                 return false;
             }

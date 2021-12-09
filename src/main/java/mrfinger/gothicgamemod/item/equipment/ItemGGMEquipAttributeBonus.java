@@ -46,7 +46,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
     {
         for (Map.Entry<IAttribute, Float> e : this.requiredsMap.entrySet())
         {
-            if (entity.getEntityAttribute(e.getKey()) == null || e.getValue() > entity.getEntityAttribute(e.getKey()).getBaseValue()) return false;
+            if (entity.getEntityAttributeInstance(e.getKey()) == null || e.getValue() > entity.getEntityAttributeInstance(e.getKey()).getBaseValue()) return false;
         }
 
         return true;
@@ -80,7 +80,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
 
             for (Map.Entry<IAttribute, Float> e : this.bonusMap.entrySet()) {
 
-                IAttributeInstance attributeInstance = player.getEntityAttribute(e.getKey());
+                IAttributeInstance attributeInstance = player.getEntityAttributeInstance(e.getKey());
 
                 if (attributeInstance == null) continue;
 
@@ -99,7 +99,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
 
             for (Map.Entry<IAttribute, Float> e : this.bonusMap.entrySet()) {
 
-                IAttributeInstance attributeInstance = player.getEntityAttribute(e.getKey());
+                IAttributeInstance attributeInstance = player.getEntityAttributeInstance(e.getKey());
 
                 if (attributeInstance != null) {
 

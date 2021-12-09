@@ -11,6 +11,12 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import mrfinger.gothicgamemod.proxy.CommonProxy;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntitySheep;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 @Mod(modid                     = GothicMain.MODID,
      name                      = GothicMain.MODNAME,
@@ -38,6 +44,25 @@ public class GothicMain {
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 		//tabs.tabGothicMagic;
+
+        /*Method[] fields = EntityLivingBase.class.getDeclaredMethods();
+
+        for (Method field : fields)
+        {
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA " + field);
+        }
+
+        fields = EntitySheep.class.getDeclaredMethods();
+
+        for (Method field : fields)
+        {
+            System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB " + field);
+        }
+
+        System.out.println(EntitySheep.class.getSuperclass() + " " + EntitySheep.class.getSuperclass().getSuperclass() + " " + EntitySheep.class.getSuperclass().getSuperclass().getSuperclass() + " " + EntitySheep.class.getSuperclass().getSuperclass().getSuperclass().getSuperclass() + " " + EntitySheep.class.getSuperclass().getSuperclass().getSuperclass().getSuperclass().getSuperclass());
+        EntitySheep kek = new EntitySheep(null);
+        System.out.println(kek.getMaxHealth());*/
+
 		proxy.preInit(event);
     }
 

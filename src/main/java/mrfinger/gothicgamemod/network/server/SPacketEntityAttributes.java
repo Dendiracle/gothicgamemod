@@ -9,6 +9,7 @@ import mrfinger.gothicgamemod.entity.capability.attribute.generic.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
 import mrfinger.gothicgamemod.network.client.AbstractClientMessageHandler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.*;
@@ -72,15 +73,15 @@ public class SPacketEntityAttributes implements IMessage
 
             Entity entity = player.worldObj.getEntityByID(message.entityID);
 
-            if (entity instanceof IGGMEntityLivingBase)
+            if (entity instanceof EntityLivingBase)
             {
                 for (Map.Entry<IGGMAttribute, IGGMAttributeInstance.IAttributeSnapshot> entry : message.attributeSnapshotsList.entrySet())
                 {
-                    IGGMAttributeInstance attributeInstance = ((IGGMEntityLivingBase) entity).getEntityAttribute(entry.getKey().getAttributeUnlocalizedName());
+                    IGGMAttributeInstance attributeInstance = (IGGMAttributeInstance) ((EntityLivingBase) entity).getAttributeMap().getAttributeInstanceByName(entry.getKey().getAttributeUnlocalizedName());
 
                     if (attributeInstance == null)
                     {
-                        ((IGGMEntityLivingBase) entity).getAttributeMap().registerAttribute(entry.getKey());
+                        ((EntityLivingBase) entity).getAttributeMap().registerAttribute(entry.getKey());
                     }
 
                     entry.getValue().setAttribute(attributeInstance);

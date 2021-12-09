@@ -292,7 +292,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
                 double d3 = vec3.yCoord - (double)i;
                 float f1 = (float)(Math.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
                 float f2 = MathHelper.wrapAngleTo180_float(f1 - this.rotationYaw);
-                this.moveForward = (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+                this.moveForward = (float)this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getAttributeValue();
 
                 if (f2 > 30.0F)
                 {
@@ -396,13 +396,13 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     @Override
     public void setPath(int x, int y, int z)
     {
-        this.pathToEntity = this.worldObj.getEntityPathToXYZ(this, x, y, z, (float) this.getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue(), true, false, this.isAvoidsWater(), this.isCanSwim());
+        this.pathToEntity = this.worldObj.getEntityPathToXYZ(this, x, y, z, (float) this.getEntityAttributeInstance(SharedMonsterAttributes.followRange).getAttributeValue(), true, false, this.isAvoidsWater(), this.isCanSwim());
     }
 
     @Override
     public void updatePathFindingToEntityToAttack()
     {
-        this.pathToEntity = this.worldObj.getPathEntityToEntity(this, (Entity) this.entityToAttack, (float) this.getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue(), true, false, this.isAvoidsWater(), this.isCanSwim());
+        this.pathToEntity = this.worldObj.getPathEntityToEntity(this, (Entity) this.entityToAttack, (float) this.getEntityAttributeInstance(SharedMonsterAttributes.followRange).getAttributeValue(), true, false, this.isAvoidsWater(), this.isCanSwim());
     }
 
 

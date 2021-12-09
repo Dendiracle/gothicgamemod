@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.server.S20PacketEntityProperties;
 import net.minecraft.network.play.server.S30PacketWindowItems;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,12 +35,11 @@ public abstract class GGMNetHandlerPlayClient implements IGGMNetHandlerPlayClien
 
         Entity entity = this.clientWorldController.getEntityByID(packet.func_149442_c());
 
-        if (entity != null) {
-
-            IGGMEntityLivingBase entityl = (IGGMEntityLivingBase) entity;
+        if (entity != null)
+        {
             for (EntityDynamicProperties dp : ((IGGMS20PacketEntityProperties) packet).getDp()) {
 
-                ((IGGMDynamicAttributeInstance) entityl.getAttributeMap().getAttributeInstanceByName(dp.getUnlocalizedName())).setDynamicValue(dp.getCurrentValue());
+                ((IGGMDynamicAttributeInstance) ((EntityLivingBase) entity).getAttributeMap().getAttributeInstanceByName(dp.getUnlocalizedName())).setDynamicValue(dp.getCurrentValue());
             }
         }
     }
