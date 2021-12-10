@@ -3,6 +3,8 @@ package mrfinger.gothicgamemod.entity.effect.instance;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.capability.attribute.generic.GGMDynamicRangedAttribute;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.GGMDynamicAttributeInstance;
+import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
+import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.init.GGMEffects;
 
 import java.util.HashMap;
@@ -54,10 +56,12 @@ public class GGMEffectInstanceDynamicAttributeController extends GGMEffectInstan
     @Override
     public void onEntityUpdate(IGGMEntityLivingBase entity)
     {
+        System.out.println("Debug in GGMEffectInstanceDynamicAttributeController 111:   " + ticksExisted);
         for (Map.Entry<GGMDynamicRangedAttribute, GGMDynamicAttributeInstance> entry : this.attributesMap.entrySet())
         {
             if (this.ticksExisted % entry.getKey().getUpdateInfrequency() == 0)
             {
+                System.out.println("Debug in GGMEffectInstanceDynamicAttributeController 222: " + entry.getKey().getUpdateInfrequency() + " " + entry.getValue().getAttribute().getAttributeUnlocalizedName() + " " + entry.getValue().getDynamicValue() + " " + entry.getValue().getCachedRegenValue());
                 entry.getValue().changeCurrentValue(entry.getValue().getCachedRegenValue());
             }
         }
@@ -72,4 +76,18 @@ public class GGMEffectInstanceDynamicAttributeController extends GGMEffectInstan
             attributeInstance.restore();
         }
     }
+
+
+    /*@Override
+    public String toString()
+    {
+        String keks = "";
+
+        for (IGGMDynamicAttributeInstance attributeInstance : this.attributesMap.values())
+        {
+            keks += attributeInstance.getAttribute().getAttributeUnlocalizedName() + ": " + attributeInstance.getDynamicValue() + " / ";
+        }
+
+        return keks;
+    }*/
 }

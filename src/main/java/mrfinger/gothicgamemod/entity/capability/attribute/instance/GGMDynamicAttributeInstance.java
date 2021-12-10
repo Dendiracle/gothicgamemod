@@ -32,6 +32,8 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
         super((BaseAttributeMap) map, attribute);
 
         this.regenModifiersMap = new TreeMap<>();
+
+        this.setNaturalRegen(attribute.getDefaultNaturalRegen());
     }
 
 
@@ -209,7 +211,8 @@ public class GGMDynamicAttributeInstance extends ModifiableAttributeInstance imp
     @Override
     public void updateRegen()
     {
-        float regen = 0F;
+        float regen = this.getNaturalRegen();
+        System.out.println("Debug in GGMDynamicAttributeInstance regen: " + regen);
 
         if (!this.regenModifiersMap.isEmpty())
         {

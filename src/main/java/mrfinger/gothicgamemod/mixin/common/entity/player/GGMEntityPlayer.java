@@ -2,6 +2,7 @@ package mrfinger.gothicgamemod.mixin.common.entity.player;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
+import mrfinger.gothicgamemod.data.entity.EntityCapabilitiesData;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.attribute.generic.IGGMAttribute;
@@ -46,11 +47,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Mixin(EntityPlayer.class)
 public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGGMEntityPlayer
 {
-
     @Shadow
     public PlayerCapabilities capabilities;
 
@@ -368,23 +369,11 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
 
-    /*@Inject(method = "onLivingUpdate", at = @At("TAIL"))
+    @Inject(method = "onLivingUpdate", at = @At("TAIL"))
     private void onOnLivingUpdate(CallbackInfo ci)
     {
-        if (!thisEntity().worldObj.isRemote) {
 
-            if (!this.isDead) {
-
-                if (this.ticksExisted % 10 == 0) {
-
-                    for (IGGMDynamicAttributeInstance dpi : ((IGGMBaseAttributeMap) this.getAttributeMap()).getDPIColl()) {
-
-                        dpi.onUpdate();
-                    }
-                }
-            }
-        }
-    }*/
+    }
 
     @Override
     public void staminaMoveUpdate()

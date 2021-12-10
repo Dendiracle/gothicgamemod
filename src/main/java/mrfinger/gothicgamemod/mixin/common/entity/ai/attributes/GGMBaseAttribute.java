@@ -1,11 +1,14 @@
 package mrfinger.gothicgamemod.mixin.common.entity.ai.attributes;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import mrfinger.gothicgamemod.data.entity.EntityCapabilitiesData;
 import mrfinger.gothicgamemod.entity.capability.attribute.generic.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap;
 import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.world.MinecraftException;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,13 +28,12 @@ public abstract class GGMBaseAttribute implements IGGMAttribute
     @Final
     private String unlocalizedName;
 
-    protected UUID id = UUID.randomUUID();
+    protected UUID id;
 
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(String p_i1607_1_, double p_i1607_2_,CallbackInfo callbackInfo)
     {
-        EntityCapabilitiesData.registerGenericAttribute(this);
     }
 
 
@@ -39,6 +41,12 @@ public abstract class GGMBaseAttribute implements IGGMAttribute
     public UUID getUUID()
     {
         return this.id;
+    }
+
+    @Override
+    public void setUUID(UUID id)
+    {
+        if (this.id != null) throw new UnsupportedOperationException("Attribute Unique ID cannot be changed");
     }
 
 

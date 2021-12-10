@@ -1,5 +1,7 @@
 package mrfinger.gothicgamemod.entity.capability.attribute.generic;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap;
@@ -14,6 +16,8 @@ public interface IGGMAttribute extends IAttribute
     {
         return null;
     }
+
+    default void setUUID(UUID id) {}
 
 
     default double getMaxValue()

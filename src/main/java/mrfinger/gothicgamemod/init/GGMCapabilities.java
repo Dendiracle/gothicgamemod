@@ -24,9 +24,9 @@ public class GGMCapabilities
 	private static final Map<IAttribute, IAttributeInfo> defaultAttributeInfoMap = new HashMap<>();
 
 
-	public static final IGGMAttribute maxHealthDynamic = ((IGGMAttribute) new GGMDynamicRangedAttribute(SharedMonsterAttributes.maxHealth.getAttributeUnlocalizedName(), SharedMonsterAttributes.maxHealth.getDefaultValue(), 0.0D, Double.MAX_VALUE, 50).setDescription(((RangedAttribute) SharedMonsterAttributes.maxHealth).getDescription()).setShouldWatch(true));
-	public static final IGGMAttribute maxStamina 		= ((IGGMAttribute) new GGMDynamicRangedAttribute("generic.maxStamina", 20.0D, 0.0D, Double.MAX_VALUE, 50).setDescription("Max Stamina").setShouldWatch(true));
-	public static final IGGMAttribute maxMana 			= ((IGGMAttribute) new GGMDynamicRangedAttribute("generic.maxMana", 20.0D, 0.0D, Double.MAX_VALUE, 10).setDescription("Max Mana").setShouldWatch(true));
+	public static final IGGMAttribute maxHealthDynamic = ((IGGMAttribute) new GGMDynamicRangedAttribute(SharedMonsterAttributes.maxHealth.getAttributeUnlocalizedName(), SharedMonsterAttributes.maxHealth.getDefaultValue(), 0.0D, Double.MAX_VALUE, 50).setDefaultNaturalRegen(0.1F).setDescription(((RangedAttribute) SharedMonsterAttributes.maxHealth).getDescription()).setShouldWatch(true));
+	public static final IGGMAttribute maxStamina 		= ((IGGMAttribute) new GGMDynamicRangedAttribute("generic.maxStamina", 20.0D, 0.0D, Double.MAX_VALUE, 10).setDefaultNaturalRegen(2F).setDescription("Max Stamina").setShouldWatch(true));
+	public static final IGGMAttribute maxMana 			= ((IGGMAttribute) new GGMDynamicRangedAttribute("generic.maxMana", 20.0D, 0.0D, Double.MAX_VALUE, 50).setDefaultNaturalRegen(0.05F).setDescription("Max Mana").setShouldWatch(true));
 	public static final IGGMAttribute dexterity 		= ((IGGMAttribute) new RangedAttribute("generic.dexterity", 2.0D, 0.0D, Double.MAX_VALUE).setDescription("Dexterity").setShouldWatch(true));
 	public static final IGGMAttribute intelligence 		= ((IGGMAttribute) new RangedAttribute("generic.intelligence", 2.0D, 0.0D, Double.MAX_VALUE).setDescription("Max Stamina").setShouldWatch(true));
 
@@ -92,6 +92,7 @@ public class GGMCapabilities
 
 	private static IAttributeInfo registerAttribute(IGGMAttribute attribute, String commandName, Float valueForLevel)
 	{
+		EntityCapabilitiesData.registerGenericAttribute(attribute);
 		IAttributeInfo attributeInfo = new BaseAttributeInfo(attribute.getDefaultValue(), attribute.getMaxValue());
 		defaultAttributeInfoMap.put(attribute, attributeInfo);
 		AttributesMapByString.put(commandName, attribute);

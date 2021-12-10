@@ -6,18 +6,18 @@ import mrfinger.gothicgamemod.entity.capability.attribute.modifier.RegenModifier
 import mrfinger.gothicgamemod.entity.capability.attribute.modifier.RegenModifierInstanceSimple;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class EntityCapabilitiesData
 {
 
-    private static final Map<UUID, IGGMAttribute> GenericAttributesMap = new HashMap<>();
-    private static final Map<UUID, IGGMAttribute> UnmodifiableGenericAttributesMap = Collections.unmodifiableMap(GenericAttributesMap);
+    private static byte[] counter = {0, 0, 0, 0, 0, 0, 0 ,0};
+
+    private static final Map<UUID, IGGMAttribute> GenericAttributesMapByUUID = new HashMap<>();
+    private static final Map<UUID, IGGMAttribute> UnmodifiableGenericAttributesMapByUUID = Collections.unmodifiableMap(GenericAttributesMapByUUID);
+    private static final Map<String, Set<IGGMAttribute>> GenericAttributesMapByUnlocolizedName = new HashMap<>();
+    private static final Map<String, Set<IGGMAttribute>> UnmodifiableGenericAttributesMapByUnlocolizedName = Collections.unmodifiableMap(GenericAttributesMapByUnlocolizedName);
 
     private static final Map<String, RegenModifier> GenericRegenModifiersMap = new HashMap<>();
     private static final Map<String, Function<RegenModifier, IRegenModifierInstance>> RegenModifiersInstanceDispencer = new HashMap<>();
@@ -31,17 +31,48 @@ public class EntityCapabilitiesData
 
     public static void registerGenericAttribute(IGGMAttribute attribute)
     {
-        GenericAttributesMap.put(attribute.getUUID(), attribute);
+        UUID id = UUID.nameUUIDFromBytes(counter);
+
+        int i = 0;
+        while (counter[i] >= 127)
+        {
+            if (counter[i] < 127)
+            {
+                counter[i]++;
+                break;
+            }
+            else
+            {
+                i++;
+            }
+        }
+
+        attribute.setUUID(id);
+        GenericAttributesMapByUUID.put(attribute.getUUID(), attribute);
+
+        Set<IGGMAttribute> attributes =  GenericAttributesMapByUnlocolizedName.get(attribute.getAttributeUnlocalizedName());
+        if (attributes == null)
+        {
+            attributes = new HashSet<>();
+
+        }
+        attributes.add(attribute);
+        GenericAttributesMapByUnlocolizedName.put(attribute.getAttributeUnlocalizedName(), attributes);
     }
 
     public static IGGMAttribute getRegisteredGenericAttribute(UUID id)
     {
-        return GenericAttributesMap.get(id);
+        return GenericAttributesMapByUUID.get(id);
     }
 
-    public static Map<UUID, IGGMAttribute> getGenericAttributesMap()
+    public static Map<UUID, IGGMAttribute> getGenericAttributesMapByUUID()
     {
-        return UnmodifiableGenericAttributesMap;
+        return UnmodifiableGenericAttributesMapByUUID;
+    }
+
+    public static Map<String, Set<IGGMAttribute>> getGenericAttributesMapByUnlocolizedName()
+    {
+        return UnmodifiableGenericAttributesMapByUnlocolizedName;
     }
 
 

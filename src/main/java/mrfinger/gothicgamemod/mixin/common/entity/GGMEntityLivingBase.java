@@ -244,7 +244,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
             this.controlAnimationHelper();
 
-
             this.activeAnimationHelper.updateAnimation();
         }
     }
@@ -684,7 +683,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
             this.onAnimatedMeleeAttack();
             return true;
         }
-        List
+
         return false;
     }
 

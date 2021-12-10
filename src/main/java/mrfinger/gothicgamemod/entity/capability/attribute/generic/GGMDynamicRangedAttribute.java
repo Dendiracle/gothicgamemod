@@ -16,6 +16,7 @@ public class GGMDynamicRangedAttribute extends RangedAttribute implements IGGMAt
 {
 
     protected int updateInfrequency;
+    protected float defaultNaturalRegen;
 
     public GGMDynamicRangedAttribute(String description, double defaultValue, double minValue, double maxValue, int updateInfrequency)
     {
@@ -23,6 +24,16 @@ public class GGMDynamicRangedAttribute extends RangedAttribute implements IGGMAt
         this.updateInfrequency = updateInfrequency;
     }
 
+    public GGMDynamicRangedAttribute setDefaultNaturalRegen(float defaultNaturalRegen)
+    {
+        this.defaultNaturalRegen = defaultNaturalRegen;
+        return this;
+    }
+
+    public float getDefaultNaturalRegen()
+    {
+        return defaultNaturalRegen;
+    }
 
     @Override
     public IGGMAttributeInstance getNewAttributeInstance(IGGMBaseAttributeMap attributeMap)

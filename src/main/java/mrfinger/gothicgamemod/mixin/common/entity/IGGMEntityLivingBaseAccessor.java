@@ -13,7 +13,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface IGGMEntityLivingBaseAccessor extends IGGMEntity
 {
 
-    @Invoker("getEntityAttribute")
-    IAttributeInstance getEntityAttribute(IAttribute attribute);
 
 }
