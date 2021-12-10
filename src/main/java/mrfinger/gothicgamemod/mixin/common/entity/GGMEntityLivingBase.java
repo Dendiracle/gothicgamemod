@@ -10,9 +10,11 @@ import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeM
 import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
 import mrfinger.gothicgamemod.entity.effect.instance.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.properties.IEntityProperties;
+import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMEntities;
+import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,14 +31,13 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Mixin(EntityLivingBase.class)
 public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntityLivingBase
 {
+
+    protected Fraction fraction;
 
     protected int lvl;
     private boolean needExpUpdate;
@@ -45,14 +46,14 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected IAnimationHelper defaulAnimationHelper;
     protected IAnimationHelper animationHelperToSet;
 
+    private boolean needAnimSync;
+
     @Shadow
     protected BaseAttributeMap attributeMap;
 
     protected Map<IGGMEffect, IGGMEffectInstance> effectsMap;
     protected Map<IGGMEffect, IGGMEffectInstance> attackEffectsMap;
     protected Map<IGGMEffect, IGGMEffectInstance> otherEffectsMap;
-
-    private boolean needAnimSync;
 
     @Shadow
     protected float lastDamage;
@@ -65,9 +66,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected float landMovementFactor;
 
     @Shadow
-    public abstract IAttributeInstance getEntityAttribute(IAttribute p_110148_1_);
-
-    @Shadow
     public abstract float getEyeHeight();
 
     @Shadow
@@ -75,6 +73,16 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
     @Shadow
     protected abstract void damageArmor(float p_70675_1_);
+
+    @Inject(method = "entityInit", at = @At("HEAD"))
+    protected void onEntityOriginalInit(CallbackInfo callbackInfo)
+    {
+        this.fraction = this.getStandartFraction();
+
+        this.effectsMap = new HashMap<>();
+        this.otherEffectsMap = new HashMap<>();
+        this.attackEffectsMap = new HashMap<>();
+    }
 
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;setHealth(F)V"))
     private void deleteHealthing(EntityLivingBase entity, float value)
@@ -92,12 +100,84 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
         this.activeAnimationHelper = this.getDefaultAnimationHelper();
     }
 
-    @Inject(method = "entityInit", at = @At("HEAD"))
-    protected void onEntityOriginalInit(CallbackInfo callbackInfo)
+
+    @Override
+    public Fraction getCurrentFraction()
     {
-        this.effectsMap = new HashMap<>();
-        this.otherEffectsMap = new HashMap<>();
-        this.attackEffectsMap = new HashMap<>();
+        return this.fraction;
+    }
+
+    @Override
+    public Fraction getStandartFraction()
+    {
+        return GGMFractions.neutralFraction;
+    }
+
+
+    @Override
+    public IAnimationHelper getDefaultAnimationHelper()
+    {
+        return this.defaulAnimationHelper;
+    }
+
+    @Override
+    public void setDefaulAnimationHelper(IAnimationHelper defaulAnimation)
+    {
+        this.defaulAnimationHelper = defaulAnimation;
+    }
+
+
+    @ModifyArg(method = "applyEntityAttributes", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;registerAttribute(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;", ordinal = 0))
+    private IAttribute redirectMaxHealthAttributePutting(IAttribute attribute)
+    {
+        return this.getGenericMaxHealthAttribute();
+    }
+
+    protected IAttribute getGenericMaxHealthAttribute()
+    {
+        return SharedMonsterAttributes.maxHealth;
+    }
+
+
+    @Override
+    public void restoreCurrentValuesFull()
+    {
+        this.setHealth(this.getMaxHealth());
+    }
+
+
+	/*@Inject(method = "getAttributeMap", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;<init>()V"))
+	private void onCreateNewMap(CallbackInfo callbackInfo)
+	{
+		((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
+		System.out.println(((IGGMBaseAttributeMap) this.attributeMap).getEntity());
+	}*/
+
+    @Shadow
+    public abstract BaseAttributeMap getAttributeMap();
+
+    @Inject(method = "getAttributeMap", at = @At(value = "RETURN"))
+    private void onCreateNewMap(CallbackInfoReturnable callbackInfo)
+    {
+        if (((IGGMBaseAttributeMap) this.attributeMap).getEntity() == null)
+        {
+            ((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
+        }
+    }
+
+    @Shadow
+    public abstract IAttributeInstance getEntityAttribute(IAttribute p_110148_1_);
+
+    @Override
+    public IGGMAttributeInstance getEntityAttributeInstance(IAttribute attribute)
+    {
+        return (IGGMAttributeInstance) this.getAttributeMap().getAttributeInstance(attribute);
+    }
+
+    @Override
+    public IGGMAttributeInstance getEntityAttributeInstance(String name)
+    {
+        return (IGGMAttributeInstance) this.getAttributeMap().getAttributeInstanceByName(name);
     }
 
 
@@ -144,61 +224,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
         return this.getLvl() * GGMEntities.EXPFromLvlModifier;
     }
 
-
-    @ModifyArg(method = "applyEntityAttributes", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;registerAttribute(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;", ordinal = 0))
-    private IAttribute redirectMexHealthAttributePutting(IAttribute attribute)
-    {
-        return this.getGenericMaxHealthAttribute();
-    }
-
-    protected IAttribute getGenericMaxHealthAttribute()
-    {
-        return SharedMonsterAttributes.maxHealth;
-    }
-
-
-    @Override
-    public void restoreCurrentValuesFull()
-    {
-        this.setHealth(this.getMaxHealth());
-    }
-
-
-    @Override
-    public IAnimationHelper getDefaultAnimationHelper()
-    {
-        return this.defaulAnimationHelper;
-    }
-
-    @Override
-    public void setDefaulAnimationHelper(IAnimationHelper defaulAnimation)
-    {
-        this.defaulAnimationHelper = defaulAnimation;
-    }
-
-
-	/*@Inject(method = "getAttributeMap", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;<init>()V"))
-	private void onCreateNewMap(CallbackInfo callbackInfo)
-	{
-		((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
-		System.out.println(((IGGMBaseAttributeMap) this.attributeMap).getEntity());
-	}*/
-
-    @Shadow
-    public abstract BaseAttributeMap getAttributeMap();
-
-    @Inject(method = "getAttributeMap", at = @At(value = "RETURN"))
-    private void onCreateNewMap(CallbackInfoReturnable callbackInfo)
-    {
-        if (((IGGMBaseAttributeMap) this.attributeMap).getEntity() == null)
-            ((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
-    }
-
-    @Override
-    public IGGMAttributeInstance getEntityAttributeInstance(String name)
-    {
-        return (IGGMAttributeInstance) this.getAttributeMap().getAttributeInstanceByName(name);
-    }
 
     @Override
     public void setEntityProperties(IEntityProperties properties)
@@ -419,6 +444,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 		return otherEffectsMap;
 	}
 */
+
+    @Shadow public abstract void setHealth(float p_70606_1_);
 
     @Override
     public IGGMAttributeInstance getHealthAttribute()
@@ -657,7 +684,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
             this.onAnimatedMeleeAttack();
             return true;
         }
-
+        List
         return false;
     }
 

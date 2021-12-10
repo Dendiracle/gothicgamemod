@@ -1,43 +1,41 @@
-[22:07:52] [main/INFO]: Setting user: Player772
-[22:07:53] [Client thread/INFO]: LWJGL Version: 2.9.1
-[22:08:02] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:GothicGameMod
-[22:08:03] [Sound Library Loader/INFO]: Sound engine started
-[22:08:04] [Client thread/INFO]: Created: 16x16 textures/blocks-atlas
-[22:08:04] [Client thread/INFO]: Created: 16x16 textures/items-atlas
-[22:08:05] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:GothicGameMod
-[22:08:05] [Client thread/INFO]: Created: 1024x512 textures/blocks-atlas
-[22:08:05] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[22:08:06] [Sound Library Loader/INFO]: Sound engine started
-[22:08:12] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
-[22:08:12] [Server thread/INFO]: Generating keypair
-[22:08:12] [Server thread/INFO]: Preparing start region for level 0
-[22:08:13] [Server thread/INFO]: Changing view distance to 12, from 10
-[22:08:13] [Server thread/WARN]: Ignoring unknown attribute 'generic.knockbackResistance'
-[22:08:13] [Server thread/WARN]: Ignoring unknown attribute 'generic.maxHealth'
-[22:08:13] [Server thread/WARN]: Ignoring unknown attribute 'generic.maxStamina'
-[22:08:13] [Server thread/WARN]: Ignoring unknown attribute 'generic.movementSpeed'
-[22:08:13] [Server thread/WARN]: Ignoring unknown attribute 'generic.maxMana'
-[22:08:13] [Server thread/WARN]: Ignoring unknown attribute 'generic.attackDamage'
-[22:08:13] [Server thread/INFO]: Player772[local:E:3d9dcb11] logged in with entity id 1 at (-1352.5, 4.0, -1204.5)
-[22:08:13] [Server thread/INFO]: Player772 joined the game
-[22:08:16] [Server thread/INFO]: Saving and pausing game...
-[22:08:16] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
-[22:08:16] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
-[22:08:16] [Server thread/INFO]: Saving chunks for level 'New World'/The End
-[22:08:37] [Client thread/INFO]: [CHAT] /gamemode, /gamerule
-[22:08:38] [Server thread/INFO]: [Player772: Set own game mode to Survival Mode]
-[22:08:38] [Client thread/INFO]: [CHAT] Your game mode has been updated
-[22:08:48] [Client thread/WARN]: Unable to play unknown soundEvent: minecraft:mob.attack
-[22:09:56] [Client thread/WARN]: Unable to play unknown soundEvent: minecraft:mob.attack
-[22:09:56] [Client thread/WARN]: Unable to play unknown soundEvent: minecraft:mob.attack
-[22:10:24] [Server thread/INFO]: Saving and pausing game...
-[22:10:24] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
-[22:10:24] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
-[22:10:24] [Server thread/INFO]: Saving chunks for level 'New World'/The End
-[22:10:25] [Server thread/INFO]: Stopping server
-[22:10:25] [Server thread/INFO]: Saving players
-[22:10:25] [Server thread/INFO]: Saving worlds
-[22:10:25] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
-[22:10:25] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
-[22:10:25] [Server thread/INFO]: Saving chunks for level 'New World'/The End
-[22:10:26] [Client thread/INFO]: Stopping!
+[18:54:45] [main/INFO]: Setting user: Player885
+[18:54:48] [Client thread/INFO]: LWJGL Version: 2.9.1
+[18:54:58] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:GothicGameMod
+[18:54:58] [Sound Library Loader/INFO]: Sound engine started
+[18:54:59] [Client thread/INFO]: Created: 16x16 textures/blocks-atlas
+[18:54:59] [Client thread/INFO]: Created: 16x16 textures/items-atlas
+[18:54:59] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:GothicGameMod
+[18:55:00] [Client thread/INFO]: Created: 1024x512 textures/blocks-atlas
+[18:55:00] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[18:55:01] [Sound Library Loader/INFO]: Sound engine started
+[18:55:12] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[18:55:12] [Server thread/INFO]: Generating keypair
+[18:55:12] [Server thread/INFO]: Preparing start region for level 0
+[18:55:12] [Server thread/INFO]: Changing view distance to 12, from 10
+[18:55:13] [Server thread/ERROR]: Encountered an unexpected exception
+net.minecraft.util.ReportedException: Ticking memory connection
+	at net.minecraft.network.NetworkSystem.networkTick(NetworkSystem.java:198) ~[NetworkSystem.class:?]
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:726) ~[MinecraftServer.class:?]
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:614) ~[MinecraftServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:118) ~[IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:485) [MinecraftServer.class:?]
+	at net.minecraft.server.MinecraftServer$2.run(MinecraftServer.java:752) [MinecraftServer$2.class:?]
+Caused by: java.lang.NullPointerException
+	at net.minecraft.entity.EntityLivingBase.applyEntityAttributes(EntityLivingBase.java:177) ~[EntityLivingBase.class:?]
+	at net.minecraft.entity.player.EntityPlayer.applyEntityAttributes(EntityPlayer.java:180) ~[EntityPlayer.class:?]
+	at net.minecraft.entity.EntityLivingBase.<init>(EntityLivingBase.java:156) ~[EntityLivingBase.class:?]
+	at net.minecraft.entity.player.EntityPlayer.<init>(EntityPlayer.java:165) ~[EntityPlayer.class:?]
+	at net.minecraft.entity.player.EntityPlayerMP.<init>(EntityPlayerMP.java:158) ~[EntityPlayerMP.class:?]
+	at net.minecraft.server.management.ServerConfigurationManager.createPlayerForUser(ServerConfigurationManager.java:443) ~[ServerConfigurationManager.class:?]
+	at net.minecraft.server.network.NetHandlerLoginServer.func_147326_c(NetHandlerLoginServer.java:105) ~[NetHandlerLoginServer.class:?]
+	at net.minecraft.server.network.NetHandlerLoginServer.onNetworkTick(NetHandlerLoginServer.java:64) ~[NetHandlerLoginServer.class:?]
+	at net.minecraft.network.NetworkManager.processReceivedPackets(NetworkManager.java:244) ~[NetworkManager.class:?]
+	at net.minecraft.network.NetworkSystem.networkTick(NetworkSystem.java:182) ~[NetworkSystem.class:?]
+	... 5 more
+[18:55:13] [Server thread/ERROR]: This crash report has been saved to: E:\MineModding\1.7.10\gothicgamemod\.\crash-reports\crash-2021-12-09_18.55.13-server.txt
+[18:55:13] [Server thread/INFO]: Stopping server
+[18:55:13] [Server thread/INFO]: Saving players
+[18:55:13] [Server thread/INFO]: Saving worlds
+[18:55:13] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
+[18:55:13] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
+[18:55:13] [Server thread/INFO]: Saving chunks for level 'New World'/The End

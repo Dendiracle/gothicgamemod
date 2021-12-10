@@ -31,39 +31,6 @@ import java.util.Map;
 public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 {
 
-	/*
-	* Responsible for the level at init.
-	*/
-	default int initialLevel()
-	{
-		return 0;
-	}
-
-
-	default int getLvl()
-	{
-		return 0;
-	}
-
-	default void setLvl(int lvl)
-	{
-		this.onSetLvl();
-	}
-
-	default void onSetLvl() {}
-
-	default int getGainingExperience()
-	{
-		return 0;
-	}
-	
-
-	default void restoreCurrentValuesFull()
-	{
-		this.setHealth(this.getMaxHealth());
-	}
-
-
 	default Fraction getCurrentFraction()
 	{
 		return this.getStandartFraction();
@@ -91,24 +58,47 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	default void setDefaulAnimationHelper(IAnimationHelper defaulAnimation) {}
 
 
-	default IAttributeInstance getEntityAttributeInstance(IAttribute attribute)
+	default void restoreCurrentValuesFull()	{}
+
+
+	default IGGMAttributeInstance getEntityAttributeInstance(IAttribute attribute)
 	{
-		return this.getAttributeMap().getAttributeInstance(attribute);
+		return null;
 	}
 
 	default IGGMAttributeInstance getEntityAttributeInstance(String name)
 	{
-		return (IGGMAttributeInstance) this.getAttributeMap().getAttributeInstanceByName(name);
+		return null;
 	}
 
-
-	default void setEntityProperties(IEntityProperties properties)
+	/*
+	 * Responsible for the level at init.
+	 */
+	default int initialLevel()
 	{
-		properties.setProperties(this);
+		return 0;
+	}
+
+	default int getLvl()
+	{
+		return 0;
+	}
+
+	default void setLvl(int lvl)
+	{
+		this.onSetLvl();
+	}
+
+	default void onSetLvl() {}
+
+	default int getGainingExperience()
+	{
+		return 0;
 	}
 
 
-	void onLivingUpdate();
+	default void setEntityProperties(IEntityProperties properties) {}
+
 
 	default void moveUpdate() {}
 
@@ -214,8 +204,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	}
 
 	float getHealth();
-
-	void setHealth(float value);
 
 	float getMaxHealth();
 
