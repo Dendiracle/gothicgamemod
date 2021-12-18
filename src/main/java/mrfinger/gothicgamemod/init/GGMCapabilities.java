@@ -25,10 +25,10 @@ public class GGMCapabilities
 
 
 	public static final IGGMAttribute maxHealthDynamic = ((IGGMAttribute) new GGMDynamicRangedAttribute(SharedMonsterAttributes.maxHealth.getAttributeUnlocalizedName(), SharedMonsterAttributes.maxHealth.getDefaultValue(), 0.0D, Double.MAX_VALUE, 50).setDefaultNaturalRegen(0.1F).setDescription(((RangedAttribute) SharedMonsterAttributes.maxHealth).getDescription()).setShouldWatch(true));
-	public static final IGGMAttribute maxStamina 		= ((IGGMAttribute) new GGMDynamicRangedAttribute("generic.maxStamina", 20.0D, 0.0D, Double.MAX_VALUE, 10).setDefaultNaturalRegen(2F).setDescription("Max Stamina").setShouldWatch(true));
-	public static final IGGMAttribute maxMana 			= ((IGGMAttribute) new GGMDynamicRangedAttribute("generic.maxMana", 20.0D, 0.0D, Double.MAX_VALUE, 50).setDefaultNaturalRegen(0.05F).setDescription("Max Mana").setShouldWatch(true));
-	public static final IGGMAttribute dexterity 		= ((IGGMAttribute) new RangedAttribute("generic.dexterity", 2.0D, 0.0D, Double.MAX_VALUE).setDescription("Dexterity").setShouldWatch(true));
-	public static final IGGMAttribute intelligence 		= ((IGGMAttribute) new RangedAttribute("generic.intelligence", 2.0D, 0.0D, Double.MAX_VALUE).setDescription("Max Stamina").setShouldWatch(true));
+	public static final IGGMAttribute maxStamina 		= ((IGGMAttribute) new GGMDynamicRangedAttribute("manager.maxStamina", 20.0D, 0.0D, Double.MAX_VALUE, 10).setDefaultNaturalRegen(2F).setDescription("Max Stamina").setShouldWatch(true));
+	public static final IGGMAttribute maxMana 			= ((IGGMAttribute) new GGMDynamicRangedAttribute("manager.maxMana", 20.0D, 0.0D, Double.MAX_VALUE, 50).setDefaultNaturalRegen(0.05F).setDescription("Max Mana").setShouldWatch(true));
+	public static final IGGMAttribute dexterity 		= ((IGGMAttribute) new RangedAttribute("manager.dexterity", 2.0D, 0.0D, Double.MAX_VALUE).setDescription("Dexterity").setShouldWatch(true));
+	public static final IGGMAttribute intelligence 		= ((IGGMAttribute) new RangedAttribute("manager.intelligence", 2.0D, 0.0D, Double.MAX_VALUE).setDescription("Max Stamina").setShouldWatch(true));
 
 	public static final Set<IAttribute> set = new HashSet<>();
 

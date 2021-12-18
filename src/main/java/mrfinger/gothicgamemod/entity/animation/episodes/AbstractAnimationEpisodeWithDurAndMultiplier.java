@@ -1,7 +1,7 @@
-package mrfinger.gothicgamemod.entity.animations.episodes;
+package mrfinger.gothicgamemod.entity.animation.episodes;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import net.minecraft.client.model.ModelBase;
 
 public abstract class AbstractAnimationEpisodeWithDurAndMultiplier<Entity extends IGGMEntityLivingBase, Model extends ModelBase> extends AbstractAnimationEpisodeWithDur<Entity, Model>
@@ -27,13 +27,13 @@ public abstract class AbstractAnimationEpisodeWithDurAndMultiplier<Entity extend
 
 
     @Override
-    public void onUpdate(Entity entity, IAnimationHelper helper)
+    public void onUpdate(Entity entity, IAnimation helper)
     {
 
     }
 
     @Override
-    public void onCulmination(Entity entity, IAnimationHelper helpe)
+    public void onCulmination(Entity entity, IAnimation helpe)
     {
 
     }

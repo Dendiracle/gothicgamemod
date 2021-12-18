@@ -17,7 +17,7 @@ public class GGMModelFix
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 0))
     private void addAnimations(Entity entity, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float p_78088_7_, CallbackInfo ci)
     {
-        if (entity instanceof IGGMEntityLivingBase)((IGGMEntityLivingBase) entity).getActiveAnimationHelper().modifyModel((ModelBase) (Object) this, p_78088_2_, p_78088_3_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
+        if (entity instanceof IGGMEntityLivingBase)((IGGMEntityLivingBase) entity).getActiveAnimation().modifyModel((ModelBase) (Object) this, p_78088_2_, p_78088_3_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
     }
 
 

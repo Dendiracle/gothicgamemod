@@ -1,12 +1,7 @@
-package mrfinger.gothicgamemod.entity.animations.episodes;
+package mrfinger.gothicgamemod.entity.animation.episodes;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.network.PacketDispatcher;
-import mrfinger.gothicgamemod.network.client.CPacketEntitiesToAttack;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.entity.Entity;
 
 public abstract class AbstractPlayerAnimationHit<Player extends IGGMEntityPlayer> extends AbstractAnimationEpisodeWithDurAndMultiplier<Player, ModelBiped> implements IAnimationHit<Player, ModelBiped>
 {

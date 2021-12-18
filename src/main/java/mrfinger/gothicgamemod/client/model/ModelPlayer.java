@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.client.model;
 
 import mrfinger.gothicgamemod.client.IGGMMinecraft;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
@@ -104,7 +104,7 @@ public class ModelPlayer extends ModelBiped
         this.forearmRight.rotateAngleX = keks;
         this.forearmLeft.rotateAngleZ = keks;*/
 
-        ((IGGMEntityPlayer) entity).getActiveAnimationHelper().modifyModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
+        ((IGGMEntityPlayer) entity).getActiveAnimation().modifyModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
 
     }
 

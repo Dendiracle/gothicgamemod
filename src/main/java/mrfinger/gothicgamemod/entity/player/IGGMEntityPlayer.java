@@ -20,7 +20,7 @@ public interface IGGMEntityPlayer extends IGGMEntityExperienceableWithEXPInside,
         InventoryPlayer getInventoryPlayer();
 
 
-        IGGMPlayerEquipmentAnimationHelperFightStance getGGMEquipment();
+        IGGMPlayerEquipmentAnimationFightStance getGGMEquipment();
 
         Container getGGMContainer();
 

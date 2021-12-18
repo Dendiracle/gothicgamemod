@@ -1,7 +1,6 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.IGGMEntityLiving;
 import mrfinger.gothicgamemod.fractions.PackFraction;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import net.minecraft.entity.Entity;
@@ -225,7 +224,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
                     if (this.isCanJustLive())
                     {
                         IAnimationEpisode episode = this.getRandomJustLivingEpisode();
-                        this.getActiveAnimationHelper().setAnimationEpisode(episode, episode.getStandartDuration());
+                        this.getActiveAnimation().setAnimationEpisode(episode, episode.getStandartDuration());
                     }
                 }
                 else
@@ -336,7 +335,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
     @Override
     public boolean isCanJustLive()
     {
-        return this.onGround && this.isEntityAlive() && this.getNavigator().noPath() && this.getActiveAnimationHelper().getAnimationEpisode() == null;
+        return this.onGround && this.isEntityAlive() && this.getNavigator().noPath() && this.getActiveAnimation() == null;
     }
 
 

@@ -3,8 +3,8 @@ package mrfinger.gothicgamemod.mixin.common.entity;
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
@@ -42,9 +42,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected int lvl;
     private boolean needExpUpdate;
 
-    protected IAnimationHelper activeAnimationHelper;
-    protected IAnimationHelper defaulAnimationHelper;
-    protected IAnimationHelper animationHelperToSet;
+    protected IAnimation activeAnimationHelper;
 
     private boolean needAnimSync;
 
@@ -95,9 +93,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     {
         this.lvl = this.initialLevel();
         this.flagForLvlUpdate();
-
-        this.defaulAnimationHelper = getNewDefaultAnimationHelper();
-        this.activeAnimationHelper = this.getDefaultAnimationHelper();
     }
 
 
@@ -111,19 +106,6 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     public Fraction getStandartFraction()
     {
         return GGMFractions.neutralFraction;
-    }
-
-
-    @Override
-    public IAnimationHelper getDefaultAnimationHelper()
-    {
-        return this.defaulAnimationHelper;
-    }
-
-    @Override
-    public void setDefaulAnimationHelper(IAnimationHelper defaulAnimation)
-    {
-        this.defaulAnimationHelper = defaulAnimation;
     }
 
 
@@ -237,27 +219,24 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     {
         if (this.isEntityAlive())
         {
-            for (IGGMEffectInstance effect : this.effectsMap.values())
-            {
-                effect.onEntityUpdate(this);
-            }
+            this.controlAnimationHelperUpdate();
+        }
+        else
+        {
+            this.clearAnimation();
+        }
 
-            this.controlAnimationHelper();
-
-            this.activeAnimationHelper.updateAnimation();
+        for (IGGMEffectInstance effect : this.effectsMap.values())
+        {
+            effect.onEntityUpdate(this);
         }
     }
 
-    protected void controlAnimationHelper()
+    protected void controlAnimationHelperUpdate()
     {
-        if (this.animationHelperToSet != null)
+        if (this.activeAnimationHelper != null)
         {
-            if (this.activeAnimationHelper.isCanAnimationHelperWillChanged())
-            {
-                IAnimationHelper old = this.activeAnimationHelper;
-                this.activeAnimationHelper = this.animationHelperToSet;
-                old.onChangeAnimationHelper();
-            }
+            this.activeAnimationHelper.updateAnimation(this);
         }
     }
 
@@ -271,43 +250,23 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Inject(method = "onLivingUpdate", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;moveStrafing:F", ordinal = 1))
     private void controlMove(CallbackInfo ci)
     {
-        this.activeAnimationHelper.controlMove();
-        this.activeAnimationHelper.controlRotation();
-
+        this.activeAnimationHelper.controlEntityMovement();
         this.moveUpdate();
     }
 
 
     @Override
-    public IAnimationHelper getActiveAnimationHelper()
+    public IAnimation getActiveAnimation()
     {
         return this.activeAnimationHelper;
     }
 
     @Override
-    public IAnimationHelper getAnimationHelperToSet()
+    public boolean tryChangeAnimation(IAnimation animation)
     {
-        return this.animationHelperToSet;
-    }
-
-    @Override
-    public void setActiveAnimationHelperDirectly(IAnimationHelper animation)
-    {
-        this.animationHelperToSet = animation == null ? this.defaulAnimationHelper : animation;
-        this.directlyChangeAnimationHelper();
-    }
-
-    @Override
-    public boolean setActiveAnimationHelperDirectly(String animationName)
-    {
-        if (animationName.equals(this.getDefaultAnimationHelper().getUnlocalizedName()))
+        if (this.activeAnimationHelper == null || this.activeAnimationHelper.isCanAnimationHelperWillChanged())
         {
-            if (this.activeAnimationHelper != this.getDefaultAnimationHelper())
-            {
-                this.animationHelperToSet = this.getDefaultAnimationHelper();
-                this.directlyChangeAnimationHelper();
-            }
-
+            this.setActiveAnimationDirectly(animation);
             return true;
         }
 
@@ -315,43 +274,43 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     }
 
     @Override
-    public boolean tryChangeAnimationHelperToDefault()
+    public void setActiveAnimationDirectly(IAnimation animation)
     {
-        if (this.animationHelperToSet == null)
+        if (animation != null )
         {
-            this.animationHelperToSet = this.defaulAnimationHelper;
+            animation.setEntity(this);
 
-            if (this.activeAnimationHelper.isCanAnimationHelperWillChanged())
+            if (this.activeAnimationHelper != null)
             {
-                this.directlyChangeAnimationHelper();
-                return true;
+                IAnimation oldAnimation = this.activeAnimationHelper;
+                this.activeAnimationHelper = animation;
+                oldAnimation.onRemoveAnimation(this);
+            }
+            else
+            {
+                this.activeAnimationHelper = animation;
+            }
+        }
+        else
+        {
+            if (this.activeAnimationHelper != null)
+            {
+                IAnimation oldAnimation = this.activeAnimationHelper;
+                this.activeAnimationHelper = null;
+                oldAnimation.onRemoveAnimation(this);
             }
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean tryChangeAnimationHelper(IAnimationHelper animation)
-    {
-        this.animationHelperToSet = animation != null ? animation : this.defaulAnimationHelper;
-
-        if (this.activeAnimationHelper.isCanAnimationHelperWillChanged())
-        {
-            this.directlyChangeAnimationHelper();
-            return true;
-        }
-
-        return false;
-    }
-
-    protected void directlyChangeAnimationHelper()
-    {
-        IAnimationHelper old = this.activeAnimationHelper;
-        this.activeAnimationHelper = this.animationHelperToSet;
-        this.animationHelperToSet = null;
-        old.onChangeAnimationHelper();
         this.flagForAnimSync();
+    }
+
+    @Override
+    public void clearAnimation()
+    {
+        if (this.activeAnimationHelper != null)
+        {
+            this.setActiveAnimationDirectly(null);
+        }
     }
 
 
@@ -368,7 +327,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     }
 
     @Override
-    public boolean isNeedSyncAnimation()
+    public boolean checkToNeedSyncAnimation()
     {
         if (this.needAnimSync)
         {
@@ -387,7 +346,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     }
 
     @Override
-    public boolean isNeedExpUpdate()
+    public boolean checkNeedExpUpdate()
     {
         if (this.needExpUpdate)
         {
@@ -444,14 +403,17 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	}
 */
 
-    @Shadow public abstract void setHealth(float p_70606_1_);
-
     @Override
     public IGGMAttributeInstance getHealthAttribute()
     {
         return (IGGMAttributeInstance) this.attributeMap.getAttributeInstance(SharedMonsterAttributes.maxHealth);
     }
 
+    @Shadow public abstract float getHealth();
+
+    @Shadow public abstract float getMaxHealth();
+
+    @Shadow public abstract void setHealth(float p_70606_1_);
 
     @Override
     public void increaseAttribute(IAttribute attribute, float value)
@@ -635,7 +597,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Inject(method = "damageEntity", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/EntityLivingBase;applyPotionDamageCalculations(Lnet/minecraft/util/DamageSource;F)F"))
     private void onDamageCalculated(DamageSource damageSource, float damage, CallbackInfo ci)
     {
-        //this.getActiveAnimationHelper().onTakingDamage((IGGMDamageSource) damageSource, damage);
+        //this.getActiveAnimation().onTakingDamage((IGGMDamageSource) damageSource, damage);
     }
 
     @Inject(method = "attackEntityFrom", at = @At(value = "JUMP", ordinal = 1), cancellable = true)
@@ -671,6 +633,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     {
         return GGMBattleSystem.crushing;
     }
+
+    @Shadow public abstract boolean attackEntityAsMob(Entity p_70652_1_);
 
     @Override
     public boolean meleeAttack(Entity entity, float distanceSQ)
@@ -713,7 +677,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Inject(method = "isMovementBlocked", at = @At("HEAD"), cancellable = true)
     private void fixIsMovementBlocked(CallbackInfoReturnable<Boolean> cir)
     {
-        cir.setReturnValue(this.activeAnimationHelper.denyMovement() || this.getHealth() <= 0.0F || this.isEntitySleeping());
+        cir.setReturnValue(this.activeAnimationHelper.blockMovement() || this.getHealth() <= 0.0F || this.isEntitySleeping());
     }
 
     @Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
@@ -738,16 +702,17 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Override
     public boolean isCanMount(Entity entity)
     {
-        boolean flag = false;
+        if (this.activeAnimationHelper != null && !this.activeAnimationHelper.allowMount((IGGMEntity) entity))
+        {
+            return false;
+        }
 
         for (IGGMEffectInstance effect : this.otherEffectsMap.values())
         {
-            if (effect.onMountEntity((IGGMEntity) entity)) flag = true;
+            if (!effect.onMountEntity((IGGMEntity) entity)) return false;
         }
 
-        flag = this.activeAnimationHelper.denyMount((IGGMEntity) entity, flag);
-
-        return flag;
+        return true;
     }
 
 

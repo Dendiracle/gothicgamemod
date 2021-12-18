@@ -2,7 +2,7 @@ package mrfinger.gothicgamemod.entity.animals;
 
 import mrfinger.gothicgamemod.GothicMain;
 import mrfinger.gothicgamemod.block.BlockAnimalEggs;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.attribute.attributeinfo.IAttributeInfoDynamic;
 import mrfinger.gothicgamemod.entity.packentities.EntityGothicAnimal;
 import mrfinger.gothicgamemod.fractions.PackFraction;
@@ -87,7 +87,7 @@ public class EntityScavenger extends EntityGothicAnimal
 	@Override
 	protected String getLivingSound()
 	{
-		return (this.getActiveAnimationHelper() == this.getDefaultAnimationHelper() && this.getActiveAnimationHelper().getAnimationEpisode() == null) ? GothicMain.MODID + ":scavenger_living" : null;
+		return this.getActiveAnimation() == null ? GothicMain.MODID + ":scavenger_living" : null;
 	}
 
 	@Override

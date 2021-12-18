@@ -952,8 +952,8 @@ Details:
 [18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.debug
 [18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity
 [18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.animals
-[18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.animations
-[18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.animations.episodes
+[18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.animation
+[18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.animation.episodes
 [18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.capability
 [18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.capability.abilities
 [18:14:10] [Client thread/TRACE] [FML/]: Recursing into package mrfinger.gothicgamemod.entity.capability.attribute

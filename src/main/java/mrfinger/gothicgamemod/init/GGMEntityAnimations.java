@@ -4,8 +4,11 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import mrfinger.gothicgamemod.client.model.ModelAnimal;
 import mrfinger.gothicgamemod.client.model.ModelPlayer;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
-import mrfinger.gothicgamemod.entity.animations.episodes.*;
+import mrfinger.gothicgamemod.entity.animation.instance.AnimationFSWithAIGothicMob;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
+import mrfinger.gothicgamemod.entity.animation.episodes.*;
+import mrfinger.gothicgamemod.entity.animation.manager.AbstractAnimationManager;
+import mrfinger.gothicgamemod.entity.animation.manager.IAnimationManager;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack;
 import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
@@ -19,10 +22,21 @@ import net.minecraft.util.MathHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class GGMEntityAnimations
 {
+
+    public static final IAnimationManager ManagerGothicMobFightStance = new AbstractAnimationManager()
+    {
+
+        @Override
+        public IAnimation getNewAnimationInstance()
+        {
+            return new AnimationFSWithAIGothicMob();
+        }
+
+    };
+
 
     public static final Map<String, IAnimationEpisode> GothicAnimalLivingEpisodesMap = new HashMap<>();
 
@@ -39,7 +53,7 @@ public class GGMEntityAnimations
     public static final AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal> AnimationEatEntityGothicAnimal = new AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal>("GA_Eat0", 100, 0.2F)
     {
         @Override
-        public void onCulmination(IEntityGothicAnimal entity, IAnimationHelper helpe)
+        public void onCulmination(IEntityGothicAnimal entity, IAnimation helpe)
         {
             if (!entity.getEntityWorld().isRemote()) entity.changeGrowth(1);
 
@@ -62,18 +76,18 @@ public class GGMEntityAnimations
         }
 
         @Override
-        public boolean isCanBreak(IEntityGothicAnimal entity, IAnimationHelper helper)
+        public boolean isCanBreak(IEntityGothicAnimal entity, IAnimation helper)
         {
-            int i = helper.getEpisodeDuration() - helper.getEpisodeCountdown();
+            int i = helper.getAnimationDuration() - helper.getAnimationCountdown();
             helper.clearAnimationEpisode();
 
             if (i < entity.getEpisodeDuration(GGMEntityAnimations.AnimationWakeUpEntityGothicAnimal))
             {
-                entity.getActiveAnimationHelper().setAnimationEpisode(GGMEntityAnimations.AnimationWakeUpEntityGothicAnimal, i);
+                entity.getActiveAnimation().setAnimationEpisode(GGMEntityAnimations.AnimationWakeUpEntityGothicAnimal, i);
             }
             else
             {
-                entity.getActiveAnimationHelper().setAnimationEpisode(GGMEntityAnimations.AnimationWakeUpEntityGothicAnimal);
+                entity.getActiveAnimation().setAnimationEpisode(GGMEntityAnimations.AnimationWakeUpEntityGothicAnimal);
             }
             return false;
         }
@@ -91,7 +105,7 @@ public class GGMEntityAnimations
     public static final AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal> AnimationChildBirthEntityGothicAnimal = new AbstractAnimationEpisodeWithDurAndMultiplier<IEntityGothicAnimal, ModelAnimal>("GA_CB0", 600, 0.4F)
     {
         @Override
-        public void onCulmination(IEntityGothicAnimal entity, IAnimationHelper helpe)
+        public void onCulmination(IEntityGothicAnimal entity, IAnimation helpe)
         {
             entity.birthChild();
         }
@@ -106,13 +120,13 @@ public class GGMEntityAnimations
     public static final AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal> AnimationAggrEntityGothicAnimal = new AbstractAnimationEpisodeWithDur<IEntityGothicAnimal, ModelAnimal>("GA_Aggr0", 60)
     {
         @Override
-        public void onSet(IEntityGothicAnimal entity, IAnimationHelper helper)
+        public void onSet(IEntityGothicAnimal entity, IAnimation helper)
         {
             entity.playWarnSound();
         }
 
         @Override
-        public void onCulmination(IEntityGothicAnimal entity, IAnimationHelper helper)
+        public void onCulmination(IEntityGothicAnimal entity, IAnimation helper)
         {
             if (!entity.getEntityWorld().isRemote()) entity.changeGrowth(1);
         }
@@ -157,7 +171,7 @@ public class GGMEntityAnimations
 
 
         @Override
-        public void controlEntityMotion(IEntityGothicAnimal entity, IAnimationHelper helper)
+        public void controlEntityMotion(IEntityGothicAnimal entity, IAnimation helper)
         {
             ((EntityLivingBase) entity).moveForward = (float) entity.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getAttributeValue();
             ((EntityLivingBase) entity).moveStrafing = 0F;
@@ -181,7 +195,7 @@ public class GGMEntityAnimations
     {
 
         @Override
-        public Entity[] getAttackTargets(IGGMEntityWithAnimAttack player, IAnimationHelper helper)
+        public Entity[] getAttackTargets(IGGMEntityWithAnimAttack player, IAnimation helper)
         {
             EntityLivingBase[] uArray;
             float[] angles;

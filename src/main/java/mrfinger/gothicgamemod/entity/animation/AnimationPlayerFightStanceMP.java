@@ -1,15 +1,15 @@
-package mrfinger.gothicgamemod.entity.animations;
+package mrfinger.gothicgamemod.entity.animation;
 
-import mrfinger.gothicgamemod.entity.animations.episodes.AbstractPlayerAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.episodes.AbstractPlayerAnimationHit;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationHelperFightStance;
+import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Collection;
 
-public class AnimationHelperPlayerFightStanceMP extends GGMPlayerEquipmentAnimationHelperFightStance<IGGMEntityPlayerMP, AbstractPlayerAnimationHit>
+public class AnimationPlayerFightStanceMP extends GGMPlayerEquipmentAnimationFightStance<IGGMEntityPlayerMP, AbstractPlayerAnimationHit>
 {
 
     protected IGGMEntity[] targets;
@@ -17,7 +17,7 @@ public class AnimationHelperPlayerFightStanceMP extends GGMPlayerEquipmentAnimat
     protected AbstractPlayerAnimationHit repeatAttackHitType;
 
 
-    public AnimationHelperPlayerFightStanceMP(IGGMEntityPlayerMP entity)
+    public AnimationPlayerFightStanceMP(IGGMEntityPlayerMP entity)
     {
         super(entity);
     }
@@ -40,7 +40,7 @@ public class AnimationHelperPlayerFightStanceMP extends GGMPlayerEquipmentAnimat
     @Override
     protected void updateAttack()
     {
-        if (this.targets != null && this.episodeCountdown <= this.episodeCulminationTick)
+        if (this.targets != null && this.countdown <= this.culminationTick)
         {
             for (IGGMEntity target : this.targets)
             {
@@ -50,7 +50,7 @@ public class AnimationHelperPlayerFightStanceMP extends GGMPlayerEquipmentAnimat
             this.targets = null;
         }
 
-        if (this.episodeCountdown <= 0 && this.repeatAttackHitType != null)
+        if (this.countdown <= 0 && this.repeatAttackHitType != null)
         {
             this.setAnimationEpisode(this.repeatAttackHitType, this.entity.getNewAttackDuration(this.repeatAttackHitType));
             this.repeatAttackHitType = null;
@@ -65,7 +65,7 @@ public class AnimationHelperPlayerFightStanceMP extends GGMPlayerEquipmentAnimat
 
     public void setTargets(IGGMEntity[] targets)
     {
-        if (this.episodeCountdown >= 0) this.targets = targets;
+        if (this.countdown >= 0) this.targets = targets;
     }
 
     public void setTargets(Collection<IGGMEntity> entities)

@@ -1,12 +1,8 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
-import mrfinger.gothicgamemod.client.model.ModelAnimal;
-import mrfinger.gothicgamemod.client.model.ModelEntityHerd;
 import mrfinger.gothicgamemod.entity.IGGMEntityLiving;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.fractions.PackFraction;
-
-import java.util.Map;
 
 public interface IEntityHerd extends IGGMEntityLiving
 {

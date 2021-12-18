@@ -2,24 +2,24 @@ package mrfinger.gothicgamemod.entity.capability.data;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelperFightStance;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.IAnimationFightStance;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationHit;
 
 public interface IGGMEntityWithAnimAttack extends IGGMEntityLivingBase
 {
 
     default boolean inFightStance()
     {
-        return this.getActiveAnimationHelper() == this.getFightStanceAnimationHelper();
+        return this.getActiveAnimation() == this.getFightStanceAnimationHelper();
     }
 
     default boolean swicthToFightStance()
     {
-        return this.tryChangeAnimationHelper(this.getFightStanceAnimationHelper());
+        return this.tryChangeAnimation(this.getFightStanceAnimationHelper());
     }
 
 
-    IAnimationHelperFightStance getFightStanceAnimationHelper();
+    IAnimationFightStance getFightStanceAnimationHelper();
 
     default short getNewAttackDuration(IAnimationHit hitType)
     {
@@ -28,17 +28,17 @@ public interface IGGMEntityWithAnimAttack extends IGGMEntityLivingBase
 
     default IAnimationHit getCurrentAttackHitTYpe()
     {
-        return this.inFightStance() ? (IAnimationHit) this.getActiveAnimationHelper().getAnimationEpisode() : null;
+        return this.inFightStance() ? (IAnimationHit) this.getActiveAnimation().getAnimationEpisode() : null;
     }
 
     default short getCurrentAttackDuration()
     {
-        return this.inFightStance() ? (short) this.getActiveAnimationHelper().getEpisodeDuration() : 0;
+        return this.inFightStance() ? (short) this.getActiveAnimation().getAnimationDuration() : 0;
     }
 
     default short getAttackCountdown()
     {
-        return this.inFightStance() ? (short) this.getActiveAnimationHelper().getEpisodeCountdown() : 0;
+        return this.inFightStance() ? (short) this.getActiveAnimation().getAnimationCountdown() : 0;
     }
 
 
@@ -52,7 +52,7 @@ public interface IGGMEntityWithAnimAttack extends IGGMEntityLivingBase
 
     default boolean startAttack(IAnimationHit hitType)
     {
-        return (this.inFightStance() || this.swicthToFightStance()) && this.canMeleeAttackAnimatedly() && this.getActiveAnimationHelper().setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
+        return (this.inFightStance() || this.swicthToFightStance()) && this.canMeleeAttackAnimatedly() && this.getActiveAnimation().setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
     }
 
 }

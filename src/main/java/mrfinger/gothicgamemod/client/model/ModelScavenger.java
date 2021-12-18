@@ -1,12 +1,8 @@
 
 package mrfinger.gothicgamemod.client.model;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
-
-import java.util.Random;
 
 public class ModelScavenger extends ModelAnimal
 {

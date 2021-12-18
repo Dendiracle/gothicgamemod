@@ -1,4 +1,4 @@
-package mrfinger.gothicgamemod.entity.animations.episodes;
+package mrfinger.gothicgamemod.entity.animation.episodes;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import net.minecraft.client.model.ModelBase;

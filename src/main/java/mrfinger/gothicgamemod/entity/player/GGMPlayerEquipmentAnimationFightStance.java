@@ -1,7 +1,8 @@
 package mrfinger.gothicgamemod.entity.player;
 
-import mrfinger.gothicgamemod.entity.animations.AnimationHelperFightStance;
-import mrfinger.gothicgamemod.entity.animations.episodes.AbstractPlayerAnimationHit;
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animation.AnimationFightStance;
+import mrfinger.gothicgamemod.entity.animation.episodes.AbstractPlayerAnimationHit;
 import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
 import mrfinger.gothicgamemod.network.BPacketSyncCurrentItemInGGMSlot;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
@@ -13,19 +14,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public abstract class GGMPlayerEquipmentAnimationHelperFightStance<Entity extends IGGMEntityPlayer, Episode extends AbstractPlayerAnimationHit> extends AnimationHelperFightStance<Entity, Episode> implements IGGMPlayerEquipmentAnimationHelperFightStance<Entity, Episode>
+public abstract class GGMPlayerEquipmentAnimationFightStance<Entity extends IGGMEntityPlayer, Episode extends AbstractPlayerAnimationHit> extends AnimationFightStance<Entity, Episode> implements IGGMPlayerEquipmentAnimationFightStance<Entity, Episode>
 {
 
     protected ItemStack[] equip;
-
     protected byte weaponSlotsAmount;
-
     protected byte currentWeapon;
-
     protected byte stats;
 
 
-    public GGMPlayerEquipmentAnimationHelperFightStance(Entity player)
+    public GGMPlayerEquipmentAnimationFightStance(Entity player)
     {
         super(player);
 
@@ -40,11 +38,6 @@ public abstract class GGMPlayerEquipmentAnimationHelperFightStance<Entity extend
         return false;
     }
 
-    @Override
-    public void updateAnimation()
-    {
-        super.updateAnimation();
-    }
 
     @Override
     public boolean allowUsingItems()
@@ -87,7 +80,7 @@ public abstract class GGMPlayerEquipmentAnimationHelperFightStance<Entity extend
     @Override
     public void setUseItem()
     {
-        if (this.episodeCountdown < 0 && !this.isUsingItem())
+        if (this.countdown < 0 && !this.isUsingItem())
         {
             this.stats &= 0b11111100;
 
@@ -114,9 +107,9 @@ public abstract class GGMPlayerEquipmentAnimationHelperFightStance<Entity extend
     }
 
     @Override
-    public void onChangeAnimationHelper()
+    public void onRemoveAnimation(IGGMEntityLivingBase entity)
     {
-        super.onChangeAnimationHelper();
+        super.onRemoveAnimation(entity);
         this.endUseItem();
     }
 
@@ -130,7 +123,7 @@ public abstract class GGMPlayerEquipmentAnimationHelperFightStance<Entity extend
     @Override
     public void setCurrentItem(int index)
     {
-        if (!this.denyChangeItem() && index >= 0)
+        if (!this.allowChangeItem() && index >= 0)
         {
             if (index >= this.weaponSlotsAmount)
             {

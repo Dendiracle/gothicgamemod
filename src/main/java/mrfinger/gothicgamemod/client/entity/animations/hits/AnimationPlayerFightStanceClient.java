@@ -3,18 +3,18 @@ package mrfinger.gothicgamemod.client.entity.animations.hits;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.client.entity.IGGMAbstractClientPlayer;
-import mrfinger.gothicgamemod.entity.animations.episodes.AbstractPlayerAnimationHit;
-import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationHelperFightStance;
+import mrfinger.gothicgamemod.entity.animation.episodes.AbstractPlayerAnimationHit;
+import mrfinger.gothicgamemod.entity.player.GGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
 import mrfinger.gothicgamemod.network.client.CPacketEntitiesToAttack;
 import mrfinger.gothicgamemod.network.client.CPacketSetItemInUseInFightAnim;
 import net.minecraft.entity.Entity;
 
 @SideOnly(Side.CLIENT)
-public class AnimationHelperPlayerFightStanceClient extends GGMPlayerEquipmentAnimationHelperFightStance<IGGMAbstractClientPlayer, AbstractPlayerAnimationHit>
+public class AnimationPlayerFightStanceClient extends GGMPlayerEquipmentAnimationFightStance<IGGMAbstractClientPlayer, AbstractPlayerAnimationHit>
 {
 
-    public AnimationHelperPlayerFightStanceClient(IGGMAbstractClientPlayer entity)
+    public AnimationPlayerFightStanceClient(IGGMAbstractClientPlayer entity)
     {
         super(entity);
     }
@@ -23,7 +23,7 @@ public class AnimationHelperPlayerFightStanceClient extends GGMPlayerEquipmentAn
     @Override
     protected void updateAttack()
     {
-        if (this.episodeCountdown == this.episodeCulminationTick)
+        if (this.countdown == this.culminationTick)
         {
             this.animationEpisode.onCulmination(this.entity, this);
 
@@ -36,11 +36,6 @@ public class AnimationHelperPlayerFightStanceClient extends GGMPlayerEquipmentAn
         }
     }
 
-
-    @Override
-    public boolean breakAnimationEpisode() {
-        return false;
-    }
 
 
     @Override

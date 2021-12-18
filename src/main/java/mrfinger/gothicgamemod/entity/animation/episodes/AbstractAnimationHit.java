@@ -1,6 +1,6 @@
-package mrfinger.gothicgamemod.entity.animations.episodes;
+package mrfinger.gothicgamemod.entity.animation.episodes;
 
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
@@ -16,7 +16,7 @@ public abstract class AbstractAnimationHit<EntityAttacker extends IGGMEntityWith
     }
 
     @Override
-    public Entity[] getAttackTargets(EntityAttacker entity, IAnimationHelper helper)
+    public Entity[] getAttackTargets(EntityAttacker entity, IAnimation helper)
     {
         if (entity.getEntityToAttack() != null)
         {

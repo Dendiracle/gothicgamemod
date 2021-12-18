@@ -1,34 +1,27 @@
 package mrfinger.gothicgamemod.entity;
 
 import mrfinger.gothicgamemod.battle.DamageType;
-import mrfinger.gothicgamemod.entity.animations.AnimationHelperEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelper;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
 import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
 import mrfinger.gothicgamemod.entity.effect.instance.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.properties.IEntityProperties;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GGMBattleSystem;
-import mrfinger.gothicgamemod.init.GGMCapabilities;
-import mrfinger.gothicgamemod.init.GGMEntities;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.mixin.common.entity.IGGMEntityLivingBaseAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.Collection;
 import java.util.Map;
 
-public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
+public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAnimationPlayer
 {
 
 	default Fraction getCurrentFraction()
@@ -40,22 +33,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	{
 		return GGMFractions.neutralFraction;
 	}
-
-
-	/*
-	 * Responsible for the default animation helper at init.
-	 */
-	default IAnimationHelper getNewDefaultAnimationHelper()
-	{
-		return new AnimationHelperEntityLivingBase(this);
-	}
-
-	default IAnimationHelper getDefaultAnimationHelper()
-	{
-		return null;
-	}
-
-	default void setDefaulAnimationHelper(IAnimationHelper defaulAnimation) {}
 
 
 	default void restoreCurrentValuesFull()	{}
@@ -103,40 +80,27 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	default void moveUpdate() {}
 
 
-	default IAnimationHelper getActiveAnimationHelper()
+	@Override
+	default IAnimation getActiveAnimation()
 	{
 		return null;
-	}
-
-	default IAnimationHelper getAnimationHelperToSet()
-	{
-		return null;
-	}
-
-	default void setActiveAnimationHelperDirectly(IAnimationHelper animation) {}
-
-	default boolean setActiveAnimationHelperDirectly(String animationName)
-	{
-		return false;
-	}
-
-	/*
-	* Returns true if after this method activeAnimationHelper
-	* is default.
-	*/
-	default boolean tryChangeAnimationHelperToDefault()
-	{
-		return true;
 	}
 
 	/*
 	 * Returns true if after this method activeAnimationHelper
-	 * is agrument or default.
+	 * is agrument.
 	 */
-	default boolean tryChangeAnimationHelper(IAnimationHelper animation)
+	@Override
+	default boolean tryChangeAnimation(IAnimation animation)
 	{
 		return true;
 	}
+
+	@Override
+	default void setActiveAnimationDirectly(IAnimation animation) {}
+
+	@Override
+	default void clearAnimation() {}
 
 
 	default Map<String, IAnimationEpisode> getAnimationEpisodesMap()
@@ -147,7 +111,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 
 	default void flagForAnimSync() {}
 
-	default boolean isNeedSyncAnimation()
+	default boolean checkToNeedSyncAnimation()
 	{
 		return false;
 	}
@@ -155,7 +119,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 
 	default void flagForLvlUpdate() {}
 
-	default boolean isNeedExpUpdate()
+	default boolean checkNeedExpUpdate()
 	{
 		return false;
 	}
@@ -203,10 +167,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 		return null;
 	}
 
-	float getHealth();
-
-	float getMaxHealth();
-
 
 	default void increaseAttribute(IAttribute attribute, float value) {}
 
@@ -227,10 +187,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	}
 
 
-	ItemStack getHeldItem();
-
-	ItemStack getEquipmentInSlot(int slot);
-
 	default boolean isCanDropItems()
 	{
 		return true;
@@ -247,14 +203,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	}
 
 
-	float getAIMoveSpeed();
-
-	void setAIMoveSpeed(float speed);
-
-
-	void moveEntityWithHeading(float strafe, float forward);
-
-
 	default float getStandartRotationSpeed()
 	{
 		return 30.0F;
@@ -263,7 +211,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 
 	default boolean canJump()
 	{
-		return this.getActiveAnimationHelper().allowJump();
+		return this.getActiveAnimation().allowJump();
 	}
 
 	default double getJumpHeight()
@@ -273,7 +221,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 
 	default void onJump()
 	{
-		this.getActiveAnimationHelper().onJumped();
+		this.getActiveAnimation().onJumped();
 	}
 
 
@@ -281,10 +229,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	{
 		return true;
 	}
-
-	boolean isSprinting();
-
-	void setSprinting(boolean sprinting);
 
 
 	default float waterMovementModifier()
@@ -299,9 +243,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	}
 
 	default void wakeUpEntity() {}
-
-
-	EntityLivingBase getAITarget();
 
 
 	default int getTotalArmorValue()
@@ -320,7 +261,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 		float attackRange = ((EntityLivingBase) this).width * 0.5F + this.getMeleeAttackDistance() + entity.width * 0.5F;
 		attackRange *= attackRange;
 
-		if (distanceSQ <= attackRange && this.attackEntityAsMob(entity))
+		if (distanceSQ <= attackRange && ((EntityLivingBase) this).attackEntityAsMob(entity))
 		{
 			this.onAnimatedMeleeAttack();
 			return true;
@@ -328,8 +269,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 
 		return false;
 	}
-
-	boolean attackEntityAsMob(Entity entity);
 
 	default short attackBreak()
 	{
@@ -342,9 +281,6 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor
 	}
 
 	default void onAnimatedMeleeAttack() {}
-
-
-	boolean isClientWorld();
 
 
 	default void saveExp(NBTTagCompound nbt) {}

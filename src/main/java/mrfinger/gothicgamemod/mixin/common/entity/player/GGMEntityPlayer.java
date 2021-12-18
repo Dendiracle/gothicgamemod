@@ -2,16 +2,16 @@ package mrfinger.gothicgamemod.mixin.common.entity.player;
 
 import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.battle.UseSpendings;
-import mrfinger.gothicgamemod.data.entity.EntityCapabilitiesData;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.attribute.generic.IGGMAttribute;
 import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.effect.instance.GGMEffectInstanceDynamicAttributeController;
 import mrfinger.gothicgamemod.entity.effect.instance.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationHelperFightStance;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.fractions.Fraction;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMEffects;
@@ -47,7 +47,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Mixin(EntityPlayer.class)
 public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGGMEntityPlayer
@@ -83,7 +82,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Shadow
     public abstract boolean isPlayerSleeping();
 
-    protected IGGMPlayerEquipmentAnimationHelperFightStance equpmentAndFightAnim;
+    protected IGGMPlayerEquipmentAnimationFightStance equpmentAndFightAnim;
 
     protected Container ggmContainerEquipment;
 
@@ -396,26 +395,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public boolean setActiveAnimationHelperDirectly(String animationName)
+    public void setActiveAnimationDirectly(IAnimation animation)
     {
-        if (animationName.equals(this.equpmentAndFightAnim.getUnlocalizedName()))
-        {
-            if (this.activeAnimationHelper != this.equpmentAndFightAnim)
-            {
-                this.animationHelperToSet = this.equpmentAndFightAnim;
-                this.directlyChangeAnimationHelper();
-            }
-
-            return true;
-        }
-
-        return super.setActiveAnimationHelperDirectly(animationName);
-    }
-
-    @Override
-    protected void directlyChangeAnimationHelper()
-    {
-        super.directlyChangeAnimationHelper();
+        super.setActiveAnimationDirectly(animation);
 
         if (this.itemInUse != null && !this.activeAnimationHelper.allowUsingItems()) this.stopUsingItem();
     }
@@ -429,7 +411,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public IGGMPlayerEquipmentAnimationHelperFightStance getGGMEquipment()
+    public IGGMPlayerEquipmentAnimationFightStance getGGMEquipment()
     {
         return this.equpmentAndFightAnim;
     }
@@ -500,7 +482,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "isMovementBlocked", at = @At("RETURN"), cancellable = true)
     private void fixIsMovementBlocked(CallbackInfoReturnable<Boolean> cir)
     {
-        cir.setReturnValue(this.activeAnimationHelper.denyMovement() || cir.getReturnValue());
+        cir.setReturnValue(this.activeAnimationHelper.blockMovement() || cir.getReturnValue());
     }
 
 
@@ -532,7 +514,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "setItemInUse", at = @At("HEAD"), cancellable = true)
     private void useItemSettingDenying(ItemStack itemStack, int duration, CallbackInfo ci)
     {
-        if (this.activeAnimationHelper.denySetItemInUse(itemStack, duration)) ci.cancel();
+        if (!this.activeAnimationHelper.allowSetItemInUse(itemStack, duration)) ci.cancel();
     }
 
     @Inject(method = "setItemInUse", at = @At(value = "JUMP", ordinal = 1))
@@ -633,13 +615,13 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Override
     public short getCurrentAttackDuration()
     {
-        return (short) this.equpmentAndFightAnim.getEpisodeDuration();
+        return (short) this.equpmentAndFightAnim.getAnimationDuration();
     }
 
     @Override
     public short getAttackCountdown()
     {
-        return (short) this.equpmentAndFightAnim.getEpisodeCountdown();
+        return (short) this.equpmentAndFightAnim.getAnimationCountdown();
     }
 
 
@@ -699,13 +681,13 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
         {
             if (!this.inFightStance())
             {
-                this.tryChangeAnimationHelper(this.equpmentAndFightAnim);
+                this.tryChangeAnimation(this.equpmentAndFightAnim);
             }
         } else
         {
             if (this.inFightStance())
             {
-                this.tryChangeAnimationHelperToDefault();
+                this.clearAnimation();
             }
         }
     }
@@ -851,14 +833,14 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
     @Redirect(method = "dropOneItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;decrStackSize(II)Lnet/minecraft/item/ItemStack;"))
-    private ItemStack fixDroppingItem2(InventoryPlayer inventoryPlayer, int index, int episodeCountdown) {
+    private ItemStack fixDroppingItem2(InventoryPlayer inventoryPlayer, int index, int countdown) {
 
         if (this.inFightStance()) {
 
-            return this.equpmentAndFightAnim.decrStackSize(equpmentAndFightAnim.getCurrentItemIndex(), episodeCountdown);
+            return this.equpmentAndFightAnim.decrStackSize(equpmentAndFightAnim.getCurrentItemIndex(), countdown);
         }
 
-        return inventoryPlayer.decrStackSize(index, episodeCountdown);
+        return inventoryPlayer.decrStackSize(index, countdown);
     }*/
 
     @ModifyVariable(method = "getBreakSpeed(Lnet/minecraft/block/Block;ZIIII)F", at = @At(value = "LOAD", ordinal = 0), ordinal = 0, remap = false)

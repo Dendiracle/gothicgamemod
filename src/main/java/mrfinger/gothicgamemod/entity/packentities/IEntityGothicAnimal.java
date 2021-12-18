@@ -1,11 +1,10 @@
 package mrfinger.gothicgamemod.entity.packentities;
 
 import mrfinger.gothicgamemod.block.BlockAnimalEggs;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationHit;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttackAndStamina;
-import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithStamina;
 import mrfinger.gothicgamemod.init.GGMBlocks;
 import mrfinger.gothicgamemod.tileentity.TileEntityAnimalEgg;
 

@@ -3,7 +3,7 @@ package mrfinger.gothicgamemod.mixin.client.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.client.entity.IGGMAbstractClientPlayer;
-import mrfinger.gothicgamemod.client.entity.animations.hits.AnimationHelperPlayerFightStanceClient;
+import mrfinger.gothicgamemod.client.entity.animations.hits.AnimationPlayerFightStanceClient;
 import mrfinger.gothicgamemod.client.gui.GGMGuiCharachterMenu;
 import mrfinger.gothicgamemod.entity.inventory.GGMContainerPlayer;
 import mrfinger.gothicgamemod.mixin.common.entity.player.GGMEntityPlayer;
@@ -22,7 +22,7 @@ public abstract class GGMAbstractClientPlayer extends GGMEntityPlayer implements
     private void onInit(CallbackInfo ci)
     {
         GGMGuiCharachterMenu.loadStatHelpers(this);
-        this.equpmentAndFightAnim = new AnimationHelperPlayerFightStanceClient(this);
+        this.equpmentAndFightAnim = new AnimationPlayerFightStanceClient(this);
         this.ggmContainerEquipment = new GGMContainerPlayer(this);
     }
 

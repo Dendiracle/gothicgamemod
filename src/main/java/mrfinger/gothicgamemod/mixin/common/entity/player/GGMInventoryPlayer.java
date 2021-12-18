@@ -1,7 +1,7 @@
 package mrfinger.gothicgamemod.mixin.common.entity.player;
 
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationHelperFightStance;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(InventoryPlayer.class)
-public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimationHelperFightStance {
+public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimationFightStance
+{
 
 
     @Shadow public ItemStack[] mainInventory;
@@ -36,7 +37,7 @@ public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimation
 
 
     /*@ModifyVariable(method = "decrStackSize", at = @At(value = "JUMP", ordinal = 1))
-    private ItemStack[] fixDecrStackSize(ItemStack[] aitemstack, int index, int episodeCountdown) {
+    private ItemStack[] fixDecrStackSize(ItemStack[] aitemstack, int index, int countdown) {
 
         IGGMEntityPlayer player = (IGGMEntityPlayer) this.player;
 
@@ -330,11 +331,11 @@ public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimation
 
         for (int i = 0; i < this.equip.length; ++i) {
 
-            //this.equip[i] = ItemStack.copyItemStack(((IGGMPlayerEquipmentAnimationHelperFightStance) ip).getGGMEquipmentInSlot(i));
+            //this.equip[i] = ItemStack.copyItemStack(((IGGMPlayerEquipmentAnimationFightStance) ip).getGGMEquipmentInSlot(i));
             System.out.println("HHHHHHHHHHHHHH");
             this.equip[i] = null;
             System.out.println("LLLLLLLLLLLLLL");
-            ((IGGMPlayerEquipmentAnimationHelperFightStance) ip).getGGMEquipmentInSlot(i);
+            ((IGGMPlayerEquipmentAnimationFightStance) ip).getGGMEquipmentInSlot(i);
         }
     }*/
 

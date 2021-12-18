@@ -1,18 +1,21 @@
-package mrfinger.gothicgamemod.entity.animations;
+package mrfinger.gothicgamemod.entity.animation;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.instance.AbstractAnimationWithCulmination;
+import mrfinger.gothicgamemod.entity.animation.instance.AbtractAnimationHelper;
 import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 
-public abstract class AnimationHelperFightStance<Entity extends IGGMEntityWithAnimAttack, Episode extends IAnimationHit> extends AnimationHelperEntityLivingWithFunctions<Entity, Episode> implements IAnimationHelperFightStance<Entity, Episode>
+public abstract class AnimationFightStance<Entity extends IGGMEntityWithAnimAttack, Episode extends IAnimationHit> extends AbtractAnimationHelper<Entity, Episode> implements IAnimationFightStance<Entity, Episode>
 {
 
-    public AnimationHelperFightStance(Entity entity)
+    public AnimationFightStance(Entity entity)
     {
         super(entity);
     }
+
 
 
     @Override
@@ -25,12 +28,12 @@ public abstract class AnimationHelperFightStance<Entity extends IGGMEntityWithAn
     @Override
     public void updateAnimation()
     {
-        if (this.episodeCountdown > -this.episodeDuration)
+        if (this.countdown > -this.duration)
         {
             this.updateAttack();
-            --this.episodeCountdown;
+            --this.countdown;
 
-            if (this.episodeCountdown == -this.episodeDuration)
+            if (this.countdown == -this.duration)
             {
                 this.clearAnimationEpisode();
             }
@@ -79,39 +82,39 @@ public abstract class AnimationHelperFightStance<Entity extends IGGMEntityWithAn
     }
 
     @Override
-    public boolean denySetItemInUse(ItemStack itemStack, int duration)
+    public boolean allowSetItemInUse(ItemStack itemStack, int duration)
     {
-        return super.denySetItemInUse(itemStack, duration) || this.isUsingItem();
+        return super.allowSetItemInUse(itemStack, duration) || !this.isUsingItem();
     }
 
     @Override
-    public boolean denyChangeItem()
+    public boolean allowChangeItem()
     {
-        return super.denyChangeItem() || this.isUsingItem();
+        return super.allowChangeItem() || !this.isUsingItem();
     }
 
 
     @Override
-    public boolean denyMount(IGGMEntity entity, boolean flag)
+    public boolean allowMount(IGGMEntity entity, boolean flag)
     {
-        return this.episodeCountdown >= 0 || this.isUsingItem();
+        return this.countdown >= 0 || !this.isUsingItem();
     }
 
 
     @Override
     public void modifyModel(ModelBase model, float f0, float f1, float tickRate)
     {
-        if (this.episodeCountdown > -this.episodeDuration)
+        if (this.countdown > -this.duration)
         {
-            short count = this.episodeCountdown > 0 ? this.episodeCountdown : 0;
-            this.animationEpisode.updateModel(this.entity, model, ((this.episodeDuration - count) + tickRate) / this.episodeDuration);
+            short count = this.countdown > 0 ? this.countdown : 0;
+            this.animationEpisode.updateModel(this.entity, model, ((this.duration - count) + tickRate) / this.duration);
         }
     }
 
     @Override
     public String toString()
     {
-        return "AnimationHelperFightStance:" + this.getUnlocalizedName();
+        return "AnimationFightStance:" + this.getUnlocalizedName();
     }
 
 }

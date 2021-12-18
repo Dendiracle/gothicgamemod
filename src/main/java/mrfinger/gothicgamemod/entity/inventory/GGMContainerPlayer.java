@@ -3,7 +3,7 @@ package mrfinger.gothicgamemod.entity.inventory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.entity.player.IGGMEntityPlayer;
-import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationHelperFightStance;
+import mrfinger.gothicgamemod.entity.player.IGGMPlayerEquipmentAnimationFightStance;
 import mrfinger.gothicgamemod.inventory.IGGMContainer;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
 import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
@@ -33,7 +33,7 @@ public class GGMContainerPlayer extends Container implements IGGMContainer {
         this.ggmSlots = new ArrayList<>();
         this.player = player;
         InventoryPlayer inventoryPlayer = player.getInventoryPlayer();
-        IGGMPlayerEquipmentAnimationHelperFightStance ggmInventoryPlayer = player.getGGMEquipment();
+        IGGMPlayerEquipmentAnimationFightStance ggmInventoryPlayer = player.getGGMEquipment();
         int i, j;
 
         for (i = 0; i < 4; ++i) {

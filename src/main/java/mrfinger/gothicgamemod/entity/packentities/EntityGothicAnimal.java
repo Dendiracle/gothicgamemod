@@ -5,11 +5,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mrfinger.gothicgamemod.block.BlockAnimalEggs;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLiving;
-import mrfinger.gothicgamemod.entity.animations.*;
-import mrfinger.gothicgamemod.entity.animations.AnimationHelperGothicAnimalLiving;
-import mrfinger.gothicgamemod.entity.animations.IAnimationHelperFightStance;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.AnimationGothicAnimalLiving;
+import mrfinger.gothicgamemod.entity.animation.IAnimationFightStance;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.instance.AnimationFSWithAIGothicMob;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMDynamicAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attribute.attributeinfo.IAttributeInfoDynamic;
@@ -31,7 +32,7 @@ import java.util.Map;
 public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGothicAnimal
 {
 
-    protected final IAnimationHelperFightStance<EntityGothicAnimal, IAnimationHit> fightStanceAnimationHelper;
+    protected final IAnimationFightStance<EntityGothicAnimal, IAnimationHit> fightStanceAnimationHelper;
 
     protected final IGGMDynamicAttributeInstance stamina;
 
@@ -72,15 +73,15 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
 
     @Override
-    public IAnimationHelper getNewDefaultAnimationHelper()
+    public IAnimation getNewDefaultAnimationHelper()
     {
-        return new AnimationHelperGothicAnimalLiving(this);
+        return new AnimationGothicAnimalLiving(this);
     }
 
 
-    protected IAnimationHelperFightStance getNewAnimationFightStance()
+    protected IAnimationFightStance getNewAnimationFightStance()
     {
-        return new AnimationHelperFSWithAIGothicMob(this);
+        return new AnimationFSWithAIGothicMob(this);
     }
 
     protected int addTasks(int priority)
@@ -128,26 +129,11 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
 
 
     @Override
-    public IAnimationHelperFightStance getFightStanceAnimationHelper()
+    public IAnimationFightStance getFightStanceAnimationHelper()
     {
         return this.fightStanceAnimationHelper;
     }
 
-    @Override
-    public boolean setActiveAnimationHelperDirectly(String animationName)
-    {
-        if (animationName.equals(this.fightStanceAnimationHelper.getUnlocalizedName()))
-        {
-            if (this.getActiveAnimationHelper() != this.fightStanceAnimationHelper)
-            {
-                this.tryChangeAnimationHelper(this.fightStanceAnimationHelper);
-            }
-
-            return true;
-        }
-
-        return super.setActiveAnimationHelperDirectly(animationName);
-    }
 
     @Override
     public boolean attackEntityAsMob(Entity target)
@@ -171,13 +157,13 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     @Override
     public short getCurrentAttackDuration()
     {
-        return (short) this.fightStanceAnimationHelper.getEpisodeDuration();
+        return (short) this.fightStanceAnimationHelper.getAnimationDuration();
     }
 
     @Override
     public short getAttackCountdown()
     {
-        return (short) this.fightStanceAnimationHelper.getEpisodeCountdown();
+        return (short) this.fightStanceAnimationHelper.getAnimationCountdown();
     }
 
 
@@ -211,7 +197,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     @Override
     public boolean startAttack(IAnimationHit hitType)
     {
-        return (this.getActiveAnimationHelper() == this.fightStanceAnimationHelper || (this.tryChangeAnimationHelper(this.fightStanceAnimationHelper))) && this.canMeleeAttackAnimatedly() && this.fightStanceAnimationHelper.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
+        return (this.getActiveAnimation() == this.fightStanceAnimationHelper || (this.tryChangeAnimation(this.fightStanceAnimationHelper))) && this.canMeleeAttackAnimatedly() && this.fightStanceAnimationHelper.setAnimationEpisode(hitType, this.getNewAttackDuration(hitType));
     }
 
     @Override
@@ -302,7 +288,7 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     @Override
     public boolean isEntitySleeping()
     {
-        return this.getActiveAnimationHelper().getAnimationEpisode() == GGMEntityAnimations.AnimationSleepingEntityGothicAnimal;
+        return this.getActiveAnimation().getAnimationEpisode() == GGMEntityAnimations.AnimationSleepingEntityGothicAnimal;
     }
 
     @Override
@@ -330,15 +316,15 @@ public abstract class EntityGothicAnimal extends EntityHerd implements IEntityGo
     @Override
     public void wakeUpEntity()
     {
-        this.getActiveAnimationHelper().breakAnimationEpisode();
+        this.getActiveAnimation().breakAnimationEpisode();
     }
 
     @Override
     public void goToSleep()
     {
-        if (this.getActiveAnimationHelper() == this.getDefaultAnimationHelper())
+        if (this.getActiveAnimation() == this.getDefaultAnimationHelper())
         {
-            this.getActiveAnimationHelper().setAnimationEpisode(GGMEntityAnimations.AnimationSleepingEntityGothicAnimal);
+            this.getActiveAnimation().setAnimationEpisode(GGMEntityAnimations.AnimationSleepingEntityGothicAnimal);
         }
     }
 

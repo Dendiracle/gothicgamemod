@@ -5,6 +5,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -55,7 +56,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
     @Override
     public void onItemEquiped(ItemStack itemStack, IGGMEntityLivingBase player) {
 
-        if (player.isClientWorld()) {
+        if (((EntityPlayer) player).isClientWorld()) {
 
             UUID id;
 
@@ -93,7 +94,7 @@ public class ItemGGMEquipAttributeBonus extends ItemGGMEquip implements IItemGGM
     @Override
     public void onItemRemoved(ItemStack itemStack, IGGMEntityLivingBase player) {
 
-        if (!player.isClientWorld()) {
+        if (!((EntityPlayer) player).isClientWorld()) {
 
             UUID id = new UUID(itemStack.stackTagCompound.getLong("GGMIDMS"), itemStack.stackTagCompound.getLong("GGMIDLS"));
 

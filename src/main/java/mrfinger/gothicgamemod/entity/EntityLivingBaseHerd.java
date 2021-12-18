@@ -17,8 +17,8 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     {
         super(world);
 
-        this.setDefaulAnimationHelper(new AnimationHelperGothicAnimalLiving(this));
-        this.setActiveAnimationHelperDirectly(this.getDefaultAnimationHelper());
+        this.setDefaulAnimationHelper(new AnimationGothicAnimalLiving(this));
+        this.setActiveAnimationDirectly(this.getDefaultAnimationHelper());
     }
 
 
@@ -271,10 +271,10 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
                     vec3 = null;
                     this.pathToEntity = null;
 
-                    if (this.entityToAttack == null && this.getActiveAnimationHelper().getAnimationEpisode() == null)
+                    if (this.entityToAttack == null && this.getActiveAnimation().getAnimationEpisode() == null)
                     {
                         IAnimationEpisode episode = this.getRandomJustLivingEpisode();
-                        this.getActiveAnimationHelper().setAnimationEpisode(episode, episode.getStandartDuration());
+                        this.getActiveAnimation().setAnimationEpisode(episode, episode.getStandartDuration());
                     }
                 }
                 else
@@ -429,7 +429,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     @Override
     public boolean isCanJustLive()
     {
-        return this.pathToEntity == null && this.getActiveAnimationHelper().getAnimationEpisode() == null;
+        return this.pathToEntity == null && this.getActiveAnimation().getAnimationEpisode() == null;
     }
 
     @Override

@@ -1,19 +1,23 @@
-package mrfinger.gothicgamemod.entity.animations;
+package mrfinger.gothicgamemod.entity.animation;
 
-import mrfinger.gothicgamemod.entity.animations.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.instance.AbstractAnimationEntityAI;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
 import mrfinger.gothicgamemod.init.GGMEntityAnimations;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.EntityAIBase;
 
-public class AnimationHelperGothicAnimalLiving extends AbstractAnimationHelperEntityAI<IEntityGothicAnimal, IAnimationEpisode> implements IAnimationHelper<IEntityGothicAnimal, IAnimationEpisode>
+public class AnimationGothicAnimalLiving extends EntityAIBase
 {
 
+    protected IEntityGothicAnimal entity;
     protected boolean isEntityHavePath;
     protected boolean isEntityHaunts;
     protected byte episodesSeries;
 
 
-    public AnimationHelperGothicAnimalLiving(IEntityGothicAnimal entity)
+    public AnimationGothicAnimalLiving(IEntityGothicAnimal entity)
     {
         this.entity = entity;
     }
@@ -22,14 +26,7 @@ public class AnimationHelperGothicAnimalLiving extends AbstractAnimationHelperEn
     @Override
     public boolean shouldExecute()
     {
-        return this.entity.getActiveAnimationHelper() == this;
-    }
-
-    @Override
-    public void resetTask()
-    {
-        if (this.animationEpisode != null) this.clearAnimationEpisode();
-        super.resetTask();
+        return this.entity.getEntityToAttack() == null;
     }
 
 
@@ -47,7 +44,7 @@ public class AnimationHelperGothicAnimalLiving extends AbstractAnimationHelperEn
                 this.entity.cleartPath();
                 if (this.entity.isEntityLookingFor((Entity) this.entity.getEntityToAttack(), 30F, 30F))
                 {
-                    this.setAnimationEpisode(GGMEntityAnimations.AnimationAggrEntityGothicAnimal);
+                    this.entity.setAnimationEpisode(GGMEntityAnimations.AnimationAggrEntityGothicAnimal);
                 }
                 else
                 {

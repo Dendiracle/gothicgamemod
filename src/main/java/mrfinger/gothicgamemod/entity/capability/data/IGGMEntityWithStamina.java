@@ -14,7 +14,7 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase
     @Override
     default boolean canJump()
     {
-        return this.getActiveAnimationHelper().allowJump() && this.getStaminaSpendingFromJump() <= this.getStaminaAttribute().getDynamicValue();
+        return this.getActiveAnimation().allowJump() && this.getStaminaSpendingFromJump() <= this.getStaminaAttribute().getDynamicValue();
     }
 
     float getStaminaSpendingFromJump();
@@ -22,7 +22,7 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase
     @Override
     default void onJump()
     {
-        this.getActiveAnimationHelper().onJumped();
+        this.getActiveAnimation().onJumped();
         this.staminaOnJump();
     }
 
@@ -45,14 +45,14 @@ public interface IGGMEntityWithStamina extends IGGMEntityLivingBase
 
     default void staminaMoveUpdate()
     {
-        if (this.isSprinting() && ((EntityLivingBase) this).moveForward > this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getBaseValue())
+        if (((EntityLivingBase) this).isSprinting() && ((EntityLivingBase) this).moveForward > this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).getBaseValue())
         {
             IGGMDynamicAttributeInstance stamina = this.getStaminaAttribute();
             double d = this.getStaminaSpendingOnSprint();
             double dd = stamina.getDynamicValue();
             if (dd < d)
             {
-                this.setSprinting(false);
+                ((EntityLivingBase) this).setSprinting(false);
             }
             else if (!((EntityLivingBase) this).worldObj.isRemote)
             {

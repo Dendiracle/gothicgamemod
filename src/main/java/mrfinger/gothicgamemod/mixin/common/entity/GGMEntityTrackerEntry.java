@@ -47,19 +47,19 @@ public abstract class GGMEntityTrackerEntry
 
             IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.myEntity;
 
-            if (entity.isNeedSyncAnimation())
+            if (entity.checkToNeedSyncAnimation())
             {
-                String episodeName = entity.getActiveAnimationHelper().getAnimationEpisode() != null ? entity.getActiveAnimationHelper().getAnimationEpisode().getUnlocalizedName() : null;
+                String episodeName = entity.getActiveAnimation().getAnimationEpisode() != null ? entity.getActiveAnimation().getAnimationEpisode().getUnlocalizedName() : null;
 
                 if (entity instanceof IGGMEntityPlayerMP)
                 {
-                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimationHelper().getUnlocalizedName(), episodeName, entity.getActiveAnimationHelper().getEpisodeCountdown());
+                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                     PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) this.myEntity);
                 }
 
                 for (Object o : this.trackingPlayers)
                 {
-                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimationHelper().getUnlocalizedName(), episodeName, entity.getActiveAnimationHelper().getEpisodeCountdown());
+                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                     PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) o);
                 }
 
@@ -128,7 +128,7 @@ public abstract class GGMEntityTrackerEntry
             dpiColl.clear();
         }
 
-        if (entity.isNeedExpUpdate()) {
+        if (entity.checkNeedExpUpdate()) {
 
             if (this.trackedEntity instanceof IGGMEntityPlayerMP) {
 
@@ -147,19 +147,19 @@ public abstract class GGMEntityTrackerEntry
     {
         IGGMEntityLivingBase entity = (IGGMEntityLivingBase) this.trackedEntity;
 
-        if (entity.isNeedSyncAnimation())
+        if (entity.checkToNeedSyncAnimation())
         {
-            String episodeName = entity.getActiveAnimationHelper().getAnimationEpisode() != null ? entity.getActiveAnimationHelper().getAnimationEpisode().getUnlocalizedName() : null;
+            String episodeName = entity.getActiveAnimation().getAnimationEpisode() != null ? entity.getActiveAnimation().getAnimationEpisode().getUnlocalizedName() : null;
 
             if (entity instanceof IGGMEntityPlayerMP)
             {
-                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimationHelper().getUnlocalizedName(), episodeName, entity.getActiveAnimationHelper().getEpisodeCountdown());
+                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                 PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) this.trackedEntity);
             }
 
             for (Object o : this.trackingPlayers)
             {
-                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimationHelper().getUnlocalizedName(), episodeName, entity.getActiveAnimationHelper().getEpisodeCountdown());
+                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                 PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) o);
             }
 

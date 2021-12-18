@@ -1,9 +1,9 @@
 package mrfinger.gothicgamemod.entity.player;
 
-/*public class GGMPlayerEquipmentAnimationHelperFightStance extends InventoryPlayer implements IGGMPlayerEquipmentAnimationHelperFightStance {
+/*public class GGMPlayerEquipmentAnimationFightStance extends InventoryPlayer implements IGGMPlayerEquipmentAnimationFightStance {
 
 
-    public GGMPlayerEquipmentAnimationHelperFightStance(IGGMEntityPlayer player) {
+    public GGMPlayerEquipmentAnimationFightStance(IGGMEntityPlayer player) {
         super((EntityPlayer) player);
         this.mainInventory = new ItemStack[6];
         this.armorInventory = new ItemStack[6];
