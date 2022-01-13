@@ -3,7 +3,6 @@ package mrfinger.gothicgamemod.entity.animation.instance;
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
-import mrfinger.gothicgamemod.entity.animation.manager.IAnimationManager;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
@@ -16,15 +15,40 @@ public interface IAnimation<Entity extends IGGMEntityLivingBase>
 
     Entity getEntity();
 
-    void setEntity(Entity entity);
+    void onSet(Entity entity, IAnimationPlayer player);
 
 
     void updateAnimation(IAnimationPlayer animationPlayer);
 
 
-    boolean isCanAnimationHelperWillChanged();
+    boolean isCanAnimationWillChangedFor(IAnimationManager manager);
 
-    void onRemoveAnimation(Entity entity);
+    boolean isCanAnimationWillChangedFor(IAnimation animation);
+
+    void onRemoveAnimation(Entity entity, IAnimationPlayer animationPlayer);
+
+
+    default int getDuration()
+    {
+        return -1;
+    }
+
+    default int getCountdown()
+    {
+        return -1;
+    }
+
+    default void setDuration(int value) {}
+
+    default void resizeDuration(float value) {}
+
+    default void setCountdown(int value) {}
+
+
+    default boolean isHurtingAnimation()
+    {
+        return false;
+    }
 
 
     default void controlEntityMovement() {}
@@ -85,6 +109,6 @@ public interface IAnimation<Entity extends IGGMEntityLivingBase>
     }
 
 
-    default void modifyModel(ModelBase model, float f0, float f1, float tickRate) {}
+    default void animateModel(ModelBase model, float f0, float f1, float tickRate) {}
 
 }

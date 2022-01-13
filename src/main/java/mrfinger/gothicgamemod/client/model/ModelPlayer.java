@@ -104,12 +104,12 @@ public class ModelPlayer extends ModelBiped
         this.forearmRight.rotateAngleX = keks;
         this.forearmLeft.rotateAngleZ = keks;*/
 
-        ((IGGMEntityPlayer) entity).getActiveAnimation().modifyModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
+        if (((IGGMEntityPlayer) entity).getActiveAnimation() != null) ((IGGMEntityPlayer) entity).getActiveAnimation().animateModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
 
     }
 
 
-    public void updateAnimationHitSplash(IGGMEntityPlayer player, IAnimationEpisode animationEpisode, float progress)
+    public void updateAnimationHitSplash(IGGMEntityPlayer player, float progress)
     {
         if (progress > 1.5F) progress = 1.5F;
 

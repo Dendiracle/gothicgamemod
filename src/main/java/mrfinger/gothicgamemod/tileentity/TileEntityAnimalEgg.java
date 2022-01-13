@@ -1,14 +1,12 @@
 package mrfinger.gothicgamemod.tileentity;
 
 import mrfinger.gothicgamemod.entity.packentities.IEntityGothicAnimal;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 
 public class TileEntityAnimalEgg extends TileEntity
 {
@@ -30,7 +28,7 @@ public class TileEntityAnimalEgg extends TileEntity
         {
             NBTTagCompound babyNBT = new NBTTagCompound();
             babyNBT.setString("id", EntityList.getEntityString((Entity) baby));
-            baby.writeToNBT(babyNBT);
+            baby.writeToNBTGGM(babyNBT);
             this.babyNBT = babyNBT;
         }
         else

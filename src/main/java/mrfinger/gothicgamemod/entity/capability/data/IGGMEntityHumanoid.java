@@ -1,6 +1,8 @@
 package mrfinger.gothicgamemod.entity.capability.data;
 
-public interface IGGMEntityHumanoid extends IGGMEntityWithAnimAttack
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+
+public interface IGGMEntityHumanoid extends IGGMEntityLivingBase
 {
 
 }

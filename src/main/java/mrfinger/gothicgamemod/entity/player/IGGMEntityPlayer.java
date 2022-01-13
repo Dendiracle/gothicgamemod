@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 
-public interface IGGMEntityPlayer extends IGGMEntityExperienceableWithEXPInside, IGGMEntityWithAnimAttackAndStamina, IGGMEntityCaster, IGGMEntityHumanoid
+public interface IGGMEntityPlayer extends IGGMEntityExperienceableWithEXPInside, IGGMEntityWithStamina, IGGMEntityCaster, IGGMEntityHumanoid
 {
 
         @Override
@@ -25,7 +25,16 @@ public interface IGGMEntityPlayer extends IGGMEntityExperienceableWithEXPInside,
         Container getGGMContainer();
 
 
-        ItemStack getSecHeldItem();
+        ItemStack getFirstHeldItem();
+
+        ItemStack getSecondHeldItem();
+
+
+        @Override
+        default boolean isCanJump()
+        {
+                return IGGMEntityWithStamina.super.isCanJump();
+        }
 
 
         boolean isUsingItem();

@@ -1,22 +1,21 @@
 package mrfinger.gothicgamemod.entity.effect.instance;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
+import mrfinger.gothicgamemod.entity.effect.IGGMEffectManager;
 
 public abstract class GGMEffectInstance implements IGGMEffectInstance
 {
 
-    protected final IGGMEffect genericEffect;
+    protected final IGGMEffectManager genericEffect;
 
 
-    public GGMEffectInstance(IGGMEffect genericEffect)
+    public GGMEffectInstance(IGGMEffectManager genericEffect)
     {
         this.genericEffect = genericEffect;
     }
 
 
     @Override
-    public IGGMEffect getGenericEffect()
+    public IGGMEffectManager getGenericEffect()
     {
         return this.genericEffect;
     }

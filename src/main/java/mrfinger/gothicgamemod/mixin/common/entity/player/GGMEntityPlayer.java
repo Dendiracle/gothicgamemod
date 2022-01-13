@@ -19,6 +19,8 @@ import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.item.IItemBlocker;
 import mrfinger.gothicgamemod.item.IItemEquip;
 import mrfinger.gothicgamemod.item.IItemMeleeWeapon;
+import mrfinger.gothicgamemod.mixin.common.entity.AAAA;
+import mrfinger.gothicgamemod.mixin.common.entity.AAAAA;
 import mrfinger.gothicgamemod.mixin.common.entity.GGMEntityLivingBase;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.entity.Entity;
@@ -62,7 +64,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     protected IGGMDynamicAttributeInstance stamina;
     protected IGGMDynamicAttributeInstance mana;
 
-    //protected Map<IGGMEffect, IGGMEffectInstance> useItemEffectsMap;
+    //protected Map<IGGMEffectManager, IGGMEffectInstance> useItemEffectsMap;
 
     @Shadow
     private ItemStack itemInUse;
@@ -368,6 +370,21 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
 
+    @Override
+    public ItemStack getFirstHeldItem()
+    {
+        return this.getHeldItem();
+    }
+
+    @Shadow public abstract ItemStack getHeldItem();
+
+    @Override
+    public ItemStack getSecondHeldItem()
+    {
+        return this.equpmentAndFightAnim.getSecHeldItem();
+    }
+
+
     @Inject(method = "onLivingUpdate", at = @At("TAIL"))
     private void onOnLivingUpdate(CallbackInfo ci)
     {
@@ -399,7 +416,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     {
         super.setActiveAnimationDirectly(animation);
 
-        if (this.itemInUse != null && !this.activeAnimationHelper.allowUsingItems()) this.stopUsingItem();
+        if (this.itemInUse != null && !this.activeAnimation.allowUsingItems()) this.stopUsingItem();
     }
 
 
@@ -439,25 +456,25 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public boolean canJump()
+    public boolean isCanJump()
     {
-        return this.inCreative() || super.canJump();
+        return this.inCreative() || IGGMEntityPlayer.super.isCanJump();
     }
 
     @Override
-    public double getJumpHeight()
+    public double getJumpBaseHeight()
     {
-        return super.getJumpHeight() + this.getEntityAttribute(GGMCapabilities.dexterity).getAttributeValue() * 0.0005D;
+        return super.getJumpBaseHeight() + this.getEntityAttribute(GGMCapabilities.dexterity).getAttributeValue() * 0.0005D;
     }
 
-    @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
-    private void onJump(CallbackInfo ci)
+    /*@Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
+    private void onJumped(CallbackInfo ci)
     {
-        if (!this.canJump())
+        if (!this.isCanJump())
         {
             ci.cancel();
         }
-    }
+    }*/
 
 
     @Override
@@ -482,15 +499,9 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "isMovementBlocked", at = @At("RETURN"), cancellable = true)
     private void fixIsMovementBlocked(CallbackInfoReturnable<Boolean> cir)
     {
-        cir.setReturnValue(this.activeAnimationHelper.blockMovement() || cir.getReturnValue());
+        cir.setReturnValue(this.activeAnimation.blockMovement() || cir.getReturnValue());
     }
 
-
-    @Override
-    public ItemStack getSecHeldItem()
-    {
-        return this.equpmentAndFightAnim.getSecHeldItem();
-    }
 
     @Override
     public boolean isUsingLH()
@@ -514,20 +525,20 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Inject(method = "setItemInUse", at = @At("HEAD"), cancellable = true)
     private void useItemSettingDenying(ItemStack itemStack, int duration, CallbackInfo ci)
     {
-        if (!this.activeAnimationHelper.allowSetItemInUse(itemStack, duration)) ci.cancel();
+        if (!this.activeAnimation.allowSetItemInUse(itemStack, duration)) ci.cancel();
     }
 
     @Inject(method = "setItemInUse", at = @At(value = "JUMP", ordinal = 1))
     private void animationOnSetUseItemEvent(ItemStack itemStack, int duration, CallbackInfo ci)
     {
-        this.activeAnimationHelper.onItemUseSetted(itemStack, duration);
-        System.out.println("Debug in GGMEntityPlayer activeAnimationHelper.onItemUseSetted");
+        this.activeAnimation.onItemUseSetted(itemStack, duration);
+        System.out.println("Debug in GGMEntityPlayer activeAnimation.onItemUseSetted");
     }
 
     /*@Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/Item;onUsingTick(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;I)V"), remap = false)
     private void animationOnItemUsingTick(CallbackInfo ci)
     {
-        this.activeAnimationHelper.onUsingItem(this.itemInUse, this.itemInUseCount);
+        this.activeAnimation.onUsingItem(this.itemInUse, this.itemInUseCount);
     }*/
 
 
@@ -601,12 +612,6 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
 
     @Override
-    public short getNewAttackDuration(IAnimationHit hitType)
-    {
-        return (short) hitType.getStandartDuration();
-    }
-
-    @Override
     public IAnimationHit getCurrentAttackHitTYpe()
     {
         return (IAnimationHit) this.equpmentAndFightAnim.getAnimationEpisode();
@@ -641,7 +646,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     @Override
     public boolean inFightStance()
     {
-        return this.activeAnimationHelper == this.equpmentAndFightAnim;
+        return this.activeAnimation == this.equpmentAndFightAnim;
     }
 
     @Override
@@ -826,7 +831,7 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
 
         if (this.inFightStance() && itemStack == null)
         {
-            itemStack = this.equpmentAndFightAnim.getSecHeldItem();
+            itemStack = this.equpmentAndFightAnim.getSecondHeldItem();
         }
         System.out.println("Debug in " + this.getClass() + " Ondropitem Item is: " + itemStack);
         return itemStack;
@@ -862,9 +867,29 @@ public abstract class GGMEntityPlayer extends GGMEntityLivingBase implements IGG
     }
 
 
+    /*@Override
+    public boolean startAnimatedAttack(IAnimationManager manager)
+    {
+        double staminaSpending = this.getStaminaSpendingFromAnimatedAttack();
+
+        if (staminaSpending <= this.getStamina() && super.startAnimatedAttack(manager))
+        {
+            this.stamina.changeCurrentValue(-staminaSpending);
+            return true;
+        }
+
+        return false;
+    }*/
+
+    @Override
+    public boolean hitEntity(Entity entity, ItemStack itemStack, float damageMultiplier)
+    {
+        return false;
+    }
+
+
     public EntityPlayer thisEntity()
     {
         return (EntityPlayer) (Object) this;
     }
-
 }

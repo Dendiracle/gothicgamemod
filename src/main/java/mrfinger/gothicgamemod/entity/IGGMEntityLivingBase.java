@@ -1,15 +1,13 @@
 package mrfinger.gothicgamemod.entity;
 
-import mrfinger.gothicgamemod.battle.DamageType;
 import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
 import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
-import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
+import mrfinger.gothicgamemod.entity.effect.IGGMEffectManager;
 import mrfinger.gothicgamemod.entity.effect.instance.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.properties.IEntityProperties;
 import mrfinger.gothicgamemod.fractions.Fraction;
-import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMFractions;
 import mrfinger.gothicgamemod.mixin.common.entity.IGGMEntityLivingBaseAccessor;
 import net.minecraft.entity.Entity;
@@ -86,12 +84,8 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 		return null;
 	}
 
-	/*
-	 * Returns true if after this method activeAnimationHelper
-	 * is agrument.
-	 */
 	@Override
-	default boolean tryChangeAnimation(IAnimation animation)
+	default boolean tryEndAnimation()
 	{
 		return true;
 	}
@@ -131,7 +125,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 	}
 
 
-	default IGGMEffectInstance getEffect(IGGMEffect effect)
+	default IGGMEffectInstance getEffect(IGGMEffectManager effect)
 	{
 		return null;
 	}
@@ -141,22 +135,22 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 		return null;
 	}
 
-	default IGGMEffectInstance removeEffect(IGGMEffect effect)
+	default IGGMEffectInstance removeEffect(IGGMEffectManager effect)
 	{
 		return null;
 	}
 
-	default Map<IGGMEffect, IGGMEffectInstance> getEffectsMap()
+	default Map<IGGMEffectManager, IGGMEffectInstance> getEffectsMap()
 	{
 		return null;
 	}
 
-	/*default Map<IGGMEffect, IGGMEffectInstance> getBattleEffectsMap()
+	/*default Map<IGGMEffectManager, IGGMEffectInstance> getBattleEffectsMap()
 	{
 		return null;
 	}
 
-	default Map<IGGMEffect, IGGMEffectInstance> getOtherEffectsMap()
+	default Map<IGGMEffectManager, IGGMEffectInstance> getOtherEffectsMap()
 	{
 		return null;
 	}
@@ -165,6 +159,26 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 	default IGGMAttributeInstance getHealthAttribute()
 	{
 		return null;
+	}
+
+	default double getHealtH()
+	{
+		return ((EntityLivingBase) this).getHealth();
+	}
+
+	default double getMaxHealtH()
+	{
+		return ((EntityLivingBase) this).getMaxHealth();
+	}
+
+	default void setHealth(double health)
+	{
+		((EntityLivingBase) this).setHealth((float) health);
+	}
+
+	default void changeHealth(double value)
+	{
+		((EntityLivingBase) this).setHealth((float) (this.getHealtH() + value));
 	}
 
 
@@ -209,19 +223,24 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 	}
 
 
-	default boolean canJump()
+	default boolean isCanJump()
 	{
-		return this.getActiveAnimation().allowJump();
+		return this.getActiveAnimation() == null || this.getActiveAnimation().allowJump();
 	}
 
-	default double getJumpHeight()
+	default void onJumped()
+	{
+		for (IGGMEffectInstance effect : this.getEffectsMap().values())
+		{
+			effect.onJumped();
+		}
+
+		if (this.getActiveAnimation() != null) this.getActiveAnimation().onJumped();
+	}
+
+	default double getJumpBaseHeight()
 	{
 		return 0.41999998688697815D;
-	}
-
-	default void onJump()
-	{
-		this.getActiveAnimation().onJumped();
 	}
 
 
@@ -251,12 +270,7 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 	}
 
 
-	default DamageType getStandartMeleeDamageType()
-	{
-		return GGMBattleSystem.crushing;
-	}
-
-	default boolean meleeAttack(Entity entity, float distanceSQ)
+	/*default boolean meleeAttack(Entity entity, float distanceSQ)
 	{
 		float attackRange = ((EntityLivingBase) this).width * 0.5F + this.getMeleeAttackDistance() + entity.width * 0.5F;
 		attackRange *= attackRange;
@@ -268,19 +282,58 @@ public interface IGGMEntityLivingBase extends IGGMEntityLivingBaseAccessor, IAni
 		}
 
 		return false;
+	}*/
+
+
+	default boolean inFightStance()
+	{
+		return false;
 	}
 
-	default short attackBreak()
+	default boolean swicthToFightStance()
+	{
+		return false;
+	}
+
+
+	default int getCurrentAttackDuration()
+	{
+		IAnimation animation = this.getActiveAnimation();
+		return animation != null && animation.isHurtingAnimation() ? animation.getDuration() : 0;
+	}
+
+	default int getAttackCountdown()
+	{
+		IAnimation animation = this.getActiveAnimation();
+		return animation != null && animation.isHurtingAnimation() ? animation.getCountdown() : 0;
+	}
+
+/*
+	default boolean startAnimatedAttack(IAnimationHitManager manager)
+	{
+		return (this.inFightStance() || this.swicthToFightStance()) && this.tryChangeAnimation(manager);
+	}
+*/
+	default boolean startAttack(Entity entity, float distance)
+	{
+		return false;
+	}
+
+	default boolean hitEntity(Entity entity, ItemStack itemStack, float damageMultiplier)
+	{
+		return false;
+	}
+
+
+	default int attackBreak()
 	{
 		return 20;
 	}
 
 	default float getMeleeAttackDistance()
 	{
-		return 1.0F;
+		return 1F;
 	}
-
-	default void onAnimatedMeleeAttack() {}
 
 
 	default void saveExp(NBTTagCompound nbt) {}

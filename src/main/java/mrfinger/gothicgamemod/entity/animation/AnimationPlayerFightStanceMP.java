@@ -44,7 +44,7 @@ public class AnimationPlayerFightStanceMP extends GGMPlayerEquipmentAnimationFig
         {
             for (IGGMEntity target : this.targets)
             {
-                if (target != null && target.isEntityAlive()) ((EntityPlayer) this.entity).attackTargetEntityWithCurrentItem((Entity) target);
+                if (target != null && target.entityAlive()) ((EntityPlayer) this.entity).attackTargetEntityWithCurrentItem((Entity) target);
             }
 
             this.targets = null;

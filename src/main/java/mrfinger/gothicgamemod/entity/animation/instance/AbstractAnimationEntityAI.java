@@ -1,8 +1,7 @@
 package mrfinger.gothicgamemod.entity.animation.instance;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animation.manager.IAnimationManager;
-import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
+import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
 import net.minecraft.entity.ai.EntityAIBase;
 
 public abstract class AbstractAnimationEntityAI<Entity extends IGGMEntityLivingBase> extends EntityAIBase implements IAnimation<Entity>
@@ -18,13 +17,13 @@ public abstract class AbstractAnimationEntityAI<Entity extends IGGMEntityLivingB
     }
 
     @Override
-    public void setEntity(Entity entity)
+    public void onSet(Entity entity, IAnimationPlayer animationPlayer)
     {
         this.entity = entity;
     }
 
     @Override
-    public void onRemoveAnimation(Entity entity)
+    public void onRemoveAnimation(Entity entity, IAnimationPlayer animationPlayer)
     {
         if (this.entity == entity) this.entity = null;
     }

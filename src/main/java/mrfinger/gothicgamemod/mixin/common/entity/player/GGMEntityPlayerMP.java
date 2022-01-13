@@ -85,7 +85,7 @@ public abstract class GGMEntityPlayerMP extends GGMEntityPlayer implements IGGME
 
             if (this.repeatStartAttack && this.attackTicksLeft <= 0) {
 
-                this.startAttack();
+                this.startAnimatedAttack();
                 this.repeatStartAttack = false;
             }
         }

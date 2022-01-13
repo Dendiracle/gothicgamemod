@@ -7,13 +7,13 @@ import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 
-public interface IAnimationHelper<Entity extends IGGMEntityLivingBase, Animation extends IAnimation<Entity>> extends IAnimation<Entity>, IAnimationPlayer<Animation>
+public interface IAnimationHelper<Entity extends IGGMEntityLivingBase, Animation extends IAnimation<Entity>> extends IAnimation<Entity>, IAnimationPlayer<Entity, Animation>
 {
 
     @Override
-    default void setEntity(Entity entity)
+    default void onSet(Entity entity, IAnimationPlayer animationPlayer)
     {
-        if (this.getActiveAnimation() != null) this.getActiveAnimation().setEntity(entity);
+        if (this.getActiveAnimation() != null) this.getActiveAnimation().onSet(entity, animationPlayer);
     }
 
 
@@ -25,15 +25,38 @@ public interface IAnimationHelper<Entity extends IGGMEntityLivingBase, Animation
 
 
     @Override
-    default boolean isCanAnimationHelperWillChanged()
+    default boolean isCanAnimationWillChangedFor(IAnimationManager manager)
     {
-        return this.getActiveAnimation() == null || this.getActiveAnimation().isCanAnimationHelperWillChanged();
+        return this.getActiveAnimation() == null || this.getActiveAnimation().isCanAnimationWillChangedFor(manager);
     }
 
     @Override
-    default void onRemoveAnimation(Entity entity)
+    default boolean isCanAnimationWillChangedFor(IAnimation animation)
     {
-        if (this.getActiveAnimation() != null) this.getActiveAnimation().onRemoveAnimation(entity);
+        return this.getActiveAnimation() == null || this.getActiveAnimation().isCanAnimationWillChangedFor(animation);
+    }
+
+    @Override
+    default void onRemoveAnimation(Entity entity, IAnimationPlayer animationPlayer)
+    {
+        if (this.getActiveAnimation() != null) this.getActiveAnimation().onRemoveAnimation(entity, animationPlayer);
+    }
+
+
+    default int getDuration()
+    {
+        return this.getActiveAnimation() != null ? this.getActiveAnimation().getDuration() : 0;
+    }
+
+    default int getCountdown()
+    {
+        return this.getActiveAnimation() != null ? this.getActiveAnimation().getCountdown() : 0;
+    }
+
+
+    default boolean isHurtingAnimation()
+    {
+        return this.getActiveAnimation() != null && this.getActiveAnimation().isHurtingAnimation();
     }
 
 
@@ -128,9 +151,9 @@ public interface IAnimationHelper<Entity extends IGGMEntityLivingBase, Animation
 
 
     @Override
-    default void modifyModel(ModelBase model, float f0, float f1, float tickRate)
+    default void animateModel(ModelBase model, float f0, float f1, float tickRate)
     {
-        if (this.getActiveAnimation() != null) this.getActiveAnimation().modifyModel(model, f0, f1, tickRate);
+        if (this.getActiveAnimation() != null) this.getActiveAnimation().animateModel(model, f0, f1, tickRate);
     }
 
 }

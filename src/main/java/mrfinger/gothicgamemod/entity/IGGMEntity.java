@@ -1,5 +1,6 @@
 package mrfinger.gothicgamemod.entity;
 
+import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,7 +12,10 @@ import java.util.Random;
 public interface IGGMEntity
 {
 
-    int getEntityId();
+    default int getEntityID()
+    {
+        return 0;
+    }
 
     default IGGMWorld getEntityWorld()
     {
@@ -19,7 +23,10 @@ public interface IGGMEntity
     }
 
 
-    boolean isEntityAlive();
+    default boolean entityAlive()
+    {
+        return false;
+    }
 
 
     default double getPosX()
@@ -37,14 +44,20 @@ public interface IGGMEntity
         return 0.0D;
     }
 
-    float getEyeHeight();
+    default float eyeHeight()
+    {
+        return 0F;
+    }
 
     default float getRotationYaw()
     {
         return 0.0F;
     }
 
-    float getRotationYawHead();
+    default float getHeadRotationYaw()
+    {
+        return 0F;
+    }
 
     default float getRotationPitch()
     {
@@ -68,16 +81,28 @@ public interface IGGMEntity
     }
 
 
-    void setLocationAndAngles(double p_70012_1_, double p_70012_3_, double p_70012_5_, float p_70012_7_, float p_70012_8_);
+    default boolean onGround()
+    {
+        return true;
+    }
 
 
-    float getDistanceToEntity(Entity entity);
+    //void setLocationAndAngles(double p_70012_1_, double p_70012_3_, double p_70012_5_, float p_70012_7_, float p_70012_8_);
 
-    double getDistanceSq(double x, double y, double z);
 
-    double getDistance(double x, double y, double z);
+    default float getDistanceToEntity(IGGMEntity entity)
+    {
+        return 0F;
+    }
 
-    double getDistanceSqToEntity(Entity entity);
+    //double getDistanceSq(double x, double y, double z);
+
+    //double getDistance(double x, double y, double z);
+
+    default double getDistanceSqToEntity(IGGMEntity entity)
+    {
+        return 0D;
+    }
 
 
     default float getWidth()
@@ -91,7 +116,10 @@ public interface IGGMEntity
     }
 
 
-    boolean canEntityBeSeen(Entity entity);
+    default boolean canEntityBeSeen(IGGMEntity entity)
+    {
+        return false;
+    }
 
     default void faceEntity(Entity p_70625_1_, float p_70625_2_, float p_70625_3_) {}
 
@@ -101,7 +129,7 @@ public interface IGGMEntity
         return null;
     }
 
-    void playSound(String name, float volume, float pitch);
+    //void playSound(String name, float volume, float pitch);
 
 
     default boolean isCanMount(Entity entity)
@@ -109,7 +137,10 @@ public interface IGGMEntity
         return true;
     }
 
-    boolean isRiding();
+    default boolean isOnMount()
+    {
+        return false;
+    }
 
     default Entity getRidingEntity()
     {
@@ -117,7 +148,10 @@ public interface IGGMEntity
     }
 
 
-    boolean attackEntityFrom(DamageSource damageSource, float damage);
+    default boolean attackEntityFrom(IGGMDamageSource damageSource, float damage)
+    {
+        return false;
+    }
 
 
     default void onKilledEntity(EntityLivingBase entity)
@@ -134,8 +168,8 @@ public interface IGGMEntity
     }
 
 
-    void writeToNBT(NBTTagCompound nbt);
+    void writeToNBTGGM(NBTTagCompound nbt);
 
-    void readFromNBT(NBTTagCompound nbt);
+    void readFromNBTGGM(NBTTagCompound nbt);
 
 }

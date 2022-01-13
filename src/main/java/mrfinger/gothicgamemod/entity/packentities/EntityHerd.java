@@ -172,7 +172,7 @@ public abstract class EntityHerd extends EntityLiving implements IEntityHerd
             {
                 this.nullifyEntityToAttack();
             }
-            else if (this.entityToAttack.isEntityAlive())
+            else if (this.entityToAttack.entityAlive())
             {
                 if (this.canEntityBeSeen((Entity) this.entityToAttack))
                 {

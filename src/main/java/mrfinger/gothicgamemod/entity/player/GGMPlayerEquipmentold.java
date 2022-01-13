@@ -21,7 +21,7 @@ package mrfinger.gothicgamemod.entity.player;
     }
 
     @Override
-    public ItemStack getSecHeldItem() {
+    public ItemStack getSecondHeldItem() {
         return this.currentItem < this.mainInventory.length / 2 - 1 && this.currentItem >= 0 ? this.mainInventory[this.currentItem * 2 + 1] : null;
     }
 
@@ -297,7 +297,7 @@ package mrfinger.gothicgamemod.entity.player;
 
 
     @Override
-    public NBTTagList writeToNBT(NBTTagList p_70442_1_) {
+    public NBTTagList writeToNBTGGM(NBTTagList p_70442_1_) {
 
         int i;
         NBTTagCompound nbttagcompound;
@@ -308,7 +308,7 @@ package mrfinger.gothicgamemod.entity.player;
             {
                 nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte("Slot", (byte)i);
-                this.mainInventory[i].writeToNBT(nbttagcompound);
+                this.mainInventory[i].writeToNBTGGM(nbttagcompound);
                 p_70442_1_.appendTag(nbttagcompound);
             }
         }
@@ -319,7 +319,7 @@ package mrfinger.gothicgamemod.entity.player;
             {
                 nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte("Slot", (byte)(i + 20));
-                this.armorInventory[i].writeToNBT(nbttagcompound);
+                this.armorInventory[i].writeToNBTGGM(nbttagcompound);
                 p_70442_1_.appendTag(nbttagcompound);
             }
         }
@@ -328,7 +328,7 @@ package mrfinger.gothicgamemod.entity.player;
     }
 
     @Override
-    public void readFromNBT(NBTTagList list) {
+    public void readFromNBTGGM(NBTTagList list) {
 
         this.mainInventory = new ItemStack[6];
         this.armorInventory = new ItemStack[6];

@@ -1,11 +1,11 @@
 package mrfinger.gothicgamemod.init;
 
-import mrfinger.gothicgamemod.entity.effect.generic.GGMEffect;
-import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
+import mrfinger.gothicgamemod.entity.effect.AbstractGGMEffectManager;
+import mrfinger.gothicgamemod.entity.effect.IGGMEffectManager;
 
 public class GGMEffects
 {
 
-    public static final IGGMEffect DynamicAttributeController = new GGMEffect("DynamicAttributeController");
+    public static final IGGMEffectManager DynamicAttributeController = new AbstractGGMEffectManager("DynamicAttributeController");
 
 }

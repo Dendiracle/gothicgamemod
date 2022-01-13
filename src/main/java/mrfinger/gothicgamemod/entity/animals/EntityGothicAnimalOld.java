@@ -121,7 +121,7 @@ public abstract class EntityGothicAnimalOld extends EntityMob {
         			this.stareTimer = 0;
         			this.updateBodySwing();
         			
-        			if (this.getDistanceToEntity(annoyingPlayer) > this.aggrAnimsDist || !this.canEntityBeSeen(annoyingPlayer) || this.toAttackAfterAnim != null && this.toAttackAfterAnim.isEntityAlive() || this.annoyingPlayer.isEntityInvulnerable() || !this.annoyingPlayer.isEntityAlive()) {                		       		
+        			if (this.getDistanceToEntity(annoyingPlayer) > this.aggrAnimsDist || !this.canEntityBeSeen(annoyingPlayer) || this.toAttackAfterAnim != null && this.toAttackAfterAnim.entityAlive() || this.annoyingPlayer.isEntityInvulnerable() || !this.annoyingPlayer.entityAlive()) {
                 		this.aggrAnimationsPassed = 0;
                 		this.getEntityAttributeInstance(SharedMonsterAttributes.movementSpeed).setBaseValue(this.getAMovementSpeed());
                 		this.farToAnnoyingPlayer = true;

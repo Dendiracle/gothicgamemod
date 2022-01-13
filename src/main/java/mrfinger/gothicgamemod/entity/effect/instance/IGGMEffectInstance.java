@@ -2,25 +2,30 @@ package mrfinger.gothicgamemod.entity.effect.instance;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
+import mrfinger.gothicgamemod.entity.effect.IGGMEffectManager;
 import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import net.minecraft.item.ItemStack;
 
-public interface IGGMEffectInstance
+public interface IGGMEffectInstance<Manager extends IGGMEffectManager<Entity>, Entity extends IGGMEntityLivingBase>
 {
 
-    IGGMEffect getGenericEffect();
+    Manager getGenericEffect();
+
+    Entity getEntity();
 
 
-    void onSetsToEntity(IGGMEntityLivingBase entity, IGGMEffectInstance oldEffect);
+    void onSetsToEntity(Entity entity, IGGMEffectInstance oldEffect);
 
 
-    void onEntityUpdate(IGGMEntityLivingBase entity);
+    void onEntityUpdate();
 
 
-    default IGGMEffectInstance onSetNewEffect(IGGMEffectInstance origin, IGGMEffectInstance result)
+    default void onRemoveEffect(IGGMEffectInstance newEffect) {}
+
+
+    default void removeEffect()
     {
-        return result;
+        this.getEntity().removeEffect(this.getGenericEffect());
     }
 
 
@@ -72,10 +77,7 @@ public interface IGGMEffectInstance
     }
 
 
-    default double onJump(double originMotion, double resultMotion)
-    {
-        return resultMotion;
-    }
+    default void onJumped() {}
 
 
     /*default float getNewBreakSpeed(Block block, int meta, float originSpeed, float newSpeed, int x, int y, int z)

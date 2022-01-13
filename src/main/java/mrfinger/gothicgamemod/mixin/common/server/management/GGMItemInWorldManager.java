@@ -26,7 +26,7 @@ public abstract class GGMItemInWorldManager {
         if (player.inFightStance()) {
 
             int slotIndex = player.getGGMEquipment().getCurrentItemIndex() * 2;
-            if (player.getGGMEquipment().getSecHeldItem() != null) ++slotIndex;
+            if (player.getGGMEquipment().getSecondHeldItem() != null) ++slotIndex;
             player.getGGMEquipment().setInventorySlotContents(slotIndex, itemStack);
         }
         else {

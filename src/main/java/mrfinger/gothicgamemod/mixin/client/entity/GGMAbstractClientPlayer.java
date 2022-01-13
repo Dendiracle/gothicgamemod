@@ -127,11 +127,11 @@ public abstract class GGMAbstractClientPlayer extends GGMEntityPlayer implements
                         uArray = new EntityLivingBase[e];
                         angles = new float[e];
 
-                        boolean isRiding = thisEntity().isRiding();
+                        boolean isOnMount = thisEntity().isOnMount();
 
                         for (EntityLivingBase entity : eArray) {
 
-                            if (entity == thisEntity() || (isRiding && thisEntity().ridingEntity == entity)) continue;
+                            if (entity == thisEntity() || (isOnMount && thisEntity().ridingEntity == entity)) continue;
 
                             float mal = flag ? -9999.0F : 9999.0F;
 
@@ -373,11 +373,11 @@ public abstract class GGMAbstractClientPlayer extends GGMEntityPlayer implements
                         uArray = new EntityLivingBase[e];
                         angles = new float[e];
 
-                        boolean isRiding = thisEntity().isRiding();
+                        boolean isOnMount = thisEntity().isOnMount();
 
                         for (EntityLivingBase entity : eArray) {
 
-                            if (entity == thisEntity() || (isRiding && thisEntity().ridingEntity == entity)) continue;
+                            if (entity == thisEntity() || (isOnMount && thisEntity().ridingEntity == entity)) continue;
 
                             float mal = 0.0F;
 

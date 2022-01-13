@@ -7,9 +7,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemBlock;
@@ -37,7 +35,7 @@ public class GGMRenderPlayer extends RenderPlayer
 
         if (player.inFightStance())
         {
-            ItemStack itemstack = player.getSecHeldItem();
+            ItemStack itemstack = player.getSecondHeldItem();
 
             if (itemstack != null)
             {
@@ -61,7 +59,7 @@ public class GGMRenderPlayer extends RenderPlayer
 
         if (player.inFightStance())
         {
-            ItemStack itemstack1 = player.getSecHeldItem();
+            ItemStack itemstack1 = player.getSecondHeldItem();
 
             if (itemstack1 != null)
             {

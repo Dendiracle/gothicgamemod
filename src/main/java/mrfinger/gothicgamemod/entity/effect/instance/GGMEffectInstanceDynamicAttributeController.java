@@ -54,7 +54,7 @@ public class GGMEffectInstanceDynamicAttributeController extends GGMEffectInstan
 
 
     @Override
-    public void onEntityUpdate(IGGMEntityLivingBase entity)
+    public void onEntityUpdate()
     {
         System.out.println("Debug in GGMEffectInstanceDynamicAttributeController 111:   " + ticksExisted);
         for (Map.Entry<GGMDynamicRangedAttribute, GGMDynamicAttributeInstance> entry : this.attributesMap.entrySet())

@@ -23,7 +23,7 @@ public abstract class ModelAnimal extends ModelEntityHerd
 	{
 		super.setRotationAngles(p_78087_1_, p_78087_2_, p_78087_3_, p_78087_4_, p_78087_5_, p_78087_6_, entity);
 
-		if (entity instanceof IGGMEntityLivingBase)((IGGMEntityLivingBase) entity).getActiveAnimation().modifyModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
+		if (entity instanceof IGGMEntityLivingBase && ((IGGMEntityLivingBase) entity).getActiveAnimation() != null) ((IGGMEntityLivingBase) entity).getActiveAnimation().animateModel(this, p_78087_1_, p_78087_2_, ((IGGMMinecraft) Minecraft.getMinecraft()).getTimer().renderPartialTicks);
 	}
 
 
@@ -40,6 +40,8 @@ public abstract class ModelAnimal extends ModelEntityHerd
 
 
 	public void updateAnimationEat(float progress) {}
+
+	public void updateAnimationFallingAsleep(float progress) {}
 
 	public void updateAnimationSleeping(float progress) {}
 

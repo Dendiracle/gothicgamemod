@@ -44,7 +44,7 @@ public class CPacketStartAttack implements IMessage
         @Override
         public IMessage handleServerMessage(EntityPlayer player, CPacketStartAttack message, MessageContext ctx)
         {
-            ((IGGMEntityPlayer) player).startAttack(GGMEntityAnimations.hitSplash);
+            ((IGGMEntityPlayer) player).tryChangeAnimation(GGMEntityAnimations.hitSplash);
             return null;
         }
     }

@@ -30,7 +30,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class GGMPlayerControllerMP implements IGGMPlayerControllerMP
 {
 
-
     @Shadow
     @Final
     private Minecraft mc;
@@ -52,7 +51,7 @@ public class GGMPlayerControllerMP implements IGGMPlayerControllerMP
             if (player().getAttackCountdown() <= 0)
             {
                 PacketDispatcher.sendToServer(new CPacketStartAttack((short) 0, (byte) 0));
-                player().startAttack(GGMEntityAnimations.hitSplash);
+                player().tryChangeAnimation(GGMEntityAnimations.hitSplash);
             } else
             {
                 this.attackPenalty = player().getCurrentAttackDuration() + player().getAttackCountdown();
@@ -123,7 +122,7 @@ public class GGMPlayerControllerMP implements IGGMPlayerControllerMP
         if (player().inFightStance())
         {
             int slotIndex = player().getGGMEquipment().getCurrentItemIndex() * 2;
-            if (player().getGGMEquipment().getSecHeldItem() != null) ++slotIndex;
+            if (player().getGGMEquipment().getSecondHeldItem() != null) ++slotIndex;
             player().getGGMEquipment().setInventorySlotContents(slotIndex, itemStack);
         }
         else

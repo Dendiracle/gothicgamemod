@@ -3,94 +3,54 @@ package mrfinger.gothicgamemod.network.server;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mrfinger.gothicgamemod.data.entity.AnimationsData;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimationManager;
 import mrfinger.gothicgamemod.network.client.AbstractClientMessageHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+
+import java.util.UUID;
 
 public class SPacketSyncAnimation implements IMessage
 {
 
     protected int entityID;
-    protected String animationName;
-    protected String episodeName;
-    protected int duration;
-    protected int count;
+    protected UUID uuid;
+    IAnimationManager.IAnimationSnapshot snapshot;
+
 
     public SPacketSyncAnimation() {}
 
-    public SPacketSyncAnimation(int entityID, String animationName, String episodeName, int duration)
+    public SPacketSyncAnimation(int entityID, IAnimation animation)
     {
         this.entityID = entityID;
-        this.animationName = animationName;
-        this.episodeName = episodeName;
-        this.duration = duration;
-        this.count = duration;
+        this.uuid = animation.getAnimationManager().getID();
+        this.snapshot = animation.getAnimationManager().saveAnimationToSnapshot(animation);
     }
 
-
-    public void setCount(int count)
-    {
-        this.count = count;
-    }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         this.entityID = buf.readInt();
-        int i = 0;
-        char[] an = new char[buf.readInt()];
-
-        for ( ; i < an.length; ++i)
+        this.uuid = new UUID(buf.readLong(), buf.readLong());
+        IAnimationManager manager = AnimationsData.getManager(this.uuid);
+        if (manager == null)
         {
-            an[i] = buf.readChar();
+            throw new NullPointerException("Animation Manager wasn't register");
         }
-
-        this.animationName = String.copyValueOf(an);
-        this.duration = buf.readInt();
-
-        if (this.duration > 0)
-        {
-            i = 0;
-            an = new char[buf.readInt()];
-
-            for ( ; i < an.length; ++i)
-            {
-                an[i] = buf.readChar();
-            }
-
-            this.episodeName = String.copyValueOf(an);
-            this.count = buf.readInt();
-        }
+        this.snapshot = manager.getSnapshotFromBytes(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(this.entityID);
-        char[] an = this.animationName.toCharArray();
-        buf.writeInt(an.length);
-
-        for (char c : an)
-        {
-            buf.writeChar(c);
-        }
-
-        buf.writeInt(this.duration);
-
-        if (this.duration > 0)
-        {
-            an = this.episodeName.toCharArray();
-            buf.writeInt(an.length);
-
-            for (char c : an)
-            {
-                buf.writeChar(c);
-            }
-
-            buf.writeInt(this.count);
-        }
-
+        buf.writeLong(this.uuid.getMostSignificantBits());
+        buf.writeLong(this.uuid.getLeastSignificantBits());
+        this.snapshot.toBytes(buf);
     }
 
 
@@ -104,15 +64,11 @@ public class SPacketSyncAnimation implements IMessage
 
             if (entity instanceof IGGMEntityLivingBase)
             {
-                if (((IGGMEntityLivingBase) entity).setActiveAnimationDirectly(message.animationName))
-                {
-                    ((IGGMEntityLivingBase) entity).getActiveAnimation().setAnimationEpisode(message.episodeName, message.duration);
-
-                    if (message.count != message.duration) ((IGGMEntityLivingBase) entity).getActiveAnimation().setAnimationCountdown(message.count);
-                }
+                ((IGGMEntityLivingBase) entity).setActiveAnimationDirectly(message.snapshot.getInstance());
             }
 
             return null;
         }
+
     }
 }

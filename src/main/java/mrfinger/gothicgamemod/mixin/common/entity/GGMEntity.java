@@ -1,10 +1,14 @@
 package mrfinger.gothicgamemod.mixin.common.entity;
 
 import mrfinger.gothicgamemod.entity.IGGMEntity;
+import mrfinger.gothicgamemod.util.IGGMDamageSource;
 import mrfinger.gothicgamemod.wolrd.IGGMWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,6 +38,8 @@ public abstract class GGMEntity implements IGGMEntity
     @Shadow public double motionZ;
     @Shadow public double motionX;
 
+    @Shadow public boolean onGround;
+
     @Shadow public float width;
     @Shadow public float height;
 
@@ -49,7 +55,7 @@ public abstract class GGMEntity implements IGGMEntity
 
 
     @Override
-    public int getEntityId() {
+    public int getEntityID() {
         return this.entityId;
     }
 
@@ -58,6 +64,15 @@ public abstract class GGMEntity implements IGGMEntity
     {
         return (IGGMWorld) this.worldObj;
     }
+
+
+    @Override
+    public boolean entityAlive()
+    {
+        return this.isEntityAlive();
+    }
+
+    @Shadow public abstract boolean isEntityAlive();
 
 
     @Override
@@ -76,10 +91,26 @@ public abstract class GGMEntity implements IGGMEntity
     }
 
     @Override
+    public float eyeHeight()
+    {
+        return this.getEyeHeight();
+    }
+
+    @Shadow public abstract float getEyeHeight();
+
+    @Override
     public float getRotationYaw()
     {
         return this.rotationYaw;
     }
+
+    @Override
+    public float getHeadRotationYaw()
+    {
+        return this.getRotationYawHead();
+    }
+
+    @Shadow public abstract float getRotationYawHead();
 
     @Override
     public float getRotationPitch()
@@ -108,6 +139,29 @@ public abstract class GGMEntity implements IGGMEntity
 
 
     @Override
+    public boolean onGround()
+    {
+        return this.onGround;
+    }
+
+    @Override
+    public float getDistanceToEntity(IGGMEntity entity)
+    {
+        return this.getDistanceToEntity((Entity) entity);
+    }
+
+    @Shadow public abstract float getDistanceToEntity(Entity p_70032_1_);
+
+    @Override
+    public double getDistanceSqToEntity(IGGMEntity entity)
+    {
+        return this.getDistanceSqToEntity((Entity) entity);
+    }
+
+    @Shadow public abstract double getDistanceSqToEntity(Entity p_70068_1_);
+
+
+    @Override
     public float getWidth()
     {
         return this.width;
@@ -117,6 +171,13 @@ public abstract class GGMEntity implements IGGMEntity
     public float getHeight()
     {
         return this.height;
+    }
+
+
+    @Override
+    public boolean canEntityBeSeen(IGGMEntity entity)
+    {
+        return this.worldObj.rayTraceBlocks(Vec3.createVectorHelper(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ), Vec3.createVectorHelper(entity.getPosX(), entity.getPosY() + (double)entity.eyeHeight(), entity.getPosZ())) == null;
     }
 
     @Override
@@ -133,6 +194,14 @@ public abstract class GGMEntity implements IGGMEntity
     }
 
     @Override
+    public boolean isOnMount()
+    {
+        return this.isRiding();
+    }
+
+    @Shadow public abstract boolean isRiding();
+
+    @Override
     public Entity getRidingEntity()
     {
         return this.ridingEntity;
@@ -146,6 +215,15 @@ public abstract class GGMEntity implements IGGMEntity
 
 
     @Override
+    public boolean attackEntityFrom(IGGMDamageSource damageSource, float damage)
+    {
+        return this.attackEntityFrom((DamageSource) damageSource, damage);
+    }
+
+    @Shadow public abstract boolean attackEntityFrom(DamageSource p_70097_1_, float p_70097_2_);
+
+
+    @Override
     public void faceEntity(Entity p_70625_1_, float p_70625_2_, float p_70625_3_)
     {
         double d0 = p_70625_1_.posX - this.posX;
@@ -155,11 +233,11 @@ public abstract class GGMEntity implements IGGMEntity
         if (p_70625_1_ instanceof EntityLivingBase)
         {
             EntityLivingBase entitylivingbase = (EntityLivingBase)p_70625_1_;
-            d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.getEyeHeight());
+            d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.eyeHeight());
         }
         else
         {
-            d1 = (p_70625_1_.boundingBox.minY + p_70625_1_.boundingBox.maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
+            d1 = (p_70625_1_.boundingBox.minY + p_70625_1_.boundingBox.maxY) / 2.0D - (this.posY + (double)this.eyeHeight());
         }
 
         double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d2 * d2);
@@ -192,5 +270,22 @@ public abstract class GGMEntity implements IGGMEntity
     {
         this.onKilledEntity(entity);
     }
+
+
+    @Override
+    public void writeToNBTGGM(NBTTagCompound nbt)
+    {
+        this.writeEntityToNBT(nbt);
+    }
+
+    @Shadow protected abstract void writeEntityToNBT(NBTTagCompound p_70014_1_);
+
+    @Override
+    public void readFromNBTGGM(NBTTagCompound nbt)
+    {
+        this.readEntityFromNBT(nbt);
+    }
+
+    @Shadow protected abstract void readEntityFromNBT(NBTTagCompound p_70037_1_);
 
 }

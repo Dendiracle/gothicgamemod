@@ -53,13 +53,13 @@ public abstract class GGMEntityTrackerEntry
 
                 if (entity instanceof IGGMEntityPlayerMP)
                 {
-                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
+                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityID(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                     PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) this.myEntity);
                 }
 
                 for (Object o : this.trackingPlayers)
                 {
-                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
+                    SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityID(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                     PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) o);
                 }
 
@@ -117,12 +117,12 @@ public abstract class GGMEntityTrackerEntry
 
             if (this.trackedEntity instanceof IGGMEntityPlayerMP) {
 
-                PacketDispatcher.sendTo(new SPacketEntityAttributes(this.trackedEntity.getEntityId(), dpiColl), (IGGMEntityPlayerMP) this.trackedEntity);
+                PacketDispatcher.sendTo(new SPacketEntityAttributes(this.trackedEntity.getEntityID(), dpiColl), (IGGMEntityPlayerMP) this.trackedEntity);
             }
 
             for (Object o : this.trackingPlayers) {
 
-                PacketDispatcher.sendTo(new SPacketEntityAttributes(this.trackedEntity.getEntityId(), dpiColl), (IGGMEntityPlayerMP) o);
+                PacketDispatcher.sendTo(new SPacketEntityAttributes(this.trackedEntity.getEntityID(), dpiColl), (IGGMEntityPlayerMP) o);
             }
 
             dpiColl.clear();
@@ -153,13 +153,13 @@ public abstract class GGMEntityTrackerEntry
 
             if (entity instanceof IGGMEntityPlayerMP)
             {
-                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
+                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityID(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                 PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) this.trackedEntity);
             }
 
             for (Object o : this.trackingPlayers)
             {
-                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityId(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
+                SPacketSyncAnimation packet = new SPacketSyncAnimation(entity.getEntityID(), entity.getActiveAnimation().getUnlocalizedName(), episodeName, entity.getActiveAnimation().getAnimationCountdown());
                 PacketDispatcher.sendTo(packet, (IGGMEntityPlayerMP) o);
             }
 

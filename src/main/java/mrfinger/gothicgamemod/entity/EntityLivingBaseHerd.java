@@ -177,7 +177,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
     }
 
     @Override
-    public IGGMEntity getEntityToAttack()
+    public IGGMEntity getAttackTarget()
     {
         return this.entityToAttack;
     }
@@ -222,7 +222,7 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
             {
                 this.nullifyEntityToAttack();
             }
-            else if (this.entityToAttack.isEntityAlive())
+            else if (this.entityToAttack.entityAlive())
             {
                 if (this.canEntityBeSeen((Entity) this.entityToAttack))
                 {
@@ -341,11 +341,11 @@ public abstract class EntityLivingBaseHerd extends EntityLivingBase implements I
         if (p_70625_1_ instanceof EntityLivingBase)
         {
             EntityLivingBase entitylivingbase = (EntityLivingBase)p_70625_1_;
-            d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.getEyeHeight());
+            d1 = entitylivingbase.posY + (double)entitylivingbase.eyeHeight() - (this.posY + (double)this.eyeHeight());
         }
         else
         {
-            d1 = (p_70625_1_.boundingBox.minY + p_70625_1_.boundingBox.maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
+            d1 = (p_70625_1_.boundingBox.minY + p_70625_1_.boundingBox.maxY) / 2.0D - (this.posY + (double)this.eyeHeight());
         }
 
         double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d2 * d2);

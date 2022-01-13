@@ -5,13 +5,13 @@ import mrfinger.gothicgamemod.entity.IGGMEntity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import mrfinger.gothicgamemod.entity.animation.episodes.IAnimationEpisode;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimationManager;
 import mrfinger.gothicgamemod.entity.capability.attribute.instance.IGGMAttributeInstance;
 import mrfinger.gothicgamemod.entity.capability.attribute.map.IGGMBaseAttributeMap;
-import mrfinger.gothicgamemod.entity.effect.generic.IGGMEffect;
+import mrfinger.gothicgamemod.entity.effect.IGGMEffectManager;
 import mrfinger.gothicgamemod.entity.effect.instance.IGGMEffectInstance;
 import mrfinger.gothicgamemod.entity.properties.IEntityProperties;
 import mrfinger.gothicgamemod.fractions.Fraction;
-import mrfinger.gothicgamemod.init.GGMBattleSystem;
 import mrfinger.gothicgamemod.init.GGMCapabilities;
 import mrfinger.gothicgamemod.init.GGMEntities;
 import mrfinger.gothicgamemod.init.GGMFractions;
@@ -42,16 +42,16 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected int lvl;
     private boolean needExpUpdate;
 
-    protected IAnimation activeAnimationHelper;
+    protected IAnimation activeAnimation;
 
     private boolean needAnimSync;
 
     @Shadow
     protected BaseAttributeMap attributeMap;
 
-    protected Map<IGGMEffect, IGGMEffectInstance> effectsMap;
-    protected Map<IGGMEffect, IGGMEffectInstance> attackEffectsMap;
-    protected Map<IGGMEffect, IGGMEffectInstance> otherEffectsMap;
+    protected Map<IGGMEffectManager, IGGMEffectInstance> effectsMap;
+    protected Map<IGGMEffectManager, IGGMEffectInstance> attackEffectsMap;
+    protected Map<IGGMEffectManager, IGGMEffectInstance> otherEffectsMap;
 
     @Shadow
     protected float lastDamage;
@@ -64,10 +64,10 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     protected float landMovementFactor;
 
     @Shadow
-    public abstract float getEyeHeight();
+    public abstract float eyeHeight();
 
     @Shadow
-    public abstract float getRotationYawHead();
+    public abstract float getHeadRotationYaw();
 
     @Shadow
     protected abstract void damageArmor(float p_70675_1_);
@@ -131,7 +131,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 	/*@Inject(method = "getAttributeMap", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/ai/attributes/ServersideAttributeMap;<init>()V"))
 	private void onCreateNewMap(CallbackInfo callbackInfo)
 	{
-		((IGGMBaseAttributeMap) this.attributeMap).setEntity(this);
+		((IGGMBaseAttributeMap) this.attributeMap).onSet(this);
 		System.out.println(((IGGMBaseAttributeMap) this.attributeMap).getEntity());
 	}*/
 
@@ -217,7 +217,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Inject(method = "onEntityUpdate", at = @At("HEAD"))
     private void onOnEntityUpdate(CallbackInfo ci)
     {
-        if (this.isEntityAlive())
+        if (this.entityAlive())
         {
             this.controlAnimationHelperUpdate();
         }
@@ -228,15 +228,15 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
         for (IGGMEffectInstance effect : this.effectsMap.values())
         {
-            effect.onEntityUpdate(this);
+            effect.onEntityUpdate();
         }
     }
 
     protected void controlAnimationHelperUpdate()
     {
-        if (this.activeAnimationHelper != null)
+        if (this.activeAnimation != null)
         {
-            this.activeAnimationHelper.updateAnimation(this);
+            this.activeAnimation.updateAnimation(this);
         }
     }
 
@@ -250,27 +250,94 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Inject(method = "onLivingUpdate", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;moveStrafing:F", ordinal = 1))
     private void controlMove(CallbackInfo ci)
     {
-        this.activeAnimationHelper.controlEntityMovement();
+        this.activeAnimation.controlEntityMovement();
         this.moveUpdate();
+    }
+
+
+    @Redirect(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;jump()V"))
+    private void jumpAccessor(EntityLivingBase entity)
+    {
+        if (this.isCanJump()) this.jump();
     }
 
 
     @Override
     public IAnimation getActiveAnimation()
     {
-        return this.activeAnimationHelper;
+        return this.activeAnimation;
+    }
+
+    @Override
+    public boolean tryChangeAnimation(IAnimationManager manager)
+    {
+        if (this.worldObj.isRemote)
+        {
+            if (manager == null)
+            {
+                clearAnimation();
+            }
+            else
+            {
+                IAnimationManager.IStartAnimationData data = manager.getAnimationData(this.getEntity(), this);
+                IAnimation animation = manager.getNewAnimationInstance();
+                this.setActiveAnimationDirectly(animation);
+                data.onAnimationStarted(animation);
+            }
+            return true;
+        }
+        return IGGMEntityLivingBase.super.tryChangeAnimation(manager);
     }
 
     @Override
     public boolean tryChangeAnimation(IAnimation animation)
     {
-        if (this.activeAnimationHelper == null || this.activeAnimationHelper.isCanAnimationHelperWillChanged())
+        if (this.worldObj.isRemote)
+        {
+            this.setActiveAnimationDirectly(animation);
+        }
+        return false;
+    }
+
+    /*@Override
+    public boolean tryChangeAnimation(IAnimationManager manager)
+    {
+        if (manager == null)
+        {
+            return this.tryEndAnimation();
+        }
+        if (this.activeAnimation == null || this.activeAnimation.isCanAnimationWillChangedFor(manager))
+        {
+            IAnimationManager.IStartAnimationData data = manager.getAnimationData(this, this);
+
+            if (data.canStartAnimation())
+            {
+                IAnimation animation = manager.getNewAnimationInstance();
+                this.setActiveAnimationDirectly(animation);
+                data.onAnimationStarted(animation);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean tryChangeAnimation(IAnimation animation)
+    {
+        if (this.activeAnimation == null || this.activeAnimation.isCanAnimationWillChangedFor(animation))
         {
             this.setActiveAnimationDirectly(animation);
             return true;
         }
 
         return false;
+    }*/
+
+    @Override
+    public boolean tryEndAnimation()
+    {
+        return this.tryChangeAnimation((IAnimation) null);
     }
 
     @Override
@@ -278,26 +345,26 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     {
         if (animation != null )
         {
-            animation.setEntity(this);
+            animation.onSet(this, this);
 
-            if (this.activeAnimationHelper != null)
+            if (this.activeAnimation != null)
             {
-                IAnimation oldAnimation = this.activeAnimationHelper;
-                this.activeAnimationHelper = animation;
-                oldAnimation.onRemoveAnimation(this);
+                IAnimation oldAnimation = this.activeAnimation;
+                this.activeAnimation = animation;
+                oldAnimation.onRemoveAnimation(this, this);
             }
             else
             {
-                this.activeAnimationHelper = animation;
+                this.activeAnimation = animation;
             }
         }
         else
         {
-            if (this.activeAnimationHelper != null)
+            if (this.activeAnimation != null)
             {
-                IAnimation oldAnimation = this.activeAnimationHelper;
-                this.activeAnimationHelper = null;
-                oldAnimation.onRemoveAnimation(this);
+                IAnimation oldAnimation = this.activeAnimation;
+                this.activeAnimation = null;
+                oldAnimation.onRemoveAnimation(this, this);
             }
         }
 
@@ -307,7 +374,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Override
     public void clearAnimation()
     {
-        if (this.activeAnimationHelper != null)
+        if (this.activeAnimation != null)
         {
             this.setActiveAnimationDirectly(null);
         }
@@ -365,7 +432,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
 
 
     @Override
-    public IGGMEffectInstance getEffect(IGGMEffect effect)
+    public IGGMEffectInstance getEffect(IGGMEffectManager effect)
     {
         return this.effectsMap.get(effect);
     }
@@ -379,25 +446,25 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     }
 
     @Override
-    public IGGMEffectInstance removeEffect(IGGMEffect effect)
+    public IGGMEffectInstance removeEffect(IGGMEffectManager effect)
     {
         return this.effectsMap.remove(effect);
     }
 
     @Override
-    public Map<IGGMEffect, IGGMEffectInstance> getEffectsMap()
+    public Map<IGGMEffectManager, IGGMEffectInstance> getEffectsMap()
     {
         return Collections.unmodifiableMap(this.effectsMap);
     }
 /*
 	@Override
-	public Map<IGGMEffect, IGGMEffectInstance> getBattleEffectsMap()
+	public Map<IGGMEffectManager, IGGMEffectInstance> getBattleEffectsMap()
 	{
 		return attackEffectsMap;
 	}
 
 	@Override
-	public Map<IGGMEffect, IGGMEffectInstance> getOtherEffectsMap()
+	public Map<IGGMEffectManager, IGGMEffectInstance> getOtherEffectsMap()
 	{
 		return otherEffectsMap;
 	}
@@ -440,8 +507,8 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     {
         posX = posX - this.getPosX();
         posZ = posZ - this.getPosZ();
-        float f = MathHelper.wrapAngleTo180_float(((float) (Math.atan2(posZ, posX)) * 57.2957795131F) - 90.0F - this.getRotationYawHead());
-        float f1 = MathHelper.wrapAngleTo180_float(-((float) Math.atan2(posY - this.getPosY() + this.getEyeHeight(), MathHelper.sqrt_double(posX * posX + posZ * posZ)) * 57.2957795131F) - this.getRotationPitch());
+        float f = MathHelper.wrapAngleTo180_float(((float) (Math.atan2(posZ, posX)) * 57.2957795131F) - 90.0F - this.getHeadRotationYaw());
+        float f1 = MathHelper.wrapAngleTo180_float(-((float) Math.atan2(posY - this.getPosY() + this.eyeHeight(), MathHelper.sqrt_double(posX * posX + posZ * posZ)) * 57.2957795131F) - this.getRotationPitch());
 
         return (f == 0F || f > 0F && f < deltaLookYaw || f < 0F && f > -deltaLookYaw) && (f1 == 0F || f1 > 0F && f1 < deltaLookPitch || f1 < 0F && f1 > -deltaLookPitch);
     }
@@ -449,13 +516,13 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Override
     public boolean isCanDropItems()
     {
-        return this.activeAnimationHelper.allowDropItems();
+        return this.activeAnimation.allowDropItems();
     }
 
     @Override
     public boolean isCanDigging()
     {
-        if (!this.activeAnimationHelper.allowDigging()) return false;
+        if (!this.activeAnimation.allowDigging()) return false;
 
         for (IGGMEffectInstance effect : this.otherEffectsMap.values())
         {
@@ -468,7 +535,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Override
     public boolean isCanUsingItems()
     {
-        return this.activeAnimationHelper.allowUsingItems();
+        return this.activeAnimation.allowUsingItems();
     }
 
 
@@ -498,42 +565,30 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     }
 
 
-    @Override
-    public boolean canJump()
-    {
-        return this.activeAnimationHelper.allowJump();
-    }
-
-    @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
+    /*@Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
     private void onJumpHead(CallbackInfo ci)
     {
-        if (!this.activeAnimationHelper.allowJump()) ci.cancel();
-    }
+        if (!this.isCanJump()) ci.cancel();
+    }*/
+
+    @Shadow protected abstract void jump();
 
     @Redirect(method = "jump", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EntityLivingBase;motionY:D", ordinal = 0))
     private void jumpFix(EntityLivingBase entity, double motionY)
     {
-        double origin = this.getJumpHeight();
-        double newMotion = origin;
-
-        for (IGGMEffectInstance effect : this.otherEffectsMap.values())
-        {
-            newMotion = effect.onJump(origin, newMotion);
-        }
-
-        entity.motionY = newMotion;
+        entity.motionY = this.getJumpBaseHeight();
     }
 
     @Override
-    public double getJumpHeight()
+    public double getJumpBaseHeight()
     {
         return 0.41999998688697815D;
     }
 
     @Inject(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ForgeHooks;onLivingJump(Lnet/minecraft/entity/EntityLivingBase;)V", remap = false))
-    private void onJumped(CallbackInfo ci)
+    private void onJumpedInject(CallbackInfo ci)
     {
-        this.onJump();
+        this.onJumped();
     }
 
 
@@ -628,31 +683,45 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     }
 
 
-    @Override
-    public DamageType getStandartMeleeDamageType()
-    {
-        return GGMBattleSystem.crushing;
-    }
-
     @Shadow public abstract boolean attackEntityAsMob(Entity p_70652_1_);
 
-    @Override
-    public boolean meleeAttack(Entity entity, float distanceSQ)
-    {
-        float attackRange = this.getWidth() * 0.5F + this.getMeleeAttackDistance() + entity.width * 0.5F;
-        attackRange *= attackRange;
 
-        if (distanceSQ <= attackRange && this.attackEntityAsMob(entity))
+    @Override
+    public boolean inFightStance()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean swicthToFightStance()
+    {
+        throw new UnsupportedOperationException("This entity cannot to fight stance");
+    }
+
+
+  /*  @Override
+    public boolean startAnimatedAttack(IAnimationManager manager)
+    {
+        if ((this.inFightStance() || this.swicthToFightStance()) && this.canMeleeAttackAnimatedly() && this.tryChangeAnimation(manager.getNewAnimationInstance()))
         {
-            this.onAnimatedMeleeAttack();
+            this.onStartsAnimatedAttack();
             return true;
         }
 
         return false;
     }
 
+    /*protected boolean canMeleeAttackAnimatedly()
+    {
+        return true;
+    }
+
+    protected void onStartsAnimatedAttack() {}
+*/
+
+
     @Override
-    public short attackBreak()
+    public int attackBreak()
     {
         return 20;
     }
@@ -677,7 +746,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Inject(method = "isMovementBlocked", at = @At("HEAD"), cancellable = true)
     private void fixIsMovementBlocked(CallbackInfoReturnable<Boolean> cir)
     {
-        cir.setReturnValue(this.activeAnimationHelper.blockMovement() || this.getHealth() <= 0.0F || this.isEntitySleeping());
+        cir.setReturnValue(this.activeAnimation.blockMovement() || this.getHealth() <= 0.0F || this.isEntitySleeping());
     }
 
     @Inject(method = "knockBack", at = @At("HEAD"), cancellable = true)
@@ -702,7 +771,7 @@ public abstract class GGMEntityLivingBase extends GGMEntity implements IGGMEntit
     @Override
     public boolean isCanMount(Entity entity)
     {
-        if (this.activeAnimationHelper != null && !this.activeAnimationHelper.allowMount((IGGMEntity) entity))
+        if (this.activeAnimation != null && !this.activeAnimation.allowMount((IGGMEntity) entity))
         {
             return false;
         }

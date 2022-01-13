@@ -2,18 +2,17 @@ package mrfinger.gothicgamemod.entity.animation.instance;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
-import mrfinger.gothicgamemod.entity.animation.manager.IAnimationManager;
 
 public abstract class AbstractAnimationWithDuration<Entity extends IGGMEntityLivingBase> extends AbstractAnimation<Entity>
 {
 
-    protected final short duration;
+    protected short duration;
     protected short countdown;
 
 
     public AbstractAnimationWithDuration(short duration)
     {
-        this.duration = duration--;
+        this.duration = duration;
         this.countdown = duration;
     }
 
@@ -31,16 +30,54 @@ public abstract class AbstractAnimationWithDuration<Entity extends IGGMEntityLiv
 
 
     @Override
-    public boolean isCanAnimationHelperWillChanged()
+    public boolean isCanAnimationWillChangedFor(IAnimationManager manager)
     {
-        return false;
+        return this.countdown <= 0;
+    }
+
+    @Override
+    public boolean isCanAnimationWillChangedFor(IAnimation animation)
+    {
+        return this.countdown <= 0;
     }
 
 
-    public  AbstractAnimationWithDuration setAnimationCountdown(int countDown)
+    @Override
+    public int getDuration()
     {
-        this.countdown = countDown > Short.MAX_VALUE ? Short.MAX_VALUE : (short) countDown;
-        return this;
+        return duration;
+    }
+
+    @Override
+    public int getCountdown()
+    {
+        return countdown;
+    }
+
+    @Override
+    public void setDuration(int value)
+    {
+        short i = this.duration;
+        this.duration = value > Short.MAX_VALUE ? Short.MAX_VALUE : (short) value;
+        this.setCountdown((int) (this.countdown * (((float) this.duration) / i)));
+    }
+
+    @Override
+    public void resizeDuration(float value)
+    {
+        this.setDuration((int) (this.duration * value));
+    }
+
+    @Override
+    public void setCountdown(int countDown)
+    {
+        this.countdown = countDown > this.duration ? this.duration : (short) countDown;
+    }
+
+
+    protected float getAnimationProgress(float tickRate)
+    {
+        return ((this.duration - this.countdown + tickRate) / this.duration);
     }
 
 }

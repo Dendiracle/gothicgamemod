@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityJumpHelper;
 import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigate;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,6 +42,12 @@ public interface IGGMEntityLiving extends IGGMEntityLivingBase
     default void cleartPath()
     {
         this.getNavigator().clearPathEntity();
+    }
+
+
+    default ItemStack getHelDItem()
+    {
+        return null;
     }
 
 

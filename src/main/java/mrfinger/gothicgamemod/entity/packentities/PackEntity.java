@@ -261,7 +261,7 @@ public class PackEntity implements IPackEntity
                         {
                             for (IEntityHerd packMember : this.entitiesSet)
                             {
-                                if (packMember.canEntityBeSeen((Entity) annoyer))
+                                if (packMember.canEntityBeSeen(annoyer))
                                 {
                                     if (this.aggrLevel < 1.0F)
                                     {
@@ -305,11 +305,11 @@ public class PackEntity implements IPackEntity
                 for (IEntityHerd entity : this.entitiesSet)
                 {
                     int index = 0;
-                    float minDistance = entity.getDistanceToEntity((Entity) entitiesToAttackList.get(0));
+                    float minDistance = entity.getDistanceToEntity(entitiesToAttackList.get(0));
 
                     for (int i = 1; i < entitiesToAttackList.size(); ++i)
                     {
-                        float distance = entity.getDistanceToEntity((Entity) entitiesToAttackList.get(i));
+                        float distance = entity.getDistanceToEntity(entitiesToAttackList.get(i));
 
                         if (distance < minDistance)
                         {
@@ -336,7 +336,7 @@ public class PackEntity implements IPackEntity
 
         for (IEntityHerd entity : this.entitiesSet)
         {
-            if (!entity.isEntityAlive())
+            if (!entity.entityAlive())
             {
                 toRemove.add(entity);
             }
@@ -399,7 +399,7 @@ public class PackEntity implements IPackEntity
         List<IEntityHerd> awaykers = new LinkedList();
         for (IEntityHerd entity : this.entitiesSet)
         {
-            if (!entity.isEntityAlive())
+            if (!entity.entityAlive())
             {
                 awaykers.add(entity);
                 continue;
@@ -586,7 +586,7 @@ public class PackEntity implements IPackEntity
 
         public boolean needRemoveEntry()
         {
-            return this.count == 0 || !this.enemy.isEntityAlive();
+            return this.count == 0 || !this.enemy.entityAlive();
         }
     }
 

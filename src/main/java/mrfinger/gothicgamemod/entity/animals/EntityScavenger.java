@@ -170,7 +170,7 @@ public class EntityScavenger extends EntityGothicAnimal
 		super.readEntityFromNBT(nbt);
 	}
 
-
+/*
 	@Override
 	public boolean startAttack(IAnimationHit hitType)
 	{
@@ -182,5 +182,5 @@ public class EntityScavenger extends EntityGothicAnimal
 
 		return false;
 	}
-
+*/
 }

@@ -24,7 +24,7 @@ public class SPacketExpValues implements IMessage {
 
     public SPacketExpValues(IGGMEntityLivingBase entity)
     {
-        this.id = entity.getEntityId();
+        this.id = entity.getEntityID();
         this.experiencable = entity instanceof IGGMEntityExperienceable;
         this.level = entity.getLvl();
 

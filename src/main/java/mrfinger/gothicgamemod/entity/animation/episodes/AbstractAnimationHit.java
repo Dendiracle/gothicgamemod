@@ -1,13 +1,13 @@
 package mrfinger.gothicgamemod.entity.animation.episodes;
 
+import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
 import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
-import mrfinger.gothicgamemod.entity.capability.data.IGGMEntityWithAnimAttack;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.Vec3;
 
-public abstract class AbstractAnimationHit<EntityAttacker extends IGGMEntityWithAnimAttack, Model extends ModelBase> extends AbstractAnimationEpisode<EntityAttacker, Model> implements IAnimationHit<EntityAttacker, Model>
+public abstract class AbstractAnimationHit<EntityAttacker extends IGGMEntityLivingBase, Model extends ModelBase> extends AbstractAnimationEpisode<EntityAttacker, Model> implements IAnimationHit<EntityAttacker, Model>
 {
 
     public AbstractAnimationHit(String unlocalizedName)
@@ -18,7 +18,7 @@ public abstract class AbstractAnimationHit<EntityAttacker extends IGGMEntityWith
     @Override
     public Entity[] getAttackTargets(EntityAttacker entity, IAnimation helper)
     {
-        if (entity.getEntityToAttack() != null)
+        if (entity.getAttackTarget() != null)
         {
             EntityLivingBase entity1 = (EntityLivingBase) entity;
 
@@ -27,12 +27,12 @@ public abstract class AbstractAnimationHit<EntityAttacker extends IGGMEntityWith
             double y = entity1.posY + lookVec.yCoord;
             double z = entity1.posZ + lookVec.zCoord;
 
-            float f0 = entity.getMeleeAttackDistance() + entity.getEntityToAttack().getWidth() * 0.5F;
+            float f0 = entity.getMeleeAttackDistance() + entity.getAttackTarget().getWidth() * 0.5F;
             f0 *= f0;
 
-            if (entity.getEntityToAttack().getDistanceSq(x, y, z) <= f0)
+            if (entity.getAttackTarget().getDistanceSq(x, y, z) <= f0)
             {
-                return new Entity[] {(net.minecraft.entity.Entity) entity.getEntityToAttack()};
+                return new Entity[] {(net.minecraft.entity.Entity) entity.getAttackTarget()};
             }
         }
 

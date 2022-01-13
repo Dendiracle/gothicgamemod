@@ -264,7 +264,7 @@ public class GGMGuiCharachterMenu extends GuiScreen  {
 					this.lStatNull();
 					break;
 				case 52:
-					PacketDispatcher.sendToServer(new CPacketAttributesToUpgrade(player.getEntityId(), statHelpersArray));
+					PacketDispatcher.sendToServer(new CPacketAttributesToUpgrade(player.getEntityID(), statHelpersArray));
 					break;
 			}
 		}*/

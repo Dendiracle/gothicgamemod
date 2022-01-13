@@ -1,6 +1,7 @@
 package mrfinger.gothicgamemod.entity.animation.instance;
 
 import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
+import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
 
 public abstract class AbstractAnimationHelperEntityAI<Entity extends IGGMEntityLivingBase, Animation extends IAnimation<Entity>> extends AbstractAnimationEntityAI<Entity> implements IAnimationHelper<Entity, Animation>
 {
@@ -9,10 +10,10 @@ public abstract class AbstractAnimationHelperEntityAI<Entity extends IGGMEntityL
 
 
     @Override
-    public void setEntity(Entity entity)
+    public void onSet(Entity entity, IAnimationPlayer animationPlayer)
     {
-        super.setEntity(entity);
-        IAnimationHelper.super.setEntity(entity);
+        super.onSet(entity, animationPlayer);
+        IAnimationHelper.super.onSet(entity, animationPlayer);
     }
 
 
@@ -24,37 +25,44 @@ public abstract class AbstractAnimationHelperEntityAI<Entity extends IGGMEntityL
 
 
     @Override
-    public void onRemoveAnimation(Entity entity)
+    public void onRemoveAnimation(Entity entity, IAnimationPlayer animationPlayer)
     {
-        super.onRemoveAnimation(entity);
-        IAnimationHelper.super.onRemoveAnimation(entity);
+        super.onRemoveAnimation(entity, animationPlayer);
+        IAnimationHelper.super.onRemoveAnimation(entity, animationPlayer);
     }
 
 
-    @Override
+    /*@Override
     public boolean tryChangeAnimation(Animation animation)
     {
-        if (this.subAnimation == null || this.subAnimation.isCanAnimationHelperWillChanged())
+        if (this.subAnimation == null || this.subAnimation.isCanAnimationWillChangedFor(animation))
         {
             this.setActiveAnimationDirectly(animation);
             return true;
         }
 
         return false;
+    }*/
+
+    @Override
+    public boolean tryEndAnimation()
+    {
+        return this.tryChangeAnimation((Animation) null);
     }
+
 
     @Override
     public void setActiveAnimationDirectly(Animation animation)
     {
         if (animation != null )
         {
-            animation.setEntity(entity);
+            animation.onSet(entity, this);
 
             if (this.subAnimation != null)
             {
                 IAnimation oldAnimation = this.subAnimation;
                 this.subAnimation = animation;
-                oldAnimation.onRemoveAnimation(entity);
+                oldAnimation.onRemoveAnimation(entity, this);
             }
             else
             {
@@ -67,7 +75,7 @@ public abstract class AbstractAnimationHelperEntityAI<Entity extends IGGMEntityL
             {
                 IAnimation oldAnimation = this.subAnimation;
                 this.subAnimation = null;
-                oldAnimation.onRemoveAnimation(entity);
+                oldAnimation.onRemoveAnimation(entity, this);
             }
         }
     }

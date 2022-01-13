@@ -100,6 +100,7 @@ public class GGMEntityAIAttackOnCollide
 
             this.attacker.attackEntityAsMob(entitylivingbase);
         }
+
         ci.cancel();
     }
 

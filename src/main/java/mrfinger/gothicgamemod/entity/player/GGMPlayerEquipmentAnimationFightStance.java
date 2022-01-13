@@ -1,8 +1,8 @@
 package mrfinger.gothicgamemod.entity.player;
 
-import mrfinger.gothicgamemod.entity.IGGMEntityLivingBase;
-import mrfinger.gothicgamemod.entity.animation.AnimationFightStance;
-import mrfinger.gothicgamemod.entity.animation.episodes.AbstractPlayerAnimationHit;
+import mrfinger.gothicgamemod.entity.animation.IAnimationPlayer;
+import mrfinger.gothicgamemod.entity.animation.instance.AnimationFightStance;
+import mrfinger.gothicgamemod.entity.animation.instance.IAnimation;
 import mrfinger.gothicgamemod.item.equipment.IItemGGMEquip;
 import mrfinger.gothicgamemod.network.BPacketSyncCurrentItemInGGMSlot;
 import mrfinger.gothicgamemod.network.PacketDispatcher;
@@ -14,28 +14,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public abstract class GGMPlayerEquipmentAnimationFightStance<Entity extends IGGMEntityPlayer, Episode extends AbstractPlayerAnimationHit> extends AnimationFightStance<Entity, Episode> implements IGGMPlayerEquipmentAnimationFightStance<Entity, Episode>
+public abstract class GGMPlayerEquipmentAnimationFightStance<Player extends IGGMEntityPlayer, Sub extends IAnimation<Player>> extends AnimationFightStance<Player, Sub> implements IGGMPlayerEquipmentAnimationFightStance<Player, Sub>
 {
 
-    protected ItemStack[] equip;
-    protected byte weaponSlotsAmount;
+    protected ItemStack[] equip = new ItemStack[12];
+    protected byte weaponSlotsAmount = 3;
     protected byte currentWeapon;
     protected byte stats;
 
 
-    public GGMPlayerEquipmentAnimationFightStance(Entity player)
+    public GGMPlayerEquipmentAnimationFightStance(Player player)
     {
-        super(player);
-
-        this.weaponSlotsAmount = 3;
-        this.equip = new ItemStack[12];
+        this.onSet(player, null);
     }
 
-
-    @Override
-    public boolean setAnimationEpisode(String episodeName, int duration)
+    public GGMPlayerEquipmentAnimationFightStance()
     {
-        return false;
     }
 
 
@@ -80,14 +74,16 @@ public abstract class GGMPlayerEquipmentAnimationFightStance<Entity extends IGGM
     @Override
     public void setUseItem()
     {
-        if (this.countdown < 0 && !this.isUsingItem())
+        if (this.subAnimation == null && !this.isUsingItem())
         {
             this.stats &= 0b11111100;
 
             ItemStack stack = this.getSecHeldItem();
+
             if (stack == null)
             {
                 stack = this.getHeldItem();
+
                 if (stack != null && stack.getItemUseAction() == EnumAction.block)
                 {
                     this.stats |= 0b1;
@@ -107,10 +103,10 @@ public abstract class GGMPlayerEquipmentAnimationFightStance<Entity extends IGGM
     }
 
     @Override
-    public void onRemoveAnimation(IGGMEntityLivingBase entity)
+    public void onRemoveAnimation(Player entity, IAnimationPlayer animationPlayer)
     {
-        super.onRemoveAnimation(entity);
         this.endUseItem();
+        super.onRemoveAnimation(entity, animationPlayer);
     }
 
 

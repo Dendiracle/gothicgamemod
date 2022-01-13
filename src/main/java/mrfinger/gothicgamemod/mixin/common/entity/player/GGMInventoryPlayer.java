@@ -17,11 +17,9 @@ public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimation
 
 
     @Shadow public ItemStack[] mainInventory;
-
     @Shadow public ItemStack[] armorInventory;
 
     @Shadow public EntityPlayer player;
-
     @Shadow private ItemStack itemStack;
 
 
@@ -53,7 +51,7 @@ public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimation
     }
 
     @Override
-    public ItemStack getSecHeldItem() {
+    public ItemStack getSecondHeldItem() {
         return this.equip[1];
     }
 
@@ -260,7 +258,7 @@ public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimation
         }
     }
 
-    @Inject(method = "writeToNBT", at = @At("TAIL"))
+    @Inject(method = "writeToNBTGGM", at = @At("TAIL"))
     private void onWriteToNBT(NBTTagList list, CallbackInfoReturnable<NBTTagList> cir) {
 
         // int i = 200;
@@ -272,7 +270,7 @@ public abstract class GGMInventoryPlayer implements IGGMPlayerEquipmentAnimation
             if (this.equip[i] != null) {
                 nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte("Slot", (byte) (-i));
-                this.equip[i].writeToNBT(nbttagcompound);
+                this.equip[i].writeToNBTGGM(nbttagcompound);
                 list.appendTag(nbttagcompound);
             }
         }

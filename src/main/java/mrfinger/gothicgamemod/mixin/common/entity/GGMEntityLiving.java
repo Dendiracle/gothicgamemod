@@ -3,6 +3,7 @@ package mrfinger.gothicgamemod.mixin.common.entity;
 import mrfinger.gothicgamemod.entity.IGGMEntityLiving;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -11,6 +12,13 @@ public abstract class GGMEntityLiving extends GGMEntityLivingBase implements IGG
 {
 
     @Shadow protected EntityLivingBase attackTarget;
+
+
+    @Override
+    public ItemStack getHelDItem()
+    {
+        return ((EntityLivingBase) (Object) this).getHeldItem();
+    }
 
     @Override
     public EntityLivingBase getAttackTarget()

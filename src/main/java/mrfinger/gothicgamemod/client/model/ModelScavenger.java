@@ -416,9 +416,16 @@ public class ModelScavenger extends ModelAnimal
     }
 
     @Override
+    public void updateAnimationFallingAsleep(float progress)
+    {
+        this.updateAnimationSitDown(progress);
+        this.neck0.rotateAngleZ = this.neck0.defaultRotateAngleZ - progress * 1.7F;
+    }
+
+    @Override
     public void updateAnimationSleeping(float progress)
     {
-        updateAnimationSitting(progress, 0.007F);
+        /*updateAnimationSitting(progress, 0.007F);
 
         if (progress < 0.02F) progress *= 50F;
         else if (progress < 0.98F) progress = 1F;
@@ -427,15 +434,15 @@ public class ModelScavenger extends ModelAnimal
             progress = (1F - progress) * 50F;
         }
 
-        this.neck0.rotateAngleZ = this.neck0.defaultRotateAngleZ - progress * 1.7F;
+        this.neck0.rotateAngleZ = this.neck0.defaultRotateAngleZ - progress * 1.7F;*/
+        updateAnimationSitting(progress, 0F);
+        this.neck0.rotateAngleZ = this.neck0.defaultRotateAngleZ - 1.7F;
     }
 
     @Override
     public void updateAnimationWakeUp(float progress)
     {
-        progress = 1F - progress;
-        this.updateAnimationSitDown(progress);
-        this.neck0.rotateAngleZ = this.neck0.defaultRotateAngleZ - progress * 1.7F;
+        this.updateAnimationFallingAsleep(1F - progress);
     }
 
     @Override
